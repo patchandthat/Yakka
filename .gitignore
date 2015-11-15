@@ -1,0 +1,7 @@
+packages/
+Yakka.Server/obj/
+Yakka.Server/bin/
+Yakka.Client.Prototype/bin/
+Yakka.Client.Prototype/obj/
+Yakka.Common/obj/
+Yakka.Common/bin/
