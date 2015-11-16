@@ -70,6 +70,7 @@ namespace Yakka.Client.Prototype
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
+            Program.YakkaSystem.Shutdown();
         }
     }
 }
