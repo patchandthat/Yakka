@@ -70,6 +70,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actors\ClientConnectionActor.cs" />
     <Compile Include="Actors\HeartbeatActor.cs" />
     <Compile Include="Actors\LogonActor.cs" />
     <Compile Include="Form1.cs">
