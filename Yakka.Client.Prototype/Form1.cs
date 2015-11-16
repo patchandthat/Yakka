@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Windows.Forms;
 using Akka.Actor;
+using Akka.Actor.Dsl;
+using Yakka.Client.Prototype.Actors;
+using Yakka.Client.Prototype.Messages;
 using Yakka.Common.Messages;
 
 namespace Yakka.Client.Prototype
 {
     public partial class Form1 : Form
     {
-        private string _hostname;
-        private int _port;
+        private IActorRef _clientActor;
         private bool _connected;
+        private int _port;
+        private string _address;
 
         public Form1()
         {
@@ -27,8 +31,8 @@ namespace Yakka.Client.Prototype
                     MessageBox.Show("Enter server address");
                     return;
                 }
-                _hostname = address;
-
+                _address = address;
+                
                 int port;
                 if (!int.TryParse(txtPort.Text, out port))
                 {
@@ -44,12 +48,7 @@ namespace Yakka.Client.Prototype
                     return;
                 }
 
-                //Select actor based on inputs
-                var authenticator =
-                    Program.YakkaSystem.ActorSelection($"akka.tcp://YakkaServer@{_hostname}:{_port}/user/Authenticator");
-
-                //Try to connect
-                authenticator.Tell(new ClientToServer.ConnectRequest(username, Program.ClientId));
+                _clientActor.Tell(new LogonRequest(address, port, username));
 
                 //Set authenticator and coordinator ref
                 _connected = true;
@@ -60,13 +59,17 @@ namespace Yakka.Client.Prototype
         {
             if (_connected)
             {
-                var authenticator =
-                    Program.YakkaSystem.ActorSelection($"akka.tcp://YakkaServer@{_hostname}:{_port}/user/Authenticator");
-
-                authenticator.Tell(new ClientToServer.Disconnect(Program.ClientId));
-
-                _connected = false;
+                _clientActor.Tell(new DisconnectFrom(_address, _port));
             }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            _clientActor = Program.YakkaSystem.ActorOf(Props.Create(() => new ChatClientActor()), "ChatClient");
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
         }
     }
 }

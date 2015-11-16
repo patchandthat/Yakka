@@ -70,7 +70,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Actors\ClientConnectionActor.cs" />
+    <Compile Include="Actors\ChatClientActor.cs" />
+    <Compile Include="Actors\ConversationCoordinatorActor.cs" />
     <Compile Include="Actors\HeartbeatActor.cs" />
     <Compile Include="Actors\LogonActor.cs" />
     <Compile Include="Form1.cs">
@@ -79,6 +80,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Messages\Internal.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">

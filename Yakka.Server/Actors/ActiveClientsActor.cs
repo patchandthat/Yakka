@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Akka.Actor;
 using Yakka.Common.Messages;
+using Yakka.Server.Messages;
 
 namespace Yakka.Server.Actors
 {
@@ -12,9 +13,13 @@ namespace Yakka.Server.Actors
         {
         }
 
+        private class WriteConnectedClients
+        {
+        }
+
         private readonly IActorRef _consoleOutActor;
 
-        private readonly Dictionary<Guid, Common.Messages.Server.ConnectedUserData> _connectedClients = new Dictionary<Guid, Common.Messages.Server.ConnectedUserData>();
+        private readonly Dictionary<Guid, ConnectedUserData> _connectedClients = new Dictionary<Guid, ConnectedUserData>();
         private ICancelable _cancelOutput;
         private ICancelable _cancelInactivityCheck;
 
@@ -22,20 +27,26 @@ namespace Yakka.Server.Actors
         {
             _consoleOutActor = consoleOutActor;
 
-            Receive<Common.Messages.Server.WriteConnectedClients>(msg => WriteConnectedClients(msg));
-            Receive<Common.Messages.Server.ClientConnected>(msg => HandleClientConnected(msg));
-            Receive<Common.Messages.Server.ClientDisconnected>(msg => HandleClientDisconnect(msg));
+            Receive<WriteConnectedClients>(msg => HandleWriteConnectedClients(msg));
+            Receive<ClientConnected>(msg => HandleClientConnected(msg));
+            Receive<ClientDisconnected>(msg => HandleClientDisconnect(msg));
 
             Receive<InactivityCheck>(msg => CullInactiveClients(msg));
-            Receive<ClientToServer.ClientStatusUpdate>(msg => HandleClientStatusUpdate(msg));
+            Receive<ClientHeartbeat>(msg => HandleClientStatusUpdate(msg));
         }
 
-        private void HandleClientStatusUpdate(ClientToServer.ClientStatusUpdate message)
+        private void HandleClientStatusUpdate(ClientHeartbeat message)
         {
             if (_connectedClients.ContainsKey(message.ClientGuid))
             {
                 _connectedClients[message.ClientGuid].LastActivity = DateTime.UtcNow;
                 _connectedClients[message.ClientGuid].Status = message.Status;
+
+                Sender.Tell(new ClientHeartbeatResponse(_connectedClients.Values.ToList()));
+            }
+            else
+            {
+                Unhandled(message);
             }
         }
 
@@ -45,7 +56,7 @@ namespace Yakka.Server.Actors
                 TimeSpan.FromSeconds(1),
                 TimeSpan.FromSeconds(1),
                 Self,
-                new Common.Messages.Server.WriteConnectedClients(),
+                new WriteConnectedClients(),
                 Self);
 
             _cancelInactivityCheck = Context.System.Scheduler.ScheduleTellRepeatedlyCancelable(
@@ -69,9 +80,9 @@ namespace Yakka.Server.Actors
             }
         }
 
-        private void WriteConnectedClients(Common.Messages.Server.WriteConnectedClients message)
+        private void HandleWriteConnectedClients(WriteConnectedClients message)
         {
-            _consoleOutActor.Tell(new Common.Messages.Server.ConnectedClients(_connectedClients.Values.ToList()));
+            _consoleOutActor.Tell(new ConnectedClients(_connectedClients.Values.ToList()));
         }
 
         private void CullInactiveClients(InactivityCheck msg)
@@ -86,24 +97,22 @@ namespace Yakka.Server.Actors
             }
         }
 
-        private void HandleClientConnected(Common.Messages.Server.ClientConnected message)
+        private void HandleClientConnected(ClientConnected message)
         {
             if (!_connectedClients.ContainsKey(message.ClientId))
             {
-                _connectedClients.Add(message.ClientId, new Common.Messages.Server.ConnectedUserData()
+                _connectedClients.Add(message.ClientId, new ConnectedUserData()
                 {
                     Name = message.Name,
                     ClientGuid = message.ClientId,
                     LastActivity = DateTime.UtcNow
                 });
 
-                //Respond with list of active clients
-                //And also provide a handle for the client to send it's heartbeat to
-                //message.Client.Tell(new ConnectedMessage());
+                message.Client.Tell(new ConnectResponse(_connectedClients.Values.ToList()), Self);
             }
         }
 
-        private void HandleClientDisconnect(Common.Messages.Server.ClientDisconnected message)
+        private void HandleClientDisconnect(ClientDisconnected message)
         {
             if (_connectedClients.ContainsKey(message.ClientId))
                 _connectedClients.Remove(message.ClientId);

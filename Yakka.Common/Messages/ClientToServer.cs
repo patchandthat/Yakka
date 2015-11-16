@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using Akka.Actor;
 
 namespace Yakka.Common.Messages
 {
-    public class ClientToServer
-    {
+    //Todo : Namespace messages by feature type
+
         public class ConnectRequest
         {
             public ConnectRequest(string username, Guid clientId)
@@ -19,17 +21,17 @@ namespace Yakka.Common.Messages
 
         public class ConnectResponse
         {
-            public ConnectResponse(bool connected)
+            public ConnectResponse(IEnumerable<ConnectedUserData> clients)
             {
-                Connected = connected;
+                Clients = clients;
             }
 
-            public bool Connected { get; }
+            public IEnumerable<ConnectedUserData> Clients { get; }
         }
 
-        public class Disconnect
+        public class DisconnectClient
         {
-            public Disconnect(Guid clientId)
+            public DisconnectClient(Guid clientId)
             {
                 ClientId = clientId;
             }
@@ -37,9 +39,9 @@ namespace Yakka.Common.Messages
             public Guid ClientId { get; }
         }
 
-        public class ClientStatusUpdate
+        public class ClientHeartbeat
         {
-            public ClientStatusUpdate(Guid clientGuid, ClientStatus status)
+            public ClientHeartbeat(Guid clientGuid, ClientStatus status)
             {
                 ClientGuid = clientGuid;
                 Status = status;
@@ -48,5 +50,22 @@ namespace Yakka.Common.Messages
             public Guid ClientGuid { get; }
             public ClientStatus Status { get; }
         }
-    }
+
+        public class ClientHeartbeatResponse
+        {
+            public ClientHeartbeatResponse(IEnumerable<ConnectedUserData> clients)
+            {
+                Clients = clients;
+            }
+
+            public IEnumerable<ConnectedUserData> Clients { get; }
+        }
+
+        public class ConnectedUserData
+        {
+            public string Name { get; set; }
+            public Guid ClientGuid { get; set; }
+            public DateTime LastActivity { get; set; }
+            public ClientStatus Status { get; set; }
+        }
 }

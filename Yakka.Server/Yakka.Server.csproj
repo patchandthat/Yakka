@@ -72,6 +72,7 @@
     <Compile Include="Actors\ConsoleWriterActor.cs" />
     <Compile Include="Actors\ConversationCoordinatorActor.cs" />
     <Compile Include="Actors\MessageRouterActor.cs" />
+    <Compile Include="Messages\InternalMessages.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerMetadata.cs" />

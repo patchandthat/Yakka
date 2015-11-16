@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Akka.Actor;
+using Yakka.Common.Messages;
+using Yakka.Server.Messages;
 
 namespace Yakka.Server.Actors
 {
@@ -9,10 +11,10 @@ namespace Yakka.Server.Actors
     {
         public ConsoleWriterActor()
         {
-            Receive<Common.Messages.Server.ConnectedClients>(message => HandleConnectedClientList(message));
+            Receive<ConnectedClients>(message => HandleConnectedClientList(message));
         }
 
-        private void HandleConnectedClientList(Common.Messages.Server.ConnectedClients message)
+        private void HandleConnectedClientList(ConnectedClients message)
         {
             Console.Clear();
 
@@ -32,7 +34,7 @@ namespace Yakka.Server.Actors
             Console.WriteLine();
         }
 
-        private void WriteConenctedClientList(IEnumerable<Common.Messages.Server.ConnectedUserData> clients)
+        private void WriteConenctedClientList(IEnumerable<ConnectedUserData> clients)
         {
             var clientList = clients.ToList();
 

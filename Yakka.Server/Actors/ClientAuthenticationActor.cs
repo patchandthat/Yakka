@@ -1,5 +1,6 @@
 ﻿using Akka.Actor;
 using Yakka.Common.Messages;
+using Yakka.Server.Messages;
 
 namespace Yakka.Server.Actors
 {
@@ -10,29 +11,28 @@ namespace Yakka.Server.Actors
         public ClientAuthenticationActor(IActorRef activeClientsActor)
         {
             _activeClientsActor = activeClientsActor;
-            Receive<ClientToServer.ConnectRequest>(msg => ConnectClient(msg));
+            Receive<ConnectRequest>(msg => ConnectClient(msg));
 
-            Receive<ClientToServer.Disconnect>(msg => DisconnectClient(msg));
+            Receive<DisconnectClient>(msg => DisconnectClient(msg));
         }
 
-        private void ConnectClient(ClientToServer.ConnectRequest message)
+        private void ConnectClient(ConnectRequest message)
         {
             //Todo: any validation
             if (true) //isValid
             {
-                _activeClientsActor.Tell(new Common.Messages.Server.ClientConnected(message.Username, message.ClientId, Sender));
-                Sender.Tell(new ClientToServer.ConnectResponse(true));
+                _activeClientsActor.Tell(new ClientConnected(message.Username, message.ClientId, Sender));
             }
-            else
-            {
-                //Server rejects conenction
-                Sender.Tell(new ClientToServer.ConnectResponse(false));
-            }
+            //else
+            //{
+            //    //Server rejects conenction
+            //    Sender.Tell(new ConnectResponse(false));
+            //}
         }
 
-        private void DisconnectClient(ClientToServer.Disconnect message)
+        private void DisconnectClient(DisconnectClient message)
         {
-            _activeClientsActor.Tell(new Common.Messages.Server.ClientDisconnected(message.ClientId));
+            _activeClientsActor.Tell(new ClientDisconnected(message.ClientId));
         }
     }
 }
