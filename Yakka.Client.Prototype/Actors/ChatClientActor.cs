@@ -1,7 +1,5 @@
-﻿using System.Threading.Tasks;
-using Akka.Actor;
+﻿using Akka.Actor;
 using Yakka.Client.Prototype.Messages;
-using Yakka.Common.Messages;
 
 namespace Yakka.Client.Prototype.Actors
 {
@@ -53,6 +51,7 @@ namespace Yakka.Client.Prototype.Actors
         {
             _heartbeatActor.Tell(new StopHeartbeat());
             _logonActor.Tell(message);
+            Context.ActorSelection($"akka://Client{Program.ClientId}/user/ConnectedUsers").Tell(message);
         }
     }
 }

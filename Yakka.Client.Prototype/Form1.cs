@@ -15,6 +15,8 @@ namespace Yakka.Client.Prototype
         private int _port;
         private string _address;
 
+        private IActorRef _usersBox;
+
         public Form1()
         {
             InitializeComponent();
@@ -66,6 +68,10 @@ namespace Yakka.Client.Prototype
         private void Form1_Load(object sender, EventArgs e)
         {
             _clientActor = Program.YakkaSystem.ActorOf(Props.Create(() => new ChatClientActor()), "ChatClient");
+            _usersBox =
+                Program.YakkaSystem.ActorOf(
+                    Props.Create(() => new ConnectedUsersActor(txtConnectedUsers))
+                         .WithDispatcher(Program.UiDispatcher), "ConnectedUsers");
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)

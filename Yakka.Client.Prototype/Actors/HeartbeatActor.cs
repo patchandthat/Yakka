@@ -27,8 +27,8 @@ namespace Yakka.Client.Prototype.Actors
         {
             _heartbeatTarget = message.ServerActor;
             _cancelHeartbeat = Context.System.Scheduler.ScheduleTellRepeatedlyCancelable(
-                TimeSpan.FromSeconds(5),
-                TimeSpan.FromSeconds(10),
+                TimeSpan.FromSeconds(2),
+                TimeSpan.FromSeconds(2),
                 Self,
                 new SendHeartbeat(),
                 Self);
@@ -47,7 +47,7 @@ namespace Yakka.Client.Prototype.Actors
 
         private void HandleHeartbeartResponse(ClientHeartbeatResponse message)
         {
-            //Output conencted user list
+            Context.ActorSelection($"akka://Client{Program.ClientId}/user/ConnectedUsers").Tell(new AvailableUsersUpdate(message.Clients));
         }
     }
 }

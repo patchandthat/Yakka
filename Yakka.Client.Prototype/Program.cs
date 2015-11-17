@@ -9,6 +9,7 @@ namespace Yakka.Client.Prototype
     {
         public static Guid ClientId;
         public static ActorSystem YakkaSystem;
+        public const string UiDispatcher = "akka.actor.synchronized-dispatcher";
         /// <summary>
         /// The main entry point for the application.
         /// </summary>

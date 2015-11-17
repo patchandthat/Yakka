@@ -71,6 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actors\ChatClientActor.cs" />
+    <Compile Include="Actors\ConnectedUsersActor.cs" />
     <Compile Include="Actors\ConversationCoordinatorActor.cs" />
     <Compile Include="Actors\HeartbeatActor.cs" />
     <Compile Include="Actors\LogonActor.cs" />

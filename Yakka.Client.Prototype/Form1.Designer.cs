@@ -36,7 +36,7 @@
             this.txtPort = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.txtUsername = new System.Windows.Forms.TextBox();
-            this.textBox4 = new System.Windows.Forms.TextBox();
+            this.txtConnectedUsers = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
@@ -108,13 +108,14 @@
             this.txtUsername.Size = new System.Drawing.Size(163, 20);
             this.txtUsername.TabIndex = 7;
             // 
-            // textBox4
+            // txtConnectedUsers
             // 
-            this.textBox4.Location = new System.Drawing.Point(293, 94);
-            this.textBox4.Multiline = true;
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(250, 231);
-            this.textBox4.TabIndex = 8;
+            this.txtConnectedUsers.Location = new System.Drawing.Point(293, 94);
+            this.txtConnectedUsers.Multiline = true;
+            this.txtConnectedUsers.Name = "txtConnectedUsers";
+            this.txtConnectedUsers.ReadOnly = true;
+            this.txtConnectedUsers.Size = new System.Drawing.Size(250, 231);
+            this.txtConnectedUsers.TabIndex = 8;
             // 
             // label4
             // 
@@ -131,7 +132,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(555, 337);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.textBox4);
+            this.Controls.Add(this.txtConnectedUsers);
             this.Controls.Add(this.txtUsername);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.txtPort);
@@ -159,7 +160,7 @@
         private System.Windows.Forms.TextBox txtPort;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox txtUsername;
-        private System.Windows.Forms.TextBox textBox4;
+        private System.Windows.Forms.TextBox txtConnectedUsers;
         private System.Windows.Forms.Label label4;
     }
 }

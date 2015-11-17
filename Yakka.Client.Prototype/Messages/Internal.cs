@@ -1,4 +1,6 @@
-﻿using Akka.Actor;
+﻿using System.Collections.Generic;
+using Akka.Actor;
+using Yakka.Common.Messages;
 
 namespace Yakka.Client.Prototype.Messages
 {
@@ -52,5 +54,15 @@ namespace Yakka.Client.Prototype.Messages
 
         public string ServerAddress { get; private set; }
         public int Port { get; private set; }
+    }
+
+    class AvailableUsersUpdate
+    {
+        public AvailableUsersUpdate(IEnumerable<ConnectedUserData> clients)
+        {
+            Clients = clients;
+        }
+
+        public IEnumerable<ConnectedUserData> Clients { get; }
     }
 }

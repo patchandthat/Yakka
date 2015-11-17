@@ -60,8 +60,8 @@ namespace Yakka.Server.Actors
                 Self);
 
             _cancelInactivityCheck = Context.System.Scheduler.ScheduleTellRepeatedlyCancelable(
-                TimeSpan.FromSeconds(5),
-                TimeSpan.FromSeconds(5),
+                TimeSpan.FromSeconds(8),
+                TimeSpan.FromSeconds(8),
                 Self,
                 new InactivityCheck(),
                 Self);
