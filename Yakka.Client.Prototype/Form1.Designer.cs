@@ -38,13 +38,20 @@
             this.txtUsername = new System.Windows.Forms.TextBox();
             this.txtConnectedUsers = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.pictureGithub = new System.Windows.Forms.PictureBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.txtShoutSend = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.txtShoutListen = new System.Windows.Forms.TextBox();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureGithub)).BeginInit();
             this.SuspendLayout();
             // 
             // btnConnect
             // 
             this.btnConnect.Location = new System.Drawing.Point(293, 12);
             this.btnConnect.Name = "btnConnect";
-            this.btnConnect.Size = new System.Drawing.Size(96, 46);
+            this.btnConnect.Size = new System.Drawing.Size(153, 30);
             this.btnConnect.TabIndex = 0;
             this.btnConnect.Text = "Connect";
             this.btnConnect.UseVisualStyleBackColor = true;
@@ -52,9 +59,9 @@
             // 
             // btnDisconnect
             // 
-            this.btnDisconnect.Location = new System.Drawing.Point(405, 12);
+            this.btnDisconnect.Location = new System.Drawing.Point(293, 46);
             this.btnDisconnect.Name = "btnDisconnect";
-            this.btnDisconnect.Size = new System.Drawing.Size(96, 46);
+            this.btnDisconnect.Size = new System.Drawing.Size(153, 29);
             this.btnDisconnect.TabIndex = 1;
             this.btnDisconnect.Text = "Disconnect";
             this.btnDisconnect.UseVisualStyleBackColor = true;
@@ -110,27 +117,91 @@
             // 
             // txtConnectedUsers
             // 
-            this.txtConnectedUsers.Location = new System.Drawing.Point(293, 94);
+            this.txtConnectedUsers.BackColor = System.Drawing.Color.Black;
+            this.txtConnectedUsers.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.txtConnectedUsers.Location = new System.Drawing.Point(293, 112);
             this.txtConnectedUsers.Multiline = true;
             this.txtConnectedUsers.Name = "txtConnectedUsers";
             this.txtConnectedUsers.ReadOnly = true;
-            this.txtConnectedUsers.Size = new System.Drawing.Size(250, 231);
+            this.txtConnectedUsers.Size = new System.Drawing.Size(250, 213);
             this.txtConnectedUsers.TabIndex = 8;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(290, 78);
+            this.label4.Location = new System.Drawing.Point(290, 94);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(87, 13);
             this.label4.TabIndex = 9;
             this.label4.Text = "Connected users";
             // 
+            // pictureGithub
+            // 
+            this.pictureGithub.Image = global::Yakka.Client.Prototype.Properties.Resources.GitHub_Mark_120px_plus;
+            this.pictureGithub.Location = new System.Drawing.Point(452, 12);
+            this.pictureGithub.Name = "pictureGithub";
+            this.pictureGithub.Size = new System.Drawing.Size(91, 69);
+            this.pictureGithub.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureGithub.TabIndex = 10;
+            this.pictureGithub.TabStop = false;
+            this.pictureGithub.Click += new System.EventHandler(this.pictureGithub_Click);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(437, 84);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(122, 13);
+            this.label5.TabIndex = 11;
+            this.label5.Text = "Report issues on GitHub";
+            // 
+            // txtShoutSend
+            // 
+            this.txtShoutSend.Location = new System.Drawing.Point(118, 140);
+            this.txtShoutSend.Name = "txtShoutSend";
+            this.txtShoutSend.Size = new System.Drawing.Size(153, 20);
+            this.txtShoutSend.TabIndex = 12;
+            this.txtShoutSend.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtShoutSend_KeyPress);
+            // 
+            // label6
+            // 
+            this.label6.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label6.Location = new System.Drawing.Point(21, 126);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(250, 2);
+            this.label6.TabIndex = 13;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(24, 143);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(88, 13);
+            this.label7.TabIndex = 14;
+            this.label7.Text = "Shout to all users";
+            // 
+            // txtShoutListen
+            // 
+            this.txtShoutListen.BackColor = System.Drawing.Color.Black;
+            this.txtShoutListen.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.txtShoutListen.Location = new System.Drawing.Point(21, 179);
+            this.txtShoutListen.Multiline = true;
+            this.txtShoutListen.Name = "txtShoutListen";
+            this.txtShoutListen.ReadOnly = true;
+            this.txtShoutListen.Size = new System.Drawing.Size(250, 146);
+            this.txtShoutListen.TabIndex = 15;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(555, 337);
+            this.ClientSize = new System.Drawing.Size(571, 337);
+            this.Controls.Add(this.txtShoutListen);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.txtShoutSend);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.pictureGithub);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.txtConnectedUsers);
             this.Controls.Add(this.txtUsername);
@@ -145,6 +216,7 @@
             this.Text = "Form1";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureGithub)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -162,6 +234,12 @@
         private System.Windows.Forms.TextBox txtUsername;
         private System.Windows.Forms.TextBox txtConnectedUsers;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.PictureBox pictureGithub;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox txtShoutSend;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox txtShoutListen;
     }
 }
 

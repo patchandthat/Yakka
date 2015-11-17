@@ -67,5 +67,34 @@ namespace Yakka.Common.Messages
             public Guid ClientGuid { get; set; }
             public DateTime LastActivity { get; set; }
             public ClientStatus Status { get; set; }
+            public ActorPath ClientActorPath { get; set; }
         }
+
+    public class ShoutRequest
+    {
+        public ShoutRequest(string message, Guid clientId)
+        {
+            Message = message;
+            ClientId = clientId;
+        }
+
+        public string Message { get; }
+
+        public Guid ClientId { get; }
+    }
+
+    public class ShoutHeard
+    {
+        public ShoutHeard(string shouterUserName, Guid shouterId, string message)
+        {
+            ShouterUserName = shouterUserName;
+            ShouterId = shouterId;
+            Message = message;
+        }
+
+        public string ShouterUserName { get; }
+        public Guid ShouterId { get; }
+
+        public string Message { get; }
+    }
 }

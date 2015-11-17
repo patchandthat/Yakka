@@ -1,5 +1,7 @@
-﻿using Akka.Actor;
+﻿using System.Threading.Tasks;
+using Akka.Actor;
 using Yakka.Client.Prototype.Messages;
+using Yakka.Common.Messages;
 
 namespace Yakka.Client.Prototype.Actors
 {
@@ -10,13 +12,18 @@ namespace Yakka.Client.Prototype.Actors
         private IActorRef _conversationCoordinator;
 
         private IActorRef _server;
+        private bool _connected;
 
         public ChatClientActor()
         {
             Receive<LogonRequest>(message => HandleLogonRequest(message));
             Receive<LogonResponse>(message => HandleLogonResponse(message));
             Receive<DisconnectFrom>(message => HandleDisconnect(message));
+            Receive<ShoutRequest>(message => HandleShoutRequest(message));
+            
         }
+
+        
 
         protected override void PreStart()
         {
@@ -44,6 +51,7 @@ namespace Yakka.Client.Prototype.Actors
             {
                 _server = message.ServerActor;
                 _heartbeatActor.Tell(new StartHeartbeat(_server));
+                //_connected = true;
             }
         }
 
@@ -52,6 +60,15 @@ namespace Yakka.Client.Prototype.Actors
             _heartbeatActor.Tell(new StopHeartbeat());
             _logonActor.Tell(message);
             Context.ActorSelection($"akka://Client{Program.ClientId}/user/ConnectedUsers").Tell(message);
+            _server = null;
+        }
+
+        private void HandleShoutRequest(ShoutRequest message)
+        {
+            if (_server != null)
+            {
+                _server.Tell(message);
+            }
         }
     }
 }

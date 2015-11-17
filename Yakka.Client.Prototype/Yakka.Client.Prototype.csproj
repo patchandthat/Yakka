@@ -75,6 +75,7 @@
     <Compile Include="Actors\ConversationCoordinatorActor.cs" />
     <Compile Include="Actors\HeartbeatActor.cs" />
     <Compile Include="Actors\LogonActor.cs" />
+    <Compile Include="Actors\ShoutListener.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -95,6 +96,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -117,6 +119,12 @@
     <Content Include="CHANGES.txt" />
     <Content Include="licenses\license.txt" />
     <Content Include="licenses\protoc-license.txt" />
+    <None Include="Resources\GitHub-Mark-Light-120px-plus.png" />
+    <None Include="Resources\GitHub-Mark-Light-64px.png" />
+    <None Include="Resources\GitHub-Mark-Light-32px.png" />
+    <None Include="Resources\GitHub-Mark-120px-plus.png" />
+    <None Include="Resources\GitHub-Mark-64px.png" />
+    <None Include="Resources\GitHub-Mark-32px.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Yakka.Common\Yakka.Common.csproj">

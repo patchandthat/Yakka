@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Akka.Actor;
 using Yakka.Common.Messages;
 using Yakka.Server.Messages;
@@ -33,6 +34,20 @@ namespace Yakka.Server.Actors
 
             Receive<InactivityCheck>(msg => CullInactiveClients(msg));
             Receive<ClientHeartbeat>(msg => HandleClientStatusUpdate(msg));
+
+            Receive<ShoutRequest>(shout => ShoutToUsers(shout));
+        }
+
+        private void ShoutToUsers(ShoutRequest shout)
+        {
+            var shoutResponse = new ShoutHeard(_connectedClients[shout.ClientId].Name, shout.ClientId, shout.Message);
+
+            foreach (var client in _connectedClients)
+            {
+                ActorPath path = client.Value.ClientActorPath.Parent.Parent.Child("ShoutListener");
+
+                Context.ActorSelection(path).Tell(shoutResponse);
+            }
         }
 
         private void HandleClientStatusUpdate(ClientHeartbeat message)
@@ -105,7 +120,8 @@ namespace Yakka.Server.Actors
                 {
                     Name = message.Name,
                     ClientGuid = message.ClientId,
-                    LastActivity = DateTime.UtcNow
+                    LastActivity = DateTime.UtcNow,
+                    ClientActorPath = message.Client.Path
                 });
 
                 message.Client.Tell(new ConnectResponse(_connectedClients.Values.ToList()), Self);
