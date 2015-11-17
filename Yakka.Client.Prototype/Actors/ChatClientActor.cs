@@ -20,11 +20,8 @@ namespace Yakka.Client.Prototype.Actors
             Receive<LogonResponse>(message => HandleLogonResponse(message));
             Receive<DisconnectFrom>(message => HandleDisconnect(message));
             Receive<ShoutRequest>(message => HandleShoutRequest(message));
-            
         }
-
         
-
         protected override void PreStart()
         {
             //Create children

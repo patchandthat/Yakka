@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Akka.Actor;
 using Yakka.Client.Prototype.Messages;
 using Yakka.Common;
@@ -47,7 +46,12 @@ namespace Yakka.Client.Prototype.Actors
 
         private void HandleHeartbeartResponse(ClientHeartbeatResponse message)
         {
+            //Use parent.parent.conenctedusers, Iactor ref rather than selector
             Context.ActorSelection($"akka://Client{Program.ClientId}/user/ConnectedUsers").Tell(new AvailableUsersUpdate(message.Clients));
+
+            //Todo: keep track of the last server response time, in the same way the server does for each client
+            //Todo: have another scheduled self message to check if we have lost connection
+            //Todo: Probably want to modify or introduce a managing parent actor which is a FSM of different connection states
         }
     }
 }

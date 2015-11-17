@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Akka.Actor;
 using Yakka.Common.Messages;
 using Yakka.Server.Messages;
@@ -44,7 +43,7 @@ namespace Yakka.Server.Actors
 
             foreach (var client in _connectedClients)
             {
-                ActorPath path = client.Value.ClientActorPath.Parent.Parent.Child("ShoutListener");
+                ActorPath path = client.Value.ClientActorPath.Root.Child("user").Child("ShoutListener");
 
                 Context.ActorSelection(path).Tell(shoutResponse);
             }
