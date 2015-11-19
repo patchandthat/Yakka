@@ -38,13 +38,11 @@
             this.txtUsername = new System.Windows.Forms.TextBox();
             this.txtConnectedUsers = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.pictureGithub = new System.Windows.Forms.PictureBox();
-            this.label5 = new System.Windows.Forms.Label();
             this.txtShoutSend = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.txtShoutListen = new System.Windows.Forms.TextBox();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureGithub)).BeginInit();
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnConnect
@@ -135,26 +133,6 @@
             this.label4.TabIndex = 9;
             this.label4.Text = "Connected users";
             // 
-            // pictureGithub
-            // 
-            this.pictureGithub.Image = global::Yakka.Client.Prototype.Properties.Resources.GitHub_Mark_120px_plus;
-            this.pictureGithub.Location = new System.Drawing.Point(452, 12);
-            this.pictureGithub.Name = "pictureGithub";
-            this.pictureGithub.Size = new System.Drawing.Size(91, 69);
-            this.pictureGithub.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureGithub.TabIndex = 10;
-            this.pictureGithub.TabStop = false;
-            this.pictureGithub.Click += new System.EventHandler(this.pictureGithub_Click);
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(437, 84);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(122, 13);
-            this.label5.TabIndex = 11;
-            this.label5.Text = "Report issues on GitHub";
-            // 
             // txtShoutSend
             // 
             this.txtShoutSend.Location = new System.Drawing.Point(118, 140);
@@ -191,17 +169,28 @@
             this.txtShoutListen.Size = new System.Drawing.Size(250, 146);
             this.txtShoutListen.TabIndex = 15;
             // 
+            // button1
+            // 
+            this.button1.Image = global::Yakka.Client.Prototype.Properties.Resources.GitHub_Mark_64px;
+            this.button1.Location = new System.Drawing.Point(464, 12);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(95, 94);
+            this.button1.TabIndex = 16;
+            this.button1.Text = "Report issues on Github";
+            this.button1.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(571, 337);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.txtShoutListen);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.txtShoutSend);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.pictureGithub);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.txtConnectedUsers);
             this.Controls.Add(this.txtUsername);
@@ -216,7 +205,6 @@
             this.Text = "Form1";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureGithub)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -234,12 +222,11 @@
         private System.Windows.Forms.TextBox txtUsername;
         private System.Windows.Forms.TextBox txtConnectedUsers;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.PictureBox pictureGithub;
-        private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox txtShoutSend;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox txtShoutListen;
+        private System.Windows.Forms.Button button1;
     }
 }
 

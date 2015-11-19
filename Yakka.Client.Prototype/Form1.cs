@@ -87,11 +87,6 @@ namespace Yakka.Client.Prototype
             Program.YakkaSystem.Shutdown();
         }
 
-        private void pictureGithub_Click(object sender, EventArgs e)
-        {
-            Process.Start("https://github.com/patchandthat/Yakka");
-        }
-
         private void txtShoutSend_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == (char) Keys.Enter)
@@ -104,6 +99,11 @@ namespace Yakka.Client.Prototype
                 txtShoutSend.Text = "";
                 e.Handled = true;
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Process.Start("https://github.com/patchandthat/Yakka");
         }
     }
 }

@@ -12,18 +12,19 @@ namespace Yakka.Server
             ServerMetadata.Hostname = Dns.GetHostName();
             ServerMetadata.Port = 8081;
 
-            string configHocon = 
-@"akka {
-    actor {
+            string configHocon = string.Format(
+@"akka {{
+    actor {{
         provider = ""Akka.Remote.RemoteActorRefProvider, Akka.Remote""
-    }
-    remote {
-        helios.tcp {
-            port = " + ServerMetadata.Port + @"
-            hostname = localhost
-        }
-    }
-}";
+    }}
+    remote {{
+        helios.tcp {{
+            port = {1}
+            hostname = {0}
+        }}
+    }}
+}}", ServerMetadata.Hostname, ServerMetadata.Port);
+
             var config = ConfigurationFactory.ParseString(configHocon);
             var system = ActorSystem.Create("YakkaServer", config);
 
