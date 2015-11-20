@@ -65,16 +65,26 @@ namespace Yakka.Client.Prototype
             {
                 _clientActor.Tell(new DisconnectFrom(_address, _port));
                 _connected = false;
-                txtConnectedUsers.Clear();
+                lstConnectedUsers.Items.Clear();
             }
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            _clientActor = Program.YakkaSystem.ActorOf(Props.Create(() => new ChatClientActor()), "ChatClient");
+            var uiDisabler =
+                Program.YakkaSystem.ActorOf(
+                    Props.Create(
+                        () => new ControlDisablingCoordinatorActor(
+                            new[] {txtAddress, txtPort, txtUsername},
+                            btnConnect,
+                            btnDisconnect))
+                         .WithDispatcher(Program.UiDispatcher),
+                    "ControlDisabler");
+
+            _clientActor = Program.YakkaSystem.ActorOf(Props.Create(() => new ChatClientActor(uiDisabler)), "ChatClient");
             _usersBox =
                 Program.YakkaSystem.ActorOf(
-                    Props.Create(() => new ConnectedUsersActor(txtConnectedUsers))
+                    Props.Create(() => new ConnectedUsersActor(lstConnectedUsers))
                          .WithDispatcher(Program.UiDispatcher), "ConnectedUsers");
             _shoutListener =
                 Program.YakkaSystem.ActorOf(
@@ -104,6 +114,11 @@ namespace Yakka.Client.Prototype
         private void button1_Click(object sender, EventArgs e)
         {
             Process.Start("https://github.com/patchandthat/Yakka");
+        }
+
+        private void btnStartConversation_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Todo");
         }
     }
 }

@@ -68,6 +68,17 @@ namespace Yakka.Common.Messages
             public DateTime LastActivity { get; set; }
             public ClientStatus Status { get; set; }
             public ActorPath ClientActorPath { get; set; }
+
+            /// <summary>
+            /// Returns a string that represents the current object.
+            /// </summary>
+            /// <returns>
+            /// A string that represents the current object.
+            /// </returns>
+            public override string ToString()
+            {
+                return $"{Name} : {Status}";
+            }
         }
 
     public class ShoutRequest

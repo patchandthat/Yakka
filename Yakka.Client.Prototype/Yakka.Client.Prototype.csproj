@@ -70,12 +70,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actors\ButtonDisablingActor.cs" />
     <Compile Include="Actors\ChatClientActor.cs" />
     <Compile Include="Actors\ConnectedUsersActor.cs" />
+    <Compile Include="Actors\ControlDisablingCoordinatorActor.cs" />
     <Compile Include="Actors\ConversationCoordinatorActor.cs" />
     <Compile Include="Actors\HeartbeatActor.cs" />
     <Compile Include="Actors\LogonActor.cs" />
     <Compile Include="Actors\ShoutListener.cs" />
+    <Compile Include="Actors\TextboxDisablingActor.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

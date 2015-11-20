@@ -36,13 +36,14 @@
             this.txtPort = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.txtUsername = new System.Windows.Forms.TextBox();
-            this.txtConnectedUsers = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.txtShoutSend = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.txtShoutListen = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
+            this.btnStartConversation = new System.Windows.Forms.Button();
+            this.lstConnectedUsers = new System.Windows.Forms.ListBox();
             this.SuspendLayout();
             // 
             // btnConnect
@@ -57,6 +58,7 @@
             // 
             // btnDisconnect
             // 
+            this.btnDisconnect.Enabled = false;
             this.btnDisconnect.Location = new System.Drawing.Point(293, 46);
             this.btnDisconnect.Name = "btnDisconnect";
             this.btnDisconnect.Size = new System.Drawing.Size(153, 29);
@@ -67,7 +69,7 @@
             // 
             // txtAddress
             // 
-            this.txtAddress.Location = new System.Drawing.Point(108, 26);
+            this.txtAddress.Location = new System.Drawing.Point(108, 12);
             this.txtAddress.Name = "txtAddress";
             this.txtAddress.Size = new System.Drawing.Size(163, 20);
             this.txtAddress.TabIndex = 2;
@@ -75,7 +77,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(24, 29);
+            this.label1.Location = new System.Drawing.Point(12, 15);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(78, 13);
             this.label1.TabIndex = 3;
@@ -84,7 +86,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(24, 64);
+            this.label2.Location = new System.Drawing.Point(12, 41);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(59, 13);
             this.label2.TabIndex = 4;
@@ -92,7 +94,7 @@
             // 
             // txtPort
             // 
-            this.txtPort.Location = new System.Drawing.Point(108, 61);
+            this.txtPort.Location = new System.Drawing.Point(108, 38);
             this.txtPort.Name = "txtPort";
             this.txtPort.Size = new System.Drawing.Size(163, 20);
             this.txtPort.TabIndex = 5;
@@ -100,7 +102,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(24, 97);
+            this.label3.Location = new System.Drawing.Point(12, 67);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(55, 13);
             this.label3.TabIndex = 6;
@@ -108,21 +110,10 @@
             // 
             // txtUsername
             // 
-            this.txtUsername.Location = new System.Drawing.Point(108, 94);
+            this.txtUsername.Location = new System.Drawing.Point(108, 64);
             this.txtUsername.Name = "txtUsername";
             this.txtUsername.Size = new System.Drawing.Size(163, 20);
             this.txtUsername.TabIndex = 7;
-            // 
-            // txtConnectedUsers
-            // 
-            this.txtConnectedUsers.BackColor = System.Drawing.Color.Black;
-            this.txtConnectedUsers.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
-            this.txtConnectedUsers.Location = new System.Drawing.Point(293, 112);
-            this.txtConnectedUsers.Multiline = true;
-            this.txtConnectedUsers.Name = "txtConnectedUsers";
-            this.txtConnectedUsers.ReadOnly = true;
-            this.txtConnectedUsers.Size = new System.Drawing.Size(250, 213);
-            this.txtConnectedUsers.TabIndex = 8;
             // 
             // label4
             // 
@@ -135,7 +126,7 @@
             // 
             // txtShoutSend
             // 
-            this.txtShoutSend.Location = new System.Drawing.Point(118, 140);
+            this.txtShoutSend.Location = new System.Drawing.Point(118, 98);
             this.txtShoutSend.Name = "txtShoutSend";
             this.txtShoutSend.Size = new System.Drawing.Size(153, 20);
             this.txtShoutSend.TabIndex = 12;
@@ -144,15 +135,15 @@
             // label6
             // 
             this.label6.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label6.Location = new System.Drawing.Point(21, 126);
+            this.label6.Location = new System.Drawing.Point(21, 90);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(250, 2);
+            this.label6.Size = new System.Drawing.Size(244, 1);
             this.label6.TabIndex = 13;
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(24, 143);
+            this.label7.Location = new System.Drawing.Point(12, 101);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(88, 13);
             this.label7.TabIndex = 14;
@@ -162,11 +153,11 @@
             // 
             this.txtShoutListen.BackColor = System.Drawing.Color.Black;
             this.txtShoutListen.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
-            this.txtShoutListen.Location = new System.Drawing.Point(21, 179);
+            this.txtShoutListen.Location = new System.Drawing.Point(21, 124);
             this.txtShoutListen.Multiline = true;
             this.txtShoutListen.Name = "txtShoutListen";
             this.txtShoutListen.ReadOnly = true;
-            this.txtShoutListen.Size = new System.Drawing.Size(250, 146);
+            this.txtShoutListen.Size = new System.Drawing.Size(250, 201);
             this.txtShoutListen.TabIndex = 15;
             // 
             // button1
@@ -181,18 +172,40 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // btnStartConversation
+            // 
+            this.btnStartConversation.Location = new System.Drawing.Point(293, 302);
+            this.btnStartConversation.Name = "btnStartConversation";
+            this.btnStartConversation.Size = new System.Drawing.Size(266, 23);
+            this.btnStartConversation.TabIndex = 17;
+            this.btnStartConversation.Text = "Message selected users";
+            this.btnStartConversation.UseVisualStyleBackColor = true;
+            this.btnStartConversation.Click += new System.EventHandler(this.btnStartConversation_Click);
+            // 
+            // lstConnectedUsers
+            // 
+            this.lstConnectedUsers.BackColor = System.Drawing.Color.Black;
+            this.lstConnectedUsers.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.lstConnectedUsers.FormattingEnabled = true;
+            this.lstConnectedUsers.Location = new System.Drawing.Point(293, 110);
+            this.lstConnectedUsers.Name = "lstConnectedUsers";
+            this.lstConnectedUsers.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
+            this.lstConnectedUsers.Size = new System.Drawing.Size(266, 186);
+            this.lstConnectedUsers.TabIndex = 18;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(571, 337);
+            this.Controls.Add(this.lstConnectedUsers);
+            this.Controls.Add(this.btnStartConversation);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.txtShoutListen);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.txtShoutSend);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.txtConnectedUsers);
             this.Controls.Add(this.txtUsername);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.txtPort);
@@ -202,7 +215,7 @@
             this.Controls.Add(this.btnDisconnect);
             this.Controls.Add(this.btnConnect);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Yakka client prototype";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
@@ -220,13 +233,14 @@
         private System.Windows.Forms.TextBox txtPort;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox txtUsername;
-        private System.Windows.Forms.TextBox txtConnectedUsers;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox txtShoutSend;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox txtShoutListen;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnStartConversation;
+        private System.Windows.Forms.ListBox lstConnectedUsers;
     }
 }
 
