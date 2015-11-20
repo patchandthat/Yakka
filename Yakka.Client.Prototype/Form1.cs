@@ -18,6 +18,7 @@ namespace Yakka.Client.Prototype
 
         private IActorRef _usersBox;
         private IActorRef _shoutListener;
+        private IActorRef _windowFlasher;
 
         public Form1()
         {
@@ -86,9 +87,14 @@ namespace Yakka.Client.Prototype
                 Program.YakkaSystem.ActorOf(
                     Props.Create(() => new ConnectedUsersActor(lstConnectedUsers))
                          .WithDispatcher(Program.UiDispatcher), "ConnectedUsers");
+
+            _windowFlasher =
+                Program.YakkaSystem.ActorOf(
+                    Props.Create(() => new WindowFlashActor(this)).WithDispatcher(Program.UiDispatcher), "MainWindowFlasher");
+
             _shoutListener =
                 Program.YakkaSystem.ActorOf(
-                    Props.Create(() => new ShoutListener(txtShoutListen)).WithDispatcher(Program.UiDispatcher),
+                    Props.Create(() => new ShoutListener(txtShoutListen, _windowFlasher)).WithDispatcher(Program.UiDispatcher),
                     "ShoutListener");
         }
 

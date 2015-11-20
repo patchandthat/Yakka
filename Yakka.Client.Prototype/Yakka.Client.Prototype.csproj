@@ -79,6 +79,8 @@
     <Compile Include="Actors\LogonActor.cs" />
     <Compile Include="Actors\ShoutListener.cs" />
     <Compile Include="Actors\TextboxDisablingActor.cs" />
+    <Compile Include="Actors\WindowFlashActor.cs" />
+    <Compile Include="FlashWindow.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
