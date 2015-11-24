@@ -28,10 +28,10 @@ namespace Yakka.Server
             var config = ConfigurationFactory.ParseString(configHocon);
             var system = ActorSystem.Create("YakkaServer", config);
 
-            //var console = system.ActorOf(Props.Create(() => new ConsoleWriterActor()));
-            //var clientList = system.ActorOf(Props.Create(() => new ActiveClientsActor(console)));
-            //var authenticator = system.ActorOf(Props.Create(() => new ClientAuthenticationActor(clientList)), "Authenticator");
-            //var coordinator = system.ActorOf(Props.Create(() => new ConversationCoordinatorActor()));
+            var console = system.ActorOf(Props.Create(() => new ConsoleWriterActor()));
+            var clientList = system.ActorOf(Props.Create(() => new ActiveClientsActor(console)));
+            var authenticator = system.ActorOf(Props.Create(() => new ClientAuthenticationActor(clientList)), "Authenticator");
+            var coordinator = system.ActorOf(Props.Create(() => new ConversationCoordinatorActor()));
 
             system.AwaitTermination();
         }
