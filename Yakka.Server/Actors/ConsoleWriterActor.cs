@@ -19,7 +19,7 @@ namespace Yakka.Server.Actors
             Console.Clear();
 
             WriteHeader();
-            WriteConenctedClientList(message.Clients);
+            WriteConnectedClientList(message.Clients);
         }
 
         private void WriteHeader()
@@ -34,7 +34,7 @@ namespace Yakka.Server.Actors
             Console.WriteLine();
         }
 
-        private void WriteConenctedClientList(IEnumerable<ConnectedUserData> clients)
+        private void WriteConnectedClientList(IEnumerable<ConnectedUserData> clients)
         {
             var clientList = clients.ToList();
 
