@@ -152,6 +152,7 @@
             // txtShoutListen
             // 
             this.txtShoutListen.BackColor = System.Drawing.Color.Black;
+            this.txtShoutListen.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtShoutListen.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
             this.txtShoutListen.Location = new System.Drawing.Point(21, 124);
             this.txtShoutListen.Multiline = true;
@@ -185,12 +186,14 @@
             // lstConnectedUsers
             // 
             this.lstConnectedUsers.BackColor = System.Drawing.Color.Black;
+            this.lstConnectedUsers.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lstConnectedUsers.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
             this.lstConnectedUsers.FormattingEnabled = true;
+            this.lstConnectedUsers.ItemHeight = 18;
             this.lstConnectedUsers.Location = new System.Drawing.Point(293, 110);
             this.lstConnectedUsers.Name = "lstConnectedUsers";
             this.lstConnectedUsers.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
-            this.lstConnectedUsers.Size = new System.Drawing.Size(266, 186);
+            this.lstConnectedUsers.Size = new System.Drawing.Size(266, 184);
             this.lstConnectedUsers.TabIndex = 18;
             // 
             // Form1

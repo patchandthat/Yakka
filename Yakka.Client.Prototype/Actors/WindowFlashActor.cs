@@ -18,8 +18,7 @@ namespace Yakka.Client.Prototype.Actors
 
         private void FlashWindowUntilFocus()
         {
-            if (!_form.Focused)
-                FlashWindow.Flash(_form);
+            FlashWindow.Flash(_form);
         }
     }
 }
