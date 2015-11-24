@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Yakka.Server.Actors
 {
-    class ClientCoordinatorActor
+    class MessageRouterActor
     {
     }
 }
