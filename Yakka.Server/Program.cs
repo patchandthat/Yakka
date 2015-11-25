@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Akka.Actor;
 using Akka.Configuration;
+using Akka.Routing;
 using Yakka.Server.Actors;
 
 namespace Yakka.Server
@@ -28,10 +29,12 @@ namespace Yakka.Server
             var config = ConfigurationFactory.ParseString(configHocon);
             var system = ActorSystem.Create("YakkaServer", config);
 
-            //var console = system.ActorOf(Props.Create(() => new ConsoleWriterActor()));
-            //var clientList = system.ActorOf(Props.Create(() => new ActiveClientsActor(console)));
-            //var authenticator = system.ActorOf(Props.Create(() => new ClientAuthenticationActor(clientList)), "Authenticator");
-            //var coordinator = system.ActorOf(Props.Create(() => new ConversationCoordinatorActor()));
+            var console = system.ActorOf(Props.Create(() => new ConsoleWriterActor()), ActorPaths.ConsoleActor.Name);
+
+            var clients = system.ActorOf(Props.Create(() => new ClientCoordinatorActor(console)), ActorPaths.ClientCoordinator.Name);
+            var chat = system.ActorOf(Props.Create(() => new ChatCoordinatorActor()), ActorPaths.ChatCoordinator.Name);
+
+            var router = system.ActorOf(Props.Empty.WithRouter(new BroadcastGroup(new []{chat, clients})), ActorPaths.MessageRouter.Name);
 
             system.AwaitTermination();
         }

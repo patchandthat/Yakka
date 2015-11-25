@@ -1,4 +1,5 @@
-﻿
+﻿Message router actor is the primary point of contact for all clients, and routes messages to the appropriate coordinator
+
 ChatCoordinator and ClientCoordinator are siblings, and can chatter between so that ChatCoordinator has an up to date client list
 
 ClientCoordinator handles logins, heartbeats, and keeping clients updated with client list (child actors as appropriate)

@@ -68,17 +68,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActorPaths.cs" />
+    <Compile Include="Actors\ConnectedClientsStateActor.cs" />
     <Compile Include="Actors\ChatCoordinatorActor.cs" />
     <Compile Include="Actors\ClientCoordinatorActor.cs" />
     <Compile Include="Actors\ConversationActor.cs" />
     <Compile Include="Actors\ConversationCoordinatorActor.cs" />
     <Compile Include="Actors\ShoutHandlerActor.cs" />
     <Compile Include="Actors\WhisperHandlerActor.cs" />
-    <Compile Include="Obsolete\Actors\ClientAuthenticationActor.cs" />
     <Compile Include="Obsolete\Actors\ActiveClientsActor.cs" />
     <Compile Include="Actors\ConsoleWriterActor.cs" />
-    <Compile Include="Obsolete\Actors\ConversationCoordinatorActor.cs" />
-    <Compile Include="Obsolete\Actors\MessageRouterActor.cs" />
     <Compile Include="Obsolete\Messages\InternalMessages.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

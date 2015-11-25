@@ -1,9 +1,17 @@
 ﻿namespace Yakka.Server
 {
-    static class ActorPaths
+    public static class ActorPaths
     {
-        public static readonly ActorMetaData ExampleActor = new ActorMetaData("ActorName");
-        public static readonly ActorMetaData ExampleChild = new ActorMetaData("ChildName", ExampleActor);
+        public static readonly ActorMetaData MessageRouter = new ActorMetaData("MessageRouter");
+
+        internal static readonly ActorMetaData ConsoleActor = new ActorMetaData("ConsoleOut");
+        internal static readonly ActorMetaData ClientCoordinator = new ActorMetaData("ClientCoordinator");
+            internal static readonly ActorMetaData ConnectedClientsActor = new ActorMetaData("ConnectedClients", ClientCoordinator);
+
+        internal static readonly ActorMetaData ChatCoordinator = new ActorMetaData("ChatCoordinator");
+        
+        internal static readonly ActorMetaData ExampleChild = new ActorMetaData("ChildName", ConsoleActor);
+        
     }
     
     /// <summary>

@@ -3,18 +3,46 @@ using System.Collections.Generic;
 using System.Linq;
 using Akka.Actor;
 using Yakka.Common.Messages;
-using Yakka.Server.Messages;
 
 namespace Yakka.Server.Actors
 {
     class ConsoleWriterActor : ReceiveActor
     {
-        public ConsoleWriterActor()
+        public class WriteConnectedClients
         {
-            Receive<ConnectedClients>(message => HandleConnectedClientList(message));
+            public WriteConnectedClients(IEnumerable<ConnectedUserInfo> clients)
+            {
+                Clients = clients;
+            }
+
+            public IEnumerable<ConnectedUserInfo> Clients { get; }
         }
 
-        private void HandleConnectedClientList(ConnectedClients message)
+        public class ConnectedUserInfo
+        {
+            public string Name { get; set; }
+            public Guid ClientGuid { get; set; }
+            public DateTime LastActivity { get; set; }
+            public ActorPath ClientActorPath { get; set; }
+
+            /// <summary>
+            /// Returns a string that represents the current object.
+            /// </summary>
+            /// <returns>
+            /// A string that represents the current object.
+            /// </returns>
+            public override string ToString()
+            {
+                return $"{Name}";
+            }
+        }
+
+        public ConsoleWriterActor()
+        {
+            Receive<WriteConnectedClients>(message => HandleConnectedClientList(message));
+        }
+
+        private void HandleConnectedClientList(WriteConnectedClients message)
         {
             Console.Clear();
 
@@ -34,7 +62,7 @@ namespace Yakka.Server.Actors
             Console.WriteLine();
         }
 
-        private void WriteConnectedClientList(IEnumerable<ConnectedUserData> clients)
+        private void WriteConnectedClientList(IEnumerable<ConnectedUserInfo> clients)
         {
             var clientList = clients.ToList();
 
@@ -42,7 +70,7 @@ namespace Yakka.Server.Actors
 
             foreach (var client in clientList)
             {
-                Console.WriteLine($"{client.ClientGuid}: {client.Name} ({client.Status}) - Last activity {client.LastActivity.ToString("HH:mm:ss")}");
+                Console.WriteLine($"{client.ClientGuid}: {client.Name} - Last activity {client.LastActivity.ToString("HH:mm:ss")}");
             }
         }
     }
