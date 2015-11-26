@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yakka.Client.Prototype", "Y
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yakka.Common", "Yakka.Common\Yakka.Common.csproj", "{F92514E8-EAF7-4BBF-951C-A98C88DD9FDF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yakka", "Yakka\Yakka.csproj", "{A401F7C4-9D4C-4455-B699-7520540AF93A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{F92514E8-EAF7-4BBF-951C-A98C88DD9FDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F92514E8-EAF7-4BBF-951C-A98C88DD9FDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F92514E8-EAF7-4BBF-951C-A98C88DD9FDF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A401F7C4-9D4C-4455-B699-7520540AF93A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A401F7C4-9D4C-4455-B699-7520540AF93A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A401F7C4-9D4C-4455-B699-7520540AF93A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A401F7C4-9D4C-4455-B699-7520540AF93A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
