@@ -1,44 +1,41 @@
 ﻿using Caliburn.Micro;
-using Yakka.Features.Flyouts;
-using Yakka.Features.Flyouts.ServerSettings;
+using Yakka.Features.HomeScreen;
+using Yakka.Features.Settings;
 
 namespace Yakka.Features.Shell
 {
     class ShellViewModel : Screen
     {
-        private readonly IObservableCollection<FlyoutBaseViewModel> _flyoutsViewModels =
-            new BindableCollection<FlyoutBaseViewModel>();
+        private IScreen _activeContent;
+        private readonly IEventAggregator _aggregator;
+        private readonly HomeViewModel _home;
+        private readonly SettingsViewModel _settings;
 
-        private IEventAggregator _aggregator;
-        private FlyoutBaseViewModel _flyout;
-
-        public IObservableCollection<FlyoutBaseViewModel> FlyoutsViewModels
+        public IScreen ActiveContent
         {
-            get { return _flyoutsViewModels; }
+            get { return _activeContent; }
+            set
+            {
+                if (Equals(value, _activeContent)) return;
+                _activeContent = value;
+                NotifyOfPropertyChange(() => ActiveContent);
+            }
         }
 
-        public FlyoutBaseViewModel Flyout { get { return _flyout; } }
-
-        public ShellViewModel(IEventAggregator agg, ServerSettingsFlyoutViewModel flyout)
+        public ShellViewModel(IEventAggregator agg, HomeViewModel home, SettingsViewModel settings)
         {
             _aggregator = agg;
-            _flyout = flyout;
-            _flyoutsViewModels.Add(flyout);
+            _home = home;
+            _settings = settings;
         }
 
         protected override void OnInitialize()
         {
             DisplayName = "Yakka";
 
-            base.OnInitialize();
-        }
+            ActiveContent = _home;
 
-        public void ToggleFlyout()
-        {
-            var flyout = _flyoutsViewModels[0];
-            flyout.IsOpen = !flyout.IsOpen;
-            NotifyOfPropertyChange(() => FlyoutsViewModels);
-            NotifyOfPropertyChange(() => Flyout);
+            base.OnInitialize();
         }
     }
 }

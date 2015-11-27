@@ -1,0 +1,20 @@
+﻿<UserControl x:Class="Yakka.Features.Settings.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Yakka.Features.Settings"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <StackPanel>
+        <Label Margin="5">Server address</Label>
+        <TextBox x:Name="ServerAddress" Margin="5"></TextBox>
+        <Label Margin="5">Server port</Label>
+        <TextBox x:Name="ServerPort" Margin="5"></TextBox>
+        <Label Margin="5">Username</Label>
+        <TextBox x:Name="Username" Margin="5"></TextBox>
+        <CheckBox x:Name="RememberSettings" Margin="5">Remember these server settings</CheckBox>
+        <CheckBox x:Name="ConnectAutomatically" Margin="5">Connect automatically when program starts</CheckBox>
+        <CheckBox x:Name="LaunchOnStartup" Margin="5">Launch program on startup</CheckBox>
+    </StackPanel>
+</UserControl>

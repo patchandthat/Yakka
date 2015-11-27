@@ -123,7 +123,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Features\Conversations\ConversationsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Features\Conversations\ConversationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Features\Flyouts\ServerSettings\ServerSettingsFlyoutView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Features\HomeScreen\HomeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Features\Settings\SettingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -140,11 +156,25 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="AutofacBootstrapper.cs" />
+    <Compile Include="Features\Conversations\ConversationsView.xaml.cs">
+      <DependentUpon>ConversationsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Features\Conversations\ConversationView.xaml.cs">
+      <DependentUpon>ConversationView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Features\Flyouts\ServerSettings\ServerSettingsFlyoutViewModel.cs" />
     <Compile Include="Features\Flyouts\FlyoutBaseViewModel.cs" />
     <Compile Include="Features\Flyouts\ServerSettings\ServerSettingsFlyoutView.xaml.cs">
       <DependentUpon>ServerSettingsFlyoutView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Features\HomeScreen\HomeView.xaml.cs">
+      <DependentUpon>HomeView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Features\HomeScreen\HomeViewModel.cs" />
+    <Compile Include="Features\Settings\SettingsView.xaml.cs">
+      <DependentUpon>SettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Features\Settings\SettingsViewModel.cs" />
     <Compile Include="Features\Shell\ShellView.xaml.cs">
       <DependentUpon>ShellView.xaml</DependentUpon>
     </Compile>
