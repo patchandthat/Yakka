@@ -8,20 +8,13 @@
              d:DesignHeight="300" d:DesignWidth="450">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="50"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
-            <!--Connect / Disconnect-->
-        <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" VerticalAlignment="Top" Orientation="Horizontal">
-            <Button Margin="5">Connect</Button>
-            <Button Margin="5">Disconnect</Button>
-            <Button Margin="5">GitHub</Button>
-            <Button Margin="5">Settings</Button>
-        </StackPanel>
+        <!--Connect / Disconnect-->
         
         <DockPanel Margin="5" Grid.Column="0" Grid.Row="1">
             <!--ShoutBox-->
