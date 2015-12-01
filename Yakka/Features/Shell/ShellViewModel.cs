@@ -1,7 +1,8 @@
-﻿using System.Diagnostics;
-using System.Windows;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using Caliburn.Micro;
 using Yakka.Features.HomeScreen;
+using Yakka.Features.InfoPage;
 using Yakka.Features.Settings;
 
 namespace Yakka.Features.Shell
@@ -9,11 +10,17 @@ namespace Yakka.Features.Shell
     class ShellViewModel : Screen
     {
         private IScreen _activeContent;
-        private IScreen _flyoutContent;
 
         private readonly IEventAggregator _aggregator;
-        private readonly HomeViewModel _home;
-        private readonly SettingsViewModel _settings;
+
+        private readonly Dictionary<Screens, Screen> _screens = new Dictionary<Screens, Screen>();
+
+        private enum Screens
+        {
+            Home,
+            Settings,
+            Info
+        }
 
         public IScreen ActiveContent
         {
@@ -23,45 +30,50 @@ namespace Yakka.Features.Shell
                 if (Equals(value, _activeContent)) return;
                 _activeContent = value;
                 NotifyOfPropertyChange(() => ActiveContent);
+                NotifyOfPropertyChange(() => ActiveContentName);
             }
         }
 
-        public IScreen FlyoutContent
-        {
-            get { return _flyoutContent; }
-            set
-            {
-                if (Equals(value, _flyoutContent)) return;
-                _flyoutContent = value;
-                NotifyOfPropertyChange(() => FlyoutContent);
-            }
-        }
+        public string ActiveContentName { get { return ActiveContent == null ? "" : ActiveContent.DisplayName ?? ""; } }
 
-        public ShellViewModel(IEventAggregator agg, HomeViewModel home, SettingsViewModel settings)
+        public string ConnectionState { get { return "Not connected"; } }
+
+        public ShellViewModel(IEventAggregator agg, HomeViewModel home, SettingsViewModel settings, InfoPageViewModel infoPage)
         {
             _aggregator = agg;
-            _home = home;
-            _settings = settings;
+
+            _screens.Add(Screens.Home, home);
+            _screens.Add(Screens.Settings, settings);
+            _screens.Add(Screens.Info, infoPage);
         }
 
         protected override void OnInitialize()
         {
             DisplayName = "Yakka";
 
-            ActiveContent = _home;
-            FlyoutContent = _settings;
+            ActiveContent = _screens[Screens.Home];
 
             base.OnInitialize();
         }
 
-        public void GitHubButton()
+        public void ConnectButton()
         {
-            Process.Start("https://github.com/patchandthat/Yakka");
+            
         }
 
-        public void ShowLeftFlyout()
+        public void HomeButton()
         {
-            ((ShellView)Application.Current.MainWindow).LeftFlyout.IsOpen = true;
+            ActiveContent = _screens[Screens.Home];
+        }
+
+        public void SettingsButton()
+        {
+            ActiveContent = _screens[Screens.Settings];
+        }
+
+        public void InfoButton()
+        {
+            ActiveContent = _screens[Screens.Info];
         }
     }
 }

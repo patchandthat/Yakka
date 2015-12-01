@@ -131,11 +131,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Features\Flyouts\ServerSettings\ServerSettingsFlyoutView.xaml">
+    <Page Include="Features\HomeScreen\HomeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Features\HomeScreen\HomeView.xaml">
+    <Page Include="Features\InfoPage\InfoPageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -162,15 +162,14 @@
     <Compile Include="Features\Conversations\ConversationView.xaml.cs">
       <DependentUpon>ConversationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Features\Flyouts\ServerSettings\ServerSettingsFlyoutViewModel.cs" />
-    <Compile Include="Features\Flyouts\FlyoutBaseViewModel.cs" />
-    <Compile Include="Features\Flyouts\ServerSettings\ServerSettingsFlyoutView.xaml.cs">
-      <DependentUpon>ServerSettingsFlyoutView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Features\HomeScreen\HomeView.xaml.cs">
       <DependentUpon>HomeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Features\HomeScreen\HomeViewModel.cs" />
+    <Compile Include="Features\InfoPage\InfoPageView.xaml.cs">
+      <DependentUpon>InfoPageView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Features\InfoPage\InfoPageViewModel.cs" />
     <Compile Include="Features\Settings\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>
@@ -214,9 +213,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="CHANGES.txt" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

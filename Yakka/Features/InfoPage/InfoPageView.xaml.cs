@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Yakka.Features.Flyouts.ServerSettings
+namespace Yakka.Features.InfoPage
 {
     /// <summary>
-    /// Interaction logic for ServerSettingsFlyoutView.xaml
+    /// Interaction logic for InfoPageView.xaml
     /// </summary>
-    public partial class ServerSettingsFlyoutView : UserControl
+    public partial class InfoPageView : UserControl
     {
-        public ServerSettingsFlyoutView()
+        public InfoPageView()
         {
             InitializeComponent();
         }

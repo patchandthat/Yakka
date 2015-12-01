@@ -15,6 +15,8 @@ namespace Yakka.Features.Settings
         public SettingsViewModel(IEventAggregator aggregator)
         {
             _aggregator = aggregator;
+
+            DisplayName = "Settings";
         }
 
         public string ServerAddress
