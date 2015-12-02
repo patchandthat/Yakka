@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Windows.Forms;
 using Akka.Actor;
-using Akka.Actor.Dsl;
 using Yakka.Client.Prototype.Actors;
 using Yakka.Client.Prototype.Messages;
 using Yakka.Common.Messages;

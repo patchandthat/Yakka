@@ -152,6 +152,16 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ClientActorSystem\Actors\UI\Input\ConversationsInputActor.cs" />
+    <Compile Include="ClientActorSystem\Actors\UI\Update\ConversationsUpdateActor.cs" />
+    <Compile Include="ClientActorSystem\Actors\UI\Input\HomeInputActor.cs" />
+    <Compile Include="ClientActorSystem\Actors\UI\Update\HomeUpdateActor.cs" />
+    <Compile Include="ClientActorSystem\Actors\UI\Input\InfoPageInputActor.cs" />
+    <Compile Include="ClientActorSystem\Actors\UI\Update\InfoPageUpdateActor.cs" />
+    <Compile Include="ClientActorSystem\Actors\UI\Input\SettingsInputActor.cs" />
+    <Compile Include="ClientActorSystem\Actors\UI\Update\SettingsUpdateActor.cs" />
+    <Compile Include="ClientActorSystem\Actors\UI\Input\ShellInputActor.cs" />
+    <Compile Include="ClientActorSystem\Actors\UI\Update\ShellUpdateActor.cs" />
     <Compile Include="YakkaBootstrapper.cs" />
     <Compile Include="Features\Conversations\ConversationsView.xaml.cs">
       <DependentUpon>ConversationsView.xaml</DependentUpon>
@@ -208,9 +218,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ClientActorSystem\Actors\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

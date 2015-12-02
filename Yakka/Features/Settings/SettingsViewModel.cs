@@ -1,5 +1,8 @@
 ﻿using Akka.Actor;
 using Caliburn.Micro;
+using Yakka.ClientActorSystem;
+using Yakka.ClientActorSystem.Actors.UI.Input;
+using Yakka.ClientActorSystem.Actors.UI.Update;
 
 namespace Yakka.Features.Settings
 {
@@ -12,9 +15,18 @@ namespace Yakka.Features.Settings
         private bool _connectAutomatically;
         private bool _rememberSettings;
 
+        private readonly IActorRef _inputActor;
+
         public SettingsViewModel(ActorSystem system)
         {
             DisplayName = "Settings";
+
+            //Todo: This is probably better done using the autofac akka module somehow. See if you can figure it out
+            //Input handler actor
+            _inputActor = system.ActorOf(Props.Create(() => new SettingsInputActor()), ActorPaths.SettingsInputActor.Name);
+
+            //UI updating actor
+            system.ActorOf(Props.Create(() => new SettingsUpdateActor(this)), ActorPaths.SettingsViewModelActor.Name);
         }
 
         public string ServerAddress
@@ -82,5 +94,19 @@ namespace Yakka.Features.Settings
                 NotifyOfPropertyChange(() => LaunchOnStartup);
             }
         }
+
+        public void AcceptButton()
+        {
+            
+        }
+
+        public bool CanAcceptButton => true;
+
+        public void CancelButton()
+        {
+            
+        }
+
+        public bool CanCancelButton => true;
     }
 }

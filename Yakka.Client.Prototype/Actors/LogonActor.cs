@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Akka.Actor;
+﻿using Akka.Actor;
 using Yakka.Client.Prototype.Messages;
 using Yakka.Common.Messages;
 

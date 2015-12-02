@@ -1,7 +1,8 @@
-﻿using System.Diagnostics;
-using Akka.Actor;
+﻿using Akka.Actor;
 using Caliburn.Micro;
 using Yakka.ClientActorSystem;
+using Yakka.ClientActorSystem.Actors.UI.Input;
+using Yakka.ClientActorSystem.Actors.UI.Update;
 
 namespace Yakka.Features.InfoPage
 {
@@ -23,12 +24,7 @@ namespace Yakka.Features.InfoPage
 
         public void GitHubButton()
         {
-            _inputActor.Tell(new OpenGithubProjectPage());
-            //Process.Start("https://github.com/patchandthat/Yakka");
+            _inputActor.Tell(new InfoPageInputActor.OpenGithubProjectPage());
         }
-
-        //Todo: move this declaration inside the actor once it exists
-        public class OpenGithubProjectPage
-        { }
     }
 }

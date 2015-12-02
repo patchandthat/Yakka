@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using Akka.Actor;
 using Caliburn.Micro;
+using Yakka.ClientActorSystem;
+using Yakka.ClientActorSystem.Actors.UI.Input;
+using Yakka.ClientActorSystem.Actors.UI.Update;
 using Yakka.Features.Conversations;
 using Yakka.Features.HomeScreen;
 using Yakka.Features.InfoPage;
@@ -13,9 +15,23 @@ namespace Yakka.Features.Shell
     {
         private IScreen _activeContent;
 
-        private readonly IEventAggregator _aggregator;
-
         private readonly Dictionary<Screens, Screen> _screens = new Dictionary<Screens, Screen>();
+        private readonly IActorRef _inputActor;
+
+        public ShellViewModel(HomeViewModel home, SettingsViewModel settings, InfoPageViewModel infoPage, ConversationsViewModel convos, ActorSystem system)
+        {
+            _screens.Add(Screens.Home, home);
+            _screens.Add(Screens.Settings, settings);
+            _screens.Add(Screens.Info, infoPage);
+            _screens.Add(Screens.Conversations, convos);
+
+            //Todo: This is probably better done using the autofac akka module somehow. See if you can figure it out
+            //Input handler actor
+            _inputActor = system.ActorOf(Props.Create(() => new ShellInputActor()), ActorPaths.ShellInputActor.Name);
+
+            //UI updating actor
+            system.ActorOf(Props.Create(() => new ShellUpdateActor(this)), ActorPaths.ShellViewModelActor.Name);
+        }
 
         private enum Screens
         {
@@ -40,17 +56,7 @@ namespace Yakka.Features.Shell
         public string ActiveContentName { get { return ActiveContent == null ? "" : ActiveContent.DisplayName ?? ""; } }
 
         public string ConnectionState { get { return "Not connected"; } }
-
-        public ShellViewModel(IEventAggregator agg, HomeViewModel home, SettingsViewModel settings, InfoPageViewModel infoPage, ConversationsViewModel convos, ActorSystem system)
-        {
-            _aggregator = agg;
-
-            _screens.Add(Screens.Home, home);
-            _screens.Add(Screens.Settings, settings);
-            _screens.Add(Screens.Info, infoPage);
-            _screens.Add(Screens.Conversations, convos);
-        }
-
+        
         protected override void OnInitialize()
         {
             DisplayName = "Yakka";

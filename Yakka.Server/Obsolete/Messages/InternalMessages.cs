@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Akka.Actor;
-using Yakka.Common.Messages;
-
-namespace Yakka.Server.Messages
+﻿namespace Yakka.Server.Messages
 {
     //public class ClientConnected
     //{

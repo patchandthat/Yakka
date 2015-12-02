@@ -4,17 +4,59 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Yakka.Features.Settings"
+             xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
-    <StackPanel Margin="5">
-        <Label Margin="5">Server address</Label>
-        <TextBox x:Name="ServerAddress" Margin="5"></TextBox>
-        <Label Margin="5">Server port</Label>
-        <TextBox x:Name="ServerPort" Margin="5"></TextBox>
-        <Label Margin="5">Username</Label>
-        <TextBox x:Name="Username" Margin="5"></TextBox>
-        <CheckBox x:Name="RememberSettings" Margin="5">Remember these server settings</CheckBox>
-        <CheckBox x:Name="ConnectAutomatically" Margin="5">Connect automatically when program starts</CheckBox>
-        <CheckBox x:Name="LaunchOnStartup" Margin="5">Launch program on startup</CheckBox>
-    </StackPanel>
+             d:DesignHeight="385" d:DesignWidth="525">
+
+    <Grid Margin="5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="80"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Grid.Column="0">
+            <Label Margin="5">Server address</Label>
+            <TextBox x:Name="ServerAddress" Margin="5"></TextBox>
+            <Label Margin="5">Server port</Label>
+            <TextBox x:Name="ServerPort"></TextBox>
+            <!--<controls:NumericUpDown x:Name="ServerPort" Margin="5" Minimum="1024" Maximum="65535" HideUpDownButtons="False"></controls:NumericUpDown>-->
+            <Label Margin="5">Username</Label>
+            <TextBox x:Name="Username" Margin="5"></TextBox>
+        </StackPanel>
+
+        <StackPanel Grid.Row="0" Grid.Column="1">
+            <CheckBox x:Name="RememberSettings" Margin="5">
+                <AccessText TextWrapping="Wrap" Text="_Remember these server settings."/>
+            </CheckBox>
+            <CheckBox x:Name="ConnectAutomatically" Margin="5">
+                <AccessText TextWrapping="Wrap" Text="_Connect automatically when program starts."/>
+            </CheckBox>
+            <CheckBox x:Name="LaunchOnStartup" Margin="5">
+                <AccessText TextWrapping="Wrap" Text="_Launch program on startup."/>
+            </CheckBox>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right">
+            <Button Style="{StaticResource MaterialDesignFloatingActionButton}" Margin="4" HorizontalAlignment="Left" DockPanel.Dock="Right" x:Name="CancelButton">
+                <Viewbox Width="24" Height="24">
+                    <Canvas Width="24" Height="24">
+                        <Path Data="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" Fill="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}, Path=Foreground}" />
+                    </Canvas>
+                </Viewbox>
+            </Button>
+
+            <Button Style="{StaticResource MaterialDesignFloatingActionButton}" Margin="4,4,8,4" HorizontalAlignment="Left" DockPanel.Dock="Right" x:Name="AcceptButton">
+                <Viewbox Width="24" Height="24">
+                    <Canvas Width="24" Height="24">
+                        <Path Data="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" Fill="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}, Path=Foreground}" />
+                    </Canvas>
+                </Viewbox>
+            </Button>
+        </StackPanel>
+
+    </Grid>
 </UserControl>
