@@ -1,22 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Net;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
+using Akka.Actor;
+using Akka.Configuration;
 using Autofac;
 using Caliburn.Micro;
 using Yakka.Features.Shell;
 
 namespace Yakka
 {
-    public class AutofacBootstrapper : BootstrapperBase
+    public class YakkaBootstrapper : BootstrapperBase
     {
         private IContainer _container;
 
-        public AutofacBootstrapper()
+        public static Guid ClientId { get { return ClientGuid.Value; } }
+
+        private static readonly Lazy<Guid> ClientGuid = new Lazy<Guid>(Guid.NewGuid);
+
+        private readonly Akka.Actor.ActorSystem _clientActorSystem;
+
+        public YakkaBootstrapper()
         {
+            var hocon = string.Format(@"
+akka {{
+    actor {{
+        provider = ""Akka.Remote.RemoteActorRefProvider, Akka.Remote""
+    }}
+    remote {{
+        helios.tcp {{
+            port = 0
+            hostname = {0}
+        }}
+    }}
+}}", Dns.GetHostName());
+            var config = ConfigurationFactory.ParseString(hocon);
+
+            var clientName = $"Client{ClientId}";
+            _clientActorSystem = ActorSystem.Create(clientName, config);
+
             Initialize();
         }
 
@@ -34,6 +57,8 @@ namespace Yakka
             builder.RegisterAssemblyTypes(assembly)
                 .Where(t => t.Name.EndsWith("ViewModel"))
                 .AsSelf();
+
+            builder.RegisterInstance(_clientActorSystem).As<ActorSystem>();
 
             _container = builder.Build();
         }

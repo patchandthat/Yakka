@@ -1,10 +1,10 @@
-﻿using Caliburn.Micro;
+﻿using Akka.Actor;
+using Caliburn.Micro;
 
 namespace Yakka.Features.Settings
 {
     class SettingsViewModel : Screen
     {
-        private readonly IEventAggregator _aggregator;
         private string _serverAddress;
         private int _serverPort;
         private string _username;
@@ -12,10 +12,8 @@ namespace Yakka.Features.Settings
         private bool _connectAutomatically;
         private bool _rememberSettings;
 
-        public SettingsViewModel(IEventAggregator aggregator)
+        public SettingsViewModel(ActorSystem system)
         {
-            _aggregator = aggregator;
-
             DisplayName = "Settings";
         }
 

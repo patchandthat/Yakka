@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using Akka.Actor;
 using Caliburn.Micro;
 using Yakka.Features.Conversations;
 using Yakka.Features.HomeScreen;
@@ -40,7 +41,7 @@ namespace Yakka.Features.Shell
 
         public string ConnectionState { get { return "Not connected"; } }
 
-        public ShellViewModel(IEventAggregator agg, HomeViewModel home, SettingsViewModel settings, InfoPageViewModel infoPage, ConversationsViewModel convos)
+        public ShellViewModel(IEventAggregator agg, HomeViewModel home, SettingsViewModel settings, InfoPageViewModel infoPage, ConversationsViewModel convos, ActorSystem system)
         {
             _aggregator = agg;
 

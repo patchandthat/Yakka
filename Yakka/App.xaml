@@ -6,7 +6,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary>
-                    <local:AutofacBootstrapper x:Key="Bootstrapper" />
+                    <local:YakkaBootstrapper x:Key="Bootstrapper" />
                 </ResourceDictionary>
 
                 <!-- MahApps -->
