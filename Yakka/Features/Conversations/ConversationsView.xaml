@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Yakka.Features.Conversations"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
-        <TextBlock>Conversations</TextBlock>
+    <Grid Margin="5">
+        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">Conversations</TextBlock>
     </Grid>
 </UserControl>

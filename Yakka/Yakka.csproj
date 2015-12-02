@@ -159,6 +159,7 @@
     <Compile Include="Features\Conversations\ConversationsView.xaml.cs">
       <DependentUpon>ConversationsView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Features\Conversations\ConversationsViewModel.cs" />
     <Compile Include="Features\Conversations\ConversationView.xaml.cs">
       <DependentUpon>ConversationView.xaml</DependentUpon>
     </Compile>

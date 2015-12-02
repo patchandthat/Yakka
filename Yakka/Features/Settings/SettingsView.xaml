@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Yakka.Features.Settings"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <StackPanel>
+    <StackPanel Margin="5">
         <Label Margin="5">Server address</Label>
         <TextBox x:Name="ServerAddress" Margin="5"></TextBox>
         <Label Margin="5">Server port</Label>

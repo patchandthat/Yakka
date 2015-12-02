@@ -14,8 +14,7 @@
             <ColumnDefinition></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <!--Connect / Disconnect-->
-        
+
         <DockPanel Margin="5" Grid.Column="0" Grid.Row="1">
             <!--ShoutBox-->
             <Label Margin="5" DockPanel.Dock="Top">Shout to everyone</Label>

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using Caliburn.Micro;
+using Yakka.Features.Conversations;
 using Yakka.Features.HomeScreen;
 using Yakka.Features.InfoPage;
 using Yakka.Features.Settings;
@@ -19,7 +20,8 @@ namespace Yakka.Features.Shell
         {
             Home,
             Settings,
-            Info
+            Info,
+            Conversations
         }
 
         public IScreen ActiveContent
@@ -38,13 +40,14 @@ namespace Yakka.Features.Shell
 
         public string ConnectionState { get { return "Not connected"; } }
 
-        public ShellViewModel(IEventAggregator agg, HomeViewModel home, SettingsViewModel settings, InfoPageViewModel infoPage)
+        public ShellViewModel(IEventAggregator agg, HomeViewModel home, SettingsViewModel settings, InfoPageViewModel infoPage, ConversationsViewModel convos)
         {
             _aggregator = agg;
 
             _screens.Add(Screens.Home, home);
             _screens.Add(Screens.Settings, settings);
             _screens.Add(Screens.Info, infoPage);
+            _screens.Add(Screens.Conversations, convos);
         }
 
         protected override void OnInitialize()
@@ -64,6 +67,11 @@ namespace Yakka.Features.Shell
         public void HomeButton()
         {
             ActiveContent = _screens[Screens.Home];
+        }
+
+        public void ConversationsButton()
+        {
+            ActiveContent = _screens[Screens.Conversations];
         }
 
         public void SettingsButton()
