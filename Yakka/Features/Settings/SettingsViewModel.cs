@@ -97,16 +97,26 @@ namespace Yakka.Features.Settings
 
         public void AcceptButton()
         {
-            
+            _inputActor.Tell(new SettingsInputActor.SaveSettings());
         }
 
-        public bool CanAcceptButton => true;
+        public bool CanAcceptButton => IsValid() && IsChanged();
+
+        private bool IsValid()
+        {
+            return true;
+        }
 
         public void CancelButton()
         {
-            
+            _inputActor.Tell(new SettingsInputActor.LoadSettings());
         }
 
-        public bool CanCancelButton => true;
+        public bool CanCancelButton => IsChanged();
+
+        private bool IsChanged()
+        {
+            return true;
+        }
     }
 }
