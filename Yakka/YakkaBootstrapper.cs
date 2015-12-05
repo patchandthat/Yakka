@@ -9,6 +9,7 @@ using Akka.DI.AutoFac;
 using Akka.DI.Core;
 using Autofac;
 using Caliburn.Micro;
+using Yakka.Features.Conversations;
 using Yakka.Features.Shell;
 
 namespace Yakka
@@ -28,6 +29,8 @@ namespace Yakka
         {
             var hocon = string.Format(@"
 akka {{
+    loglevel = DEBUG
+    loggers = [""Akka.Logger.NLog.NLogLogger, Akka.Logger.NLog""]
     actor {{
         provider = ""Akka.Remote.RemoteActorRefProvider, Akka.Remote""
     }}
@@ -59,12 +62,21 @@ akka {{
             var assembly = Assembly.GetExecutingAssembly();
             builder.RegisterAssemblyTypes(assembly)
                 .Where(t => t.Name.EndsWith("ViewModel"))
+                .Except<ConversationViewModel>()
+                .AsSelf()
+                .SingleInstance();
+
+            builder.RegisterType<ConversationViewModel>()
+                .AsSelf()
+                .InstancePerDependency();
+
+            builder.RegisterAssemblyTypes(assembly)
+                .Where(t => t.Name.EndsWith("Actor"))
                 .AsSelf();
 
             builder.RegisterInstance(_clientActorSystem).As<ActorSystem>();
 
             _container = builder.Build();
-
             _resolver = new AutoFacDependencyResolver(_container, _clientActorSystem);
         }
 

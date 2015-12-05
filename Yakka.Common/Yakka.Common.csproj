@@ -64,22 +64,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClientStatus.cs" />
-    <Compile Include="Messages\ClientToServer.cs" />
+    <Compile Include="Paths\ActorMetadata.cs" />
+    <Compile Include="Paths\ClientActorPaths.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Paths\ServerActorPaths.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="protos\google\protobuf\csharp_options.proto" />
-    <None Include="protos\google\protobuf\descriptor.proto" />
-    <None Include="protos\tutorial\addressbook.proto" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="CHANGES.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Client\" />
-    <Folder Include="Server\" />
+    <Folder Include="Actors\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,8 +1,8 @@
 ﻿using Akka.Actor;
 using Caliburn.Micro;
-using Yakka.ClientActorSystem;
-using Yakka.ClientActorSystem.Actors.UI.Input;
-using Yakka.ClientActorSystem.Actors.UI.Update;
+using Yakka.Actors.UI.Input;
+using Yakka.Actors.UI.Update;
+using Yakka.Common.Paths;
 
 namespace Yakka.Features.Settings
 {
@@ -23,10 +23,10 @@ namespace Yakka.Features.Settings
 
             //Todo: This is probably better done using the autofac akka module somehow. See if you can figure it out
             //Input handler actor
-            _inputActor = system.ActorOf(Props.Create(() => new SettingsInputActor()), ActorPaths.SettingsInputActor.Name);
+            _inputActor = system.ActorOf(Props.Create(() => new SettingsInputActor()), ClientActorPaths.SettingsInputActor.Name);
 
             //UI updating actor
-            system.ActorOf(Props.Create(() => new SettingsUpdateActor(this)), ActorPaths.SettingsViewModelActor.Name);
+            system.ActorOf(Props.Create(() => new SettingsUpdateActor(this)), ClientActorPaths.SettingsViewModelActor.Name);
         }
 
         public string ServerAddress

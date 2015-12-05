@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using Akka.Actor;
 using Caliburn.Micro;
-using Yakka.ClientActorSystem;
-using Yakka.ClientActorSystem.Actors.UI.Input;
-using Yakka.ClientActorSystem.Actors.UI.Update;
+using Yakka.Actors.UI.Input;
+using Yakka.Actors.UI.Update;
+using Yakka.Common.Paths;
 using Yakka.Features.Conversations;
 using Yakka.Features.HomeScreen;
 using Yakka.Features.InfoPage;
@@ -27,10 +27,10 @@ namespace Yakka.Features.Shell
 
             //Todo: This is probably better done using the autofac akka module somehow. See if you can figure it out
             //Input handler actor
-            _inputActor = system.ActorOf(Props.Create(() => new ShellInputActor()), ActorPaths.ShellInputActor.Name);
+            _inputActor = system.ActorOf(Props.Create(() => new ShellInputActor()), ClientActorPaths.ShellInputActor.Name);
 
             //UI updating actor
-            system.ActorOf(Props.Create(() => new ShellUpdateActor(this)), ActorPaths.ShellViewModelActor.Name);
+            system.ActorOf(Props.Create(() => new ShellUpdateActor(this)), ClientActorPaths.ShellViewModelActor.Name);
         }
 
         private enum Screens

@@ -1,8 +1,9 @@
 ﻿using Akka.Actor;
+using Akka.DI.Core;
 using Caliburn.Micro;
-using Yakka.ClientActorSystem;
-using Yakka.ClientActorSystem.Actors.UI.Input;
-using Yakka.ClientActorSystem.Actors.UI.Update;
+using Yakka.Actors.UI.Input;
+using Yakka.Actors.UI.Update;
+using Yakka.Common.Paths;
 
 namespace Yakka.Features.InfoPage
 {
@@ -10,19 +11,12 @@ namespace Yakka.Features.InfoPage
     {
         private readonly IActorRef _inputActor;
 
-        //todo:
-        //Create a factory class per VM to resolve the input&update actors
-
         public InfoPageViewModel(ActorSystem system)
         {
             DisplayName = "Info";
 
-            //Todo: This is probably better done using the autofac akka module somehow. See if you can figure it out
-            //Input handler actor
-            _inputActor = system.ActorOf(Props.Create(() => new InfoPageInputActor()), ActorPaths.InfoInputActor.Name);
-            
-            //UI updating actor
-            system.ActorOf(Props.Create(() => new InfoPageUpdateActor(this)), ActorPaths.InfoViewModelActor.Name);
+            _inputActor = system.ActorOf(system.DI().Props<InfoPageInputActor>(), ClientActorPaths.InfoInputActor.Name);
+            system.ActorOf(system.DI().Props<InfoPageUpdateActor>(), ClientActorPaths.InfoViewModelActor.Name);
         }
 
         public void GitHubButton()

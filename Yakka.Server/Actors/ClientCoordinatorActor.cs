@@ -1,5 +1,8 @@
 ﻿using System;
 using Akka.Actor;
+using Akka.DI.Core;
+using Akka.Event;
+using Yakka.Common.Paths;
 
 namespace Yakka.Server.Actors
 {
@@ -41,21 +44,19 @@ namespace Yakka.Server.Actors
 
         #endregion
 
-        private readonly IActorRef _consoleWriter;
-
         private readonly IActorRef _activeClientsActor;
 
-        public ClientCoordinatorActor(IActorRef consoleWriter)
-        {
-            _consoleWriter = consoleWriter;
+        private readonly ILoggingAdapter _logger = Context.GetLogger();
 
-            _activeClientsActor = Context.ActorOf(Props.Create(() => new ConnectedClientsStateActor(consoleWriter)),
-                ActorPaths.ConnectedClientsActor.Name);
+        public ClientCoordinatorActor()
+        {
+            _logger.Debug("Instantiating ClientCoordinatorActor {0}", Context.Self.Path.ToStringWithAddress());
+
+            var activeClientsProps = Context.DI().Props<ConnectedClientsStateActor>();
+            _activeClientsActor = Context.ActorOf(activeClientsProps, ServerActorPaths.ConnectedClientsActor.Name);
 
             Receive<ConnectRequest>(msg => _activeClientsActor.Tell(new ConnectedClientsStateActor.AddClient(msg.ClientGuid, msg.Username), Sender));
             Receive<DisconnectRequest>(msg => _activeClientsActor.Tell(new ConnectedClientsStateActor.RemoveClient(msg.ClientGuid), Sender));
         }
-
-
     }
 }

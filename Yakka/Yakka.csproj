@@ -39,12 +39,16 @@
       <HintPath>..\packages\Akka.1.0.5\lib\net45\Akka.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Akka.DI.AutoFac, Version=1.0.4.12, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Akka.DI.AutoFac.1.0.4\lib\net45\Akka.DI.AutoFac.dll</HintPath>
+    <Reference Include="Akka.DI.AutoFac, Version=1.0.5.14, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Akka.DI.AutoFac.1.0.5\lib\net45\Akka.DI.AutoFac.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Akka.DI.Core, Version=1.0.4.12, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Akka.DI.Core.1.0.4\lib\net45\Akka.DI.Core.dll</HintPath>
+    <Reference Include="Akka.DI.Core, Version=1.0.5.14, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Akka.DI.Core.1.0.5\lib\net45\Akka.DI.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Akka.Logger.NLog, Version=1.0.5.14, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Akka.Logger.NLog.1.0.5\lib\net45\Akka.Logger.NLog.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Akka.Remote, Version=1.0.5.15, Culture=neutral, processorArchitecture=MSIL">
@@ -83,8 +87,8 @@
       <HintPath>..\packages\MahApps.Metro.1.1.2.0\lib\net45\MahApps.Metro.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MaterialDesignColors, Version=1.0.0.14576, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MaterialDesignColors.1.1.1\lib\net45\MaterialDesignColors.dll</HintPath>
+    <Reference Include="MaterialDesignColors, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MaterialDesignColors.1.1.2\lib\net45\MaterialDesignColors.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="MaterialDesignThemes.MahApps, Version=0.0.3.0, Culture=neutral, processorArchitecture=MSIL">
@@ -97,6 +101,10 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NLog, Version=3.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.3.0.0.0\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -147,21 +155,21 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Compile Include="ClientActorSystem\ActorPaths.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ClientActorSystem\Actors\UI\Input\ConversationsInputActor.cs" />
-    <Compile Include="ClientActorSystem\Actors\UI\Update\ConversationsUpdateActor.cs" />
-    <Compile Include="ClientActorSystem\Actors\UI\Input\HomeInputActor.cs" />
-    <Compile Include="ClientActorSystem\Actors\UI\Update\HomeUpdateActor.cs" />
-    <Compile Include="ClientActorSystem\Actors\UI\Input\InfoPageInputActor.cs" />
-    <Compile Include="ClientActorSystem\Actors\UI\Update\InfoPageUpdateActor.cs" />
-    <Compile Include="ClientActorSystem\Actors\UI\Input\SettingsInputActor.cs" />
-    <Compile Include="ClientActorSystem\Actors\UI\Update\SettingsUpdateActor.cs" />
-    <Compile Include="ClientActorSystem\Actors\UI\Input\ShellInputActor.cs" />
-    <Compile Include="ClientActorSystem\Actors\UI\Update\ShellUpdateActor.cs" />
+    <Compile Include="Actors\UI\Input\ConversationsInputActor.cs" />
+    <Compile Include="Actors\UI\Update\ConversationsUpdateActor.cs" />
+    <Compile Include="Actors\UI\Input\HomeInputActor.cs" />
+    <Compile Include="Actors\UI\Update\HomeUpdateActor.cs" />
+    <Compile Include="Actors\UI\Input\InfoPageInputActor.cs" />
+    <Compile Include="Actors\UI\Update\InfoPageUpdateActor.cs" />
+    <Compile Include="Actors\UI\Input\SettingsInputActor.cs" />
+    <Compile Include="Actors\UI\Update\SettingsUpdateActor.cs" />
+    <Compile Include="Actors\UI\Input\ShellInputActor.cs" />
+    <Compile Include="Actors\UI\Update\ShellUpdateActor.cs" />
+    <Compile Include="Features\Conversations\ConversationViewModel.cs" />
     <Compile Include="YakkaBootstrapper.cs" />
     <Compile Include="Features\Conversations\ConversationsView.xaml.cs">
       <DependentUpon>ConversationsView.xaml</DependentUpon>
@@ -205,20 +213,30 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <None Include="protos\google\protobuf\csharp_options.proto" />
-    <None Include="protos\google\protobuf\descriptor.proto" />
-    <None Include="protos\tutorial\addressbook.proto" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="logfile.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Yakka.Common\Yakka.Common.csproj">
+      <Project>{f92514e8-eaf7-4bbf-951c-a98c88dd9fdf}</Project>
+      <Name>Yakka.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

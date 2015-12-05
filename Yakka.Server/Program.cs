@@ -1,7 +1,11 @@
 ﻿using System.Net;
+using System.Reflection;
 using Akka.Actor;
 using Akka.Configuration;
+using Akka.DI.AutoFac;
 using Akka.Routing;
+using Autofac;
+using Yakka.Common.Paths;
 using Yakka.Server.Actors;
 
 namespace Yakka.Server
@@ -31,14 +35,28 @@ namespace Yakka.Server
             var config = ConfigurationFactory.ParseString(configHocon);
             var system = ActorSystem.Create("YakkaServer", config);
 
-            var console = system.ActorOf(Props.Create(() => new ConsoleWriterActor()), ActorPaths.ConsoleActor.Name);
+            var container = ConfigureAutofacContainer();
+            var resolver = new AutoFacDependencyResolver(container, system);
 
-            var clients = system.ActorOf(Props.Create(() => new ClientCoordinatorActor(console)), ActorPaths.ClientCoordinator.Name);
-            var chat = system.ActorOf(Props.Create(() => new ChatCoordinatorActor()), ActorPaths.ChatCoordinator.Name);
-
-            var router = system.ActorOf(Props.Empty.WithRouter(new BroadcastGroup(new []{chat, clients})), ActorPaths.MessageRouter.Name);
+            //Create root level actors
+            var clients = system.ActorOf(Props.Create(() => new ClientCoordinatorActor()), ServerActorPaths.ClientCoordinator.Name);
+            var chat = system.ActorOf(Props.Create(() => new ChatCoordinatorActor()), ServerActorPaths.ChatCoordinator.Name);
+            var router = system.ActorOf(Props.Empty.WithRouter(new BroadcastGroup(new []{chat, clients})), ServerActorPaths.MessageRouter.Name);
 
             system.AwaitTermination();
+        }
+
+        private static IContainer ConfigureAutofacContainer()
+        {
+            var builder = new ContainerBuilder();
+
+            //Register all actors
+            var assembly = Assembly.GetExecutingAssembly();
+            builder.RegisterAssemblyTypes(assembly)
+                .Where(t => t.Name.EndsWith("Actor"))
+                .AsSelf();
+
+            return builder.Build();
         }
     }
 }

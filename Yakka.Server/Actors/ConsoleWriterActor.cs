@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Akka.Actor;
+using Akka.Event;
 
 namespace Yakka.Server.Actors
 {
@@ -36,8 +37,14 @@ namespace Yakka.Server.Actors
             }
         }
 
+        private readonly ILoggingAdapter _logger = Context.GetLogger();
+        private readonly Version _version;
+
         public ConsoleWriterActor()
         {
+            _logger.Debug("Instantiating ConsoleWriterActor {0}", Context.Self.Path.ToStringWithAddress());
+            _version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+
             Receive<WriteConnectedClients>(message => HandleConnectedClientList(message));
         }
 
@@ -55,7 +62,7 @@ namespace Yakka.Server.Actors
             Console.WriteLine("=== Yakka Server at {0}:{1} == Version {2} - {3} ===", 
                 ServerMetadata.Hostname,
                 ServerMetadata.Port,
-                System.Reflection.Assembly.GetExecutingAssembly().GetName().Version,
+                _version,
                 DateTime.Now.ToString("HH:mm:ss dd MMM yyyy"));
             Console.WriteLine();
             Console.WriteLine();
