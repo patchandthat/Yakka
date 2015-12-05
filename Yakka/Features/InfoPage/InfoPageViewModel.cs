@@ -10,6 +10,9 @@ namespace Yakka.Features.InfoPage
     {
         private readonly IActorRef _inputActor;
 
+        //todo:
+        //Create a factory class per VM to resolve the input&update actors
+
         public InfoPageViewModel(ActorSystem system)
         {
             DisplayName = "Info";

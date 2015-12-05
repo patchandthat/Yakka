@@ -15,13 +15,15 @@ namespace Yakka.Server
 
             string configHocon = string.Format(
 @"akka {{
+    loglevel = DEBUG
+    loggers = [""Akka.Logger.NLog.NLogLogger, Akka.Logger.NLog""]
     actor {{
         provider = ""Akka.Remote.RemoteActorRefProvider, Akka.Remote""
     }}
     remote {{
         helios.tcp {{
+            hostname = {0}            
             port = {1}
-            hostname = {0}
         }}
     }}
 }}", ServerMetadata.Hostname, ServerMetadata.Port);

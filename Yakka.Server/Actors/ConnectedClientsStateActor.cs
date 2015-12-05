@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Akka.Actor;
+using Akka.Event;
 
 namespace Yakka.Server.Actors
 {
@@ -37,6 +38,8 @@ namespace Yakka.Server.Actors
         private ICancelable _cancelOutput;
         private readonly Dictionary<Guid, ClientData> _clients = new Dictionary<Guid, ClientData>();
 
+        private ILoggingAdapter _logger = Context.GetLogger();
+
         internal class ClientData
         {
             public ClientData(Guid guid, string username)
@@ -52,26 +55,30 @@ namespace Yakka.Server.Actors
         public ConnectedClientsStateActor(IActorRef consoleWriter)
         {
             _consoleWriter = consoleWriter;
-            
+
             Receive<AddClient>(msg =>
-            {
-                //Todo authentication
-                if (!_clients.ContainsKey(msg.ClientGuid))
-                    _clients.Add(msg.ClientGuid, new ClientData(msg.ClientGuid, msg.Username));
-            });
+                               {
+                                   _logger.Info("Incoming connection from {0} with client id {2}", msg.Username,
+                                       msg.ClientGuid);
+
+                                   //Todo authentication
+                                   if (!_clients.ContainsKey(msg.ClientGuid))
+                                       _clients.Add(msg.ClientGuid, new ClientData(msg.ClientGuid, msg.Username));
+                               });
             Receive<RemoveClient>(msg =>
-            {
-                if (_clients.ContainsKey(msg.ClientGuid))
-                    _clients.Remove(msg.ClientGuid);
-            });
+                                  {
+                                      if (_clients.ContainsKey(msg.ClientGuid))
+                                          _clients.Remove(msg.ClientGuid);
+                                  });
             Receive<WriteClientList>(msg =>
-            {
-                _consoleWriter.Tell(new ConsoleWriterActor.WriteConnectedClients(_clients.Values.Select(x => new ConsoleWriterActor.ConnectedUserInfo
-                {
-                    Name = x.Username,
-                    ClientGuid = x.Guid
-                }).ToList()));
-            });
+                                     {
+                                         var list = _clients.Values.Select(x => new ConsoleWriterActor.ConnectedUserInfo
+                                         {
+                                             Name = x.Username,
+                                             ClientGuid = x.Guid
+                                         }).ToList();
+                                         _consoleWriter.Tell(new ConsoleWriterActor.WriteConnectedClients(list));
+                                     });
         }
 
         protected override void PreStart()

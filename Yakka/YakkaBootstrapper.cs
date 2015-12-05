@@ -5,6 +5,8 @@ using System.Reflection;
 using System.Windows;
 using Akka.Actor;
 using Akka.Configuration;
+using Akka.DI.AutoFac;
+using Akka.DI.Core;
 using Autofac;
 using Caliburn.Micro;
 using Yakka.Features.Shell;
@@ -19,7 +21,8 @@ namespace Yakka
 
         private static readonly Lazy<Guid> ClientGuid = new Lazy<Guid>(Guid.NewGuid);
 
-        private readonly Akka.Actor.ActorSystem _clientActorSystem;
+        private readonly ActorSystem _clientActorSystem;
+        private IDependencyResolver _resolver;
 
         public YakkaBootstrapper()
         {
@@ -61,6 +64,8 @@ akka {{
             builder.RegisterInstance(_clientActorSystem).As<ActorSystem>();
 
             _container = builder.Build();
+
+            _resolver = new AutoFacDependencyResolver(_container, _clientActorSystem);
         }
 
         /// <summary>
