@@ -43,7 +43,7 @@ akka {{
 }}", Dns.GetHostName());
             var config = ConfigurationFactory.ParseString(hocon);
 
-            var clientName = $"Client{ClientId}";
+            var clientName = string.Format("Client{0}", ClientId);
             _clientActorSystem = ActorSystem.Create(clientName, config);
 
             Initialize();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using Akka.Actor;
 using Akka.Event;
 
@@ -15,7 +16,7 @@ namespace Yakka.Server.Actors
                 Clients = clients;
             }
 
-            public IEnumerable<ConnectedUserInfo> Clients { get; }
+            public IEnumerable<ConnectedUserInfo> Clients { get; private set; }
         }
 
         public class ConnectedUserInfo
@@ -33,7 +34,7 @@ namespace Yakka.Server.Actors
             /// </returns>
             public override string ToString()
             {
-                return $"{Name}";
+                return Name;
             }
         }
 
@@ -76,7 +77,8 @@ namespace Yakka.Server.Actors
 
             foreach (var client in clientList)
             {
-                Console.WriteLine($"{client.ClientGuid}: {client.Name} - Last activity {client.LastActivity.ToString("HH:mm:ss")}");
+                //Console.WriteLine($"{client.ClientGuid}: {client.Name} - Last activity {client.LastActivity.ToString("HH:mm:ss")}");
+                Console.WriteLine("{0}: {1} - Last activity {2}", client.ClientGuid, client.Name, client.LastActivity.ToString("HH:mm:ss"));
             }
         }
     }

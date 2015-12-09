@@ -18,8 +18,8 @@ namespace Yakka.Server.Actors
                 Username = username;
             }
 
-            public Guid ClientGuid { get; }
-            public string Username { get; }
+            public Guid ClientGuid { get; private set; }
+            public string Username { get; private set; }
         }
 
         public class ConnectResponse
@@ -34,7 +34,7 @@ namespace Yakka.Server.Actors
                 ClientGuid = clientGuid;
             }
 
-            public Guid ClientGuid { get; }
+            public Guid ClientGuid { get; private set; }
         }
 
         public class DisconnectResponse

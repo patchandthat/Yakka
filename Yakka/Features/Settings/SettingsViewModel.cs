@@ -100,7 +100,7 @@ namespace Yakka.Features.Settings
             _inputActor.Tell(new SettingsInputActor.SaveSettings());
         }
 
-        public bool CanAcceptButton => IsValid() && IsChanged();
+        public bool CanAcceptButton {get{return IsValid() && IsChanged();}}
 
         private bool IsValid()
         {
@@ -112,7 +112,7 @@ namespace Yakka.Features.Settings
             _inputActor.Tell(new SettingsInputActor.LoadSettings());
         }
 
-        public bool CanCancelButton => IsChanged();
+        public bool CanCancelButton { get { return IsChanged(); } }
 
         private bool IsChanged()
         {
