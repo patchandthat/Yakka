@@ -1,6 +1,6 @@
 ﻿namespace Yakka.DataModels
 {
-    class Settings
+    class YakkaSettings
     {
         public string ServerAddress { get; set; }
 

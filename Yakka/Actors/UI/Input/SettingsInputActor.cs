@@ -1,6 +1,6 @@
-﻿using System.Threading.Tasks;
-using Akka.Actor;
+﻿using Akka.Actor;
 using Akka.Event;
+using Yakka.DataModels;
 
 namespace Yakka.Actors.UI.Input
 {
@@ -10,12 +10,12 @@ namespace Yakka.Actors.UI.Input
 
         internal class SaveSettings
         {
-            public SaveSettings(Settings settings)
+            public SaveSettings(YakkaSettings settings)
             {
                 Settings = settings;
             }
 
-            public Settings Settings { get; private set; }
+            public YakkaSettings Settings { get; private set; }
         }
 
         internal class LoadSettings

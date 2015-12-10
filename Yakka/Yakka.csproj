@@ -171,7 +171,7 @@
     <Compile Include="Actors\UI\Update\SettingsUpdateActor.cs" />
     <Compile Include="Actors\UI\Input\ShellInputActor.cs" />
     <Compile Include="Actors\UI\Update\ShellUpdateActor.cs" />
-    <Compile Include="DataModels\Settings.cs" />
+    <Compile Include="DataModels\YakkaSettings.cs" />
     <Compile Include="Features\Conversations\ConversationViewModel.cs" />
     <Compile Include="YakkaBootstrapper.cs" />
     <Compile Include="Features\Conversations\ConversationsView.xaml.cs">

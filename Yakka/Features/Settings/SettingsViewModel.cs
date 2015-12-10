@@ -3,6 +3,7 @@ using Caliburn.Micro;
 using Yakka.Actors.UI.Input;
 using Yakka.Actors.UI.Update;
 using Yakka.Common.Paths;
+using Yakka.DataModels;
 
 namespace Yakka.Features.Settings
 {
@@ -97,7 +98,7 @@ namespace Yakka.Features.Settings
 
         public void AcceptButton()
         {
-            _inputActor.Tell(new SettingsInputActor.SaveSettings());
+            _inputActor.Tell(new SettingsInputActor.SaveSettings(new YakkaSettings()));
         }
 
         public bool CanAcceptButton {get{return IsValid() && IsChanged();}}
