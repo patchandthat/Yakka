@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Akka.Actor;
+using Akka.Event;
+using Yakka.DataModels;
 
 namespace Yakka.Actors
 {
@@ -7,15 +10,62 @@ namespace Yakka.Actors
     {
         #region Messages
 
-        //InitiateSave
-        //InitiateLoad
+        public class InitiateSave
+        {
+            public InitiateSave(YakkaSettings settings)
+            {
+                Settings = settings;
+            }
 
-        //Failure ?
+            public YakkaSettings Settings { get; }
 
-        //Savesuccess
-        //Loadsuccess
-        
+            public override string ToString()
+            {
+                return Settings.ToString();
+            }
+        }
+
+        public class InitiateLoad
+        {
+        }
+
+        public class Failure
+        {
+        }
+
+        public class SaveSuccess
+        {
+        }
+
+        public class LoadSuccess
+        {
+            public LoadSuccess(YakkaSettings settings)
+            {
+                Settings = settings;
+            }
+
+            public YakkaSettings Settings { get; }
+        }
+
         #endregion
+
+        private readonly ILoggingAdapter _logger = Context.GetLogger();
+
+        public SettingsPersistenceWorkerActor()
+        {
+            Receive<InitiateSave>(msg => BeginSave(msg));
+            Receive<InitiateLoad>(msg => BeginLoad(msg));
+        }
+
+        private void BeginSave(InitiateSave msg)
+        {
+            _logger.Debug("Saving settings: {0}", msg);
+        }
+
+        private void BeginLoad(InitiateLoad msg)
+        {
+            
+        }
 
         protected override SupervisorStrategy SupervisorStrategy()
         {

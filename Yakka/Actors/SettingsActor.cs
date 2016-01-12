@@ -2,6 +2,7 @@
 using Akka.Actor;
 using Akka.Actor.Dsl;
 using Akka.DI.Core;
+using Akka.Event;
 using Yakka.DataModels;
 
 namespace Yakka.Actors
@@ -56,6 +57,8 @@ namespace Yakka.Actors
 
         public IStash Stash { get; set; }
 
+        private readonly ILoggingAdapter _logger = Context.GetLogger();
+
         public SettingsActor()
         {
             Become(Available);
@@ -82,8 +85,6 @@ namespace Yakka.Actors
         private void HandleLoadSettingsRequest(LoadSettingsRequest msg)
         {
             var workerProps = Context.DI().Props<SettingsPersistenceWorkerActor>();
-            _worker = Context.ActorOf(workerProps);
-
             //_worker.Tell( , Self);
 
             Become(Working);
