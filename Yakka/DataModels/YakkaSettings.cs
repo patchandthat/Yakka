@@ -2,6 +2,15 @@
 {
     class YakkaSettings
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:System.Object"/> class.
+        /// </summary>
+        public YakkaSettings()
+        {
+            ServerAddress = "";
+            Username = "";
+        }
+
         public string ServerAddress { get; set; }
 
         public int ServerPort { get; set; }

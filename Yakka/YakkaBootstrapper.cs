@@ -18,8 +18,7 @@ namespace Yakka
     {
         private IContainer _container;
 
-        public static Guid ClientId { get { return ClientGuid.Value; } }
-
+        public static Guid ClientId => ClientGuid.Value;
         private static readonly Lazy<Guid> ClientGuid = new Lazy<Guid>(Guid.NewGuid);
 
         private readonly ActorSystem _clientActorSystem;
@@ -89,9 +88,8 @@ akka {{
             var settings = new Dictionary<string, object>
             {
                 {"SizeToContent", SizeToContent.Manual},
-                {"Width", 525},
-                {"Height", 425},
-
+                {"Width", 750},
+                {"Height", 500},
             };
 
             DisplayRootViewFor<ShellViewModel>(settings);

@@ -45,25 +45,40 @@ namespace Yakka.DataLayer
             {
                 connection.Open();
                 connection.Execute(
-                    @"create table Settings
+                    @"CREATE TABLE Settings
                     (
-                        ID  integer identity primary key AUTOINCREMENT,
-                        ServerAddress ,
-                        ServerPort ,
-                        Username ,
-                        RememberSettings ,
-                        ConnectAutomatically ,
-                        LaunchOnStartup 
-                    )"); //etc
+                        [ID] INT IDENTITY PRIMARY KEY AUTOINCREMENT,
+                        [ServerAddress] NVARCHAR(100) NOT NULL,
+                        [ServerPort] INT NOT NULL,
+                        [Username] NVARCHAR(100) NOT NULL,
+                        [RememberSettings] INT NOT NULL,
+                        [ConnectAutomatically] INT NOT NULL,
+                        [LaunchOnStartup] INT NOT NULL
+                    )");
             }
         }
 
         public YakkaSettings LoadSettings()
         {
+            if (!File.Exists(DatabaseFile))
+            {
+                return new YakkaSettings();
+            }
+
             using (IDbConnection connection = GetConnection())
             {
                 connection.Open();
-                return connection.Query<YakkaSettings>("SELECT --etc").FirstOrDefault();
+                return connection.Query<YakkaSettings>(
+                    @"SELECT TOP 1 
+                        [ServerAddress],
+                        [ServerPort],
+                        [Username],
+                        [RememberSettings],
+                        [ConnectAutomatically]
+                        [LaunchOnStartup]
+                    FROM [Settings]
+                    ORDER BY [ID] DESC")
+                    .FirstOrDefault();
             }
         }
     }
