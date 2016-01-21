@@ -30,6 +30,16 @@ namespace Yakka.Features.Settings
             system.ActorOf(Props.Create(() => new SettingsUpdateActor(this)), ClientActorPaths.SettingsViewModelActor.Name);
         }
 
+        /// <summary>
+        /// Called when initializing.
+        /// </summary>
+        protected override void OnInitialize()
+        {
+            base.OnInitialize();
+
+            _inputActor.Tell(new SettingsInputActor.LoadSettings());
+        }
+
         public string ServerAddress
         {
             get { return _serverAddress; }
@@ -101,7 +111,10 @@ namespace Yakka.Features.Settings
             _inputActor.Tell(new SettingsInputActor.SaveSettings(new YakkaSettings()));
         }
 
-        public bool CanAcceptButton {get{return IsValid() && IsChanged();}}
+        public bool CanAcceptButton
+        {
+            get { return IsValid() && IsChanged(); }
+        }
 
         private bool IsValid()
         {

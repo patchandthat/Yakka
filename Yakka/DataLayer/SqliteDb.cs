@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Data.Entity;
 using System.Data.SQLite;
 using System.IO;
 using System.Linq;
@@ -31,9 +30,20 @@ namespace Yakka.DataLayer
                 connection.Open();
                 connection.Execute(
                     @"INSERT INTO Settings
-                    (FIELDS)
-                    VALUES (@params)",
-                    settings); //where param names match property names
+                    ([ServerAddress]
+                    ,[ServerPort]
+                    ,[Username]
+                    ,[RememberSettings]
+                    ,[ConnectAutomatically]
+                    ,[LaunchOnStartup])
+                    VALUES 
+                    (@ServerAddress
+                    ,@ServerPort
+                    ,@Username
+                    ,@RememberSettings
+                    ,@ConnectAutomatically
+                    ,@LaunchOnStartup)",
+                    settings);
             }
         }
 

@@ -18,5 +18,7 @@
         public static readonly ActorMetaData SettingsInputActor = new ActorMetaData("SettingsInputActor");
         public static readonly ActorMetaData ConversationsInputActor = new ActorMetaData("ConversationsInputActor");
         public static readonly ActorMetaData InfoInputActor = new ActorMetaData("InfoInputActor");
+
+        public static readonly ActorMetaData SettingsActor = new ActorMetaData("SettingsActor");
     }
 }

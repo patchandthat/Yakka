@@ -36,7 +36,7 @@ namespace Yakka.Actors.UI.Input
 
         private void HandleSaveSettings(SaveSettings msg)
         {
-            //Tell settings actor to save
+            
         }
 
         private void HandleLoadSettings(LoadSettings msg)

@@ -9,6 +9,9 @@ using Akka.DI.AutoFac;
 using Akka.DI.Core;
 using Autofac;
 using Caliburn.Micro;
+using Yakka.Actors;
+using Yakka.Common.Paths;
+using Yakka.DataLayer;
 using Yakka.Features.Conversations;
 using Yakka.Features.Shell;
 
@@ -21,7 +24,7 @@ namespace Yakka
         public static Guid ClientId => ClientGuid.Value;
         private static readonly Lazy<Guid> ClientGuid = new Lazy<Guid>(Guid.NewGuid);
 
-        private readonly ActorSystem _clientActorSystem;
+        private static ActorSystem _clientActorSystem;
         private IDependencyResolver _resolver;
 
         public YakkaBootstrapper()
@@ -44,6 +47,7 @@ akka {{
 
             var clientName = string.Format("Client{0}", ClientId);
             _clientActorSystem = ActorSystem.Create(clientName, config);
+            var settingsActor = _clientActorSystem.ActorOf(Props.Create(() => new SettingsActor()), ClientActorPaths.SettingsActor.Name);
 
             Initialize();
         }
@@ -57,6 +61,8 @@ akka {{
 
             builder.RegisterType<WindowManager>().As<IWindowManager>().SingleInstance();
             builder.RegisterType<EventAggregator>().As<IEventAggregator>().SingleInstance();
+
+            builder.RegisterType<SqliteDb>().As<IYakkaDb>();
 
             var assembly = Assembly.GetExecutingAssembly();
             builder.RegisterAssemblyTypes(assembly)
