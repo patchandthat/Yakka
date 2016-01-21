@@ -17,6 +17,7 @@ namespace Yakka.Features.Settings
         private bool _rememberSettings;
 
         private readonly IActorRef _inputActor;
+        private IActorRef _updater;
 
         public SettingsViewModel(ActorSystem system)
         {
@@ -27,7 +28,7 @@ namespace Yakka.Features.Settings
             _inputActor = system.ActorOf(Props.Create(() => new SettingsInputActor()), ClientActorPaths.SettingsInputActor.Name);
 
             //UI updating actor
-            system.ActorOf(Props.Create(() => new SettingsUpdateActor(this)), ClientActorPaths.SettingsViewModelActor.Name);
+            _updater = system.ActorOf(Props.Create(() => new SettingsUpdateActor(this)), ClientActorPaths.SettingsViewModelActor.Name);
         }
 
         /// <summary>
@@ -37,7 +38,7 @@ namespace Yakka.Features.Settings
         {
             base.OnInitialize();
 
-            _inputActor.Tell(new SettingsInputActor.LoadSettings());
+            _inputActor.Tell(new SettingsInputActor.LoadSettings(), _updater);
         }
 
         public string ServerAddress
@@ -108,7 +109,15 @@ namespace Yakka.Features.Settings
 
         public void AcceptButton()
         {
-            _inputActor.Tell(new SettingsInputActor.SaveSettings(new YakkaSettings()));
+            _inputActor.Tell(new SettingsInputActor.SaveSettings(new YakkaSettings
+            {
+                ConnectAutomatically = ConnectAutomatically,
+                RememberSettings = RememberSettings,
+                LaunchOnStartup = LaunchOnStartup,
+                ServerAddress = ServerAddress,
+                ServerPort = ServerPort,
+                Username = Username
+            }), _updater);
         }
 
         public bool CanAcceptButton
@@ -123,7 +132,7 @@ namespace Yakka.Features.Settings
 
         public void CancelButton()
         {
-            _inputActor.Tell(new SettingsInputActor.LoadSettings());
+            _inputActor.Tell(new SettingsInputActor.LoadSettings(), _updater);
         }
 
         public bool CanCancelButton { get { return IsChanged(); } }

@@ -57,7 +57,7 @@ namespace Yakka.DataLayer
                 connection.Execute(
                     @"CREATE TABLE Settings
                     (
-                        [ID] INT IDENTITY PRIMARY KEY AUTOINCREMENT,
+                        [ID] INTEGER PRIMARY KEY AUTOINCREMENT,
                         [ServerAddress] NVARCHAR(100) NOT NULL,
                         [ServerPort] INT NOT NULL,
                         [Username] NVARCHAR(100) NOT NULL,
@@ -79,12 +79,13 @@ namespace Yakka.DataLayer
             {
                 connection.Open();
                 return connection.Query<YakkaSettings>(
-                    @"SELECT TOP 1 
+                    @"SELECT
+                        [ID],
                         [ServerAddress],
                         [ServerPort],
                         [Username],
                         [RememberSettings],
-                        [ConnectAutomatically]
+                        [ConnectAutomatically],
                         [LaunchOnStartup]
                     FROM [Settings]
                     ORDER BY [ID] DESC")

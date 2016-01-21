@@ -4,6 +4,7 @@ using Akka.Actor.Dsl;
 using Akka.DI.Core;
 using Akka.Event;
 using Yakka.DataModels;
+using Settings = Yakka.Properties.Settings;
 
 namespace Yakka.Actors
 {
@@ -59,6 +60,9 @@ namespace Yakka.Actors
 
         private readonly ILoggingAdapter _logger = Context.GetLogger();
 
+        //Todo: cache last settings saved/loaded, and then save async
+        //Todo: Only full round trip load on first startup
+
         public SettingsActor()
         {
             Become(Available);
@@ -66,6 +70,12 @@ namespace Yakka.Actors
 
         private void Available()
         {
+            if (_worker != null)
+            {
+                Context.Stop(_worker);
+                _worker = null;
+            }
+
             Receive<SaveSettingsRequest>(msg => HandleSaveSettingsRequest(msg));
             Receive<LoadSettingsRequest>(msg => HandleLoadSettingsRequest(msg));
             
@@ -77,7 +87,7 @@ namespace Yakka.Actors
             var workerProps = Context.DI().Props<SettingsPersistenceWorkerActor>();
             _worker = Context.ActorOf(workerProps);
 
-            //_worker.Tell( , Self);
+            _worker.Tell(new SettingsPersistenceWorkerActor.InitiateSave(msg.Settings, Sender), Self);
 
             Become(Working);
         }
@@ -85,7 +95,9 @@ namespace Yakka.Actors
         private void HandleLoadSettingsRequest(LoadSettingsRequest msg)
         {
             var workerProps = Context.DI().Props<SettingsPersistenceWorkerActor>();
-            //_worker.Tell( , Self);
+            _worker = Context.ActorOf(workerProps);
+
+            _worker.Tell(new SettingsPersistenceWorkerActor.InitiateLoad(Sender), Self);
 
             Become(Working);
         }
@@ -99,6 +111,24 @@ namespace Yakka.Actors
             Receive<RequestCurrentSettingsRequest>(msg => { Sender.Tell(new RequestCurrentSettingsResponse(_currentSettings)); });
 
             //Receive worker response messages & kill worker
+            Receive<SettingsPersistenceWorkerActor.LoadSuccess>(msg =>
+            {
+                Sender.Tell(msg.Settings);
+                Stash.UnstashAll();
+                Become(Available);
+            });
+            Receive<SettingsPersistenceWorkerActor.Failure>(msg =>
+            {
+                //Todo: sort this later
+                Stash.UnstashAll();
+                Become(Available);
+            });
+            Receive<SettingsPersistenceWorkerActor.SaveSuccess>(msg =>
+            {
+                //Todo: should have some sort of response?
+                Stash.UnstashAll();
+                Become(Available);
+            });
         }
     }
 }

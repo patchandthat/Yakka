@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Event;
+using Yakka.DataLayer;
 using Yakka.DataModels;
 
 namespace Yakka.Actors
@@ -12,12 +12,15 @@ namespace Yakka.Actors
 
         public class InitiateSave
         {
-            public InitiateSave(YakkaSettings settings)
+            public InitiateSave(YakkaSettings settings, IActorRef requester)
             {
                 Settings = settings;
+                Requester = requester;
             }
 
             public YakkaSettings Settings { get; }
+
+            public IActorRef Requester { get; }
 
             public override string ToString()
             {
@@ -27,10 +30,22 @@ namespace Yakka.Actors
 
         public class InitiateLoad
         {
+            public InitiateLoad(IActorRef requester)
+            {
+                Requester = requester;
+            }
+
+            public IActorRef Requester { get; }
         }
 
         public class Failure
         {
+            public Failure(IActorRef requester)
+            {
+                Requester = requester;
+            }
+
+            public IActorRef Requester { get; }
         }
 
         public class SaveSuccess
@@ -50,21 +65,32 @@ namespace Yakka.Actors
         #endregion
 
         private readonly ILoggingAdapter _logger = Context.GetLogger();
+        private readonly IYakkaDb _storage;
 
-        public SettingsPersistenceWorkerActor()
+        public SettingsPersistenceWorkerActor(IYakkaDb storage)
         {
+            _storage = storage;
+
             Receive<InitiateSave>(msg => BeginSave(msg));
             Receive<InitiateLoad>(msg => BeginLoad(msg));
         }
 
+        //Todo: error handling/supervision
+
         private void BeginSave(InitiateSave msg)
         {
             _logger.Debug("Saving settings: {0}", msg);
+
+            _storage.SaveSettings(msg.Settings);
         }
 
         private void BeginLoad(InitiateLoad msg)
         {
+            _logger.Debug("Loading settings: {0}", msg);
+
+            var settings = _storage.LoadSettings();
             
+            Sender.Tell(new LoadSuccess(settings), msg.Requester);
         }
 
         protected override SupervisorStrategy SupervisorStrategy()

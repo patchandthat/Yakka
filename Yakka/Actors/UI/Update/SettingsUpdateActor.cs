@@ -1,5 +1,6 @@
 ﻿using Akka.Actor;
 using Akka.Event;
+using Yakka.DataModels;
 using Yakka.Features.Settings;
 
 namespace Yakka.Actors.UI.Update
@@ -13,6 +14,16 @@ namespace Yakka.Actors.UI.Update
         {
             _logger.Debug("Initialising {0} at {1}", GetType().FullName, Context.Self.Path.ToStringWithAddress());
             _settingsViewModel = settingsViewModel;
+
+            Receive<YakkaSettings>(msg =>
+            {
+                _settingsViewModel.Username = msg.Username;
+                _settingsViewModel.ConnectAutomatically = msg.ConnectAutomatically;
+                _settingsViewModel.LaunchOnStartup = msg.ConnectAutomatically;
+                _settingsViewModel.RememberSettings = msg.RememberSettings;
+                _settingsViewModel.ServerAddress = msg.ServerAddress;
+                _settingsViewModel.ServerPort = msg.ServerPort;
+            });
         }
     }
 }
