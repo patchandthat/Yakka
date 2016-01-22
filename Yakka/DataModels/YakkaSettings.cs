@@ -22,5 +22,16 @@
         public bool ConnectAutomatically { get; set; }
 
         public bool LaunchOnStartup { get; set; }
+
+        public ImmutableYakkaSettings AsImmutable()
+        {
+            return new ImmutableYakkaSettings(
+                ServerAddress,
+                ServerPort,
+                Username,
+                RememberSettings,
+                ConnectAutomatically,
+                LaunchOnStartup);
+        }
     }
 }

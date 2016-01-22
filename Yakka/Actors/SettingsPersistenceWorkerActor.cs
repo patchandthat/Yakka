@@ -12,15 +12,15 @@ namespace Yakka.Actors
 
         public class InitiateSave
         {
-            public InitiateSave(YakkaSettings settings, IActorRef requester)
+            public InitiateSave(ImmutableYakkaSettings settings, IActorRef respondTo)
             {
                 Settings = settings;
-                Requester = requester;
+                RespondTo = respondTo;
             }
 
-            public YakkaSettings Settings { get; }
+            public ImmutableYakkaSettings Settings { get; }
 
-            public IActorRef Requester { get; }
+            public IActorRef RespondTo { get; }
 
             public override string ToString()
             {
@@ -30,36 +30,47 @@ namespace Yakka.Actors
 
         public class InitiateLoad
         {
-            public InitiateLoad(IActorRef requester)
+            public InitiateLoad(IActorRef respondTo)
             {
-                Requester = requester;
+                RespondTo = respondTo;
             }
 
-            public IActorRef Requester { get; }
+            public IActorRef RespondTo { get; }
         }
 
         public class Failure
         {
-            public Failure(IActorRef requester)
+            public Failure(IActorRef respondTo)
             {
-                Requester = requester;
+                RespondTo = respondTo;
             }
 
-            public IActorRef Requester { get; }
+            public IActorRef RespondTo { get; }
         }
 
         public class SaveSuccess
         {
+            public SaveSuccess(ImmutableYakkaSettings settings, IActorRef respondTo)
+            {
+                Settings = settings;
+                RespondTo = respondTo;
+            }
+
+            public ImmutableYakkaSettings Settings { get; }
+
+            public IActorRef RespondTo { get; }
         }
 
         public class LoadSuccess
         {
-            public LoadSuccess(YakkaSettings settings)
+            public LoadSuccess(ImmutableYakkaSettings settings, IActorRef respondTo)
             {
                 Settings = settings;
+                RespondTo = respondTo;
             }
 
-            public YakkaSettings Settings { get; }
+            public ImmutableYakkaSettings Settings { get; }
+            public IActorRef RespondTo { get; }
         }
 
         #endregion
@@ -81,7 +92,9 @@ namespace Yakka.Actors
         {
             _logger.Debug("Saving settings: {0}", msg);
 
-            _storage.SaveSettings(msg.Settings);
+            _storage.SaveSettings(msg.Settings.AsMutable());
+
+            Sender.Tell(new SaveSuccess(msg.Settings, msg.RespondTo));
         }
 
         private void BeginLoad(InitiateLoad msg)
@@ -89,8 +102,8 @@ namespace Yakka.Actors
             _logger.Debug("Loading settings: {0}", msg);
 
             var settings = _storage.LoadSettings();
-            
-            Sender.Tell(new LoadSuccess(settings), msg.Requester);
+
+            Sender.Tell(new LoadSuccess(settings.AsImmutable(), msg.RespondTo));
         }
 
         protected override SupervisorStrategy SupervisorStrategy()

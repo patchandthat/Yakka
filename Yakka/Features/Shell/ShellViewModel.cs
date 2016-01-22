@@ -63,6 +63,10 @@ namespace Yakka.Features.Shell
 
             ActiveContent = _screens[Screens.Home];
 
+            //Do first load initialisation
+            var settings = _screens[Screens.Settings] as SettingsViewModel;
+            settings.CancelButton();
+
             base.OnInitialize();
         }
 

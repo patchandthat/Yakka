@@ -15,7 +15,7 @@ namespace Yakka.Actors.UI.Update
             _logger.Debug("Initialising {0} at {1}", GetType().FullName, Context.Self.Path.ToStringWithAddress());
             _settingsViewModel = settingsViewModel;
 
-            Receive<YakkaSettings>(msg =>
+            Receive<ImmutableYakkaSettings>(msg =>
             {
                 _settingsViewModel.Username = msg.Username;
                 _settingsViewModel.ConnectAutomatically = msg.ConnectAutomatically;
@@ -23,6 +23,8 @@ namespace Yakka.Actors.UI.Update
                 _settingsViewModel.RememberSettings = msg.RememberSettings;
                 _settingsViewModel.ServerAddress = msg.ServerAddress;
                 _settingsViewModel.ServerPort = msg.ServerPort;
+
+                _settingsViewModel.UpdateSettings(msg);
             });
         }
     }

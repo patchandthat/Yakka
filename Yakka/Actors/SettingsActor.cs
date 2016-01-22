@@ -14,54 +14,69 @@ namespace Yakka.Actors
 
         public class SaveSettingsRequest
         {
-            public SaveSettingsRequest(YakkaSettings settings)
+            public SaveSettingsRequest(ImmutableYakkaSettings settings, IActorRef respondTo)
             {
                 Settings = settings;
+                RespondTo = respondTo;
             }
 
-            public YakkaSettings Settings { get; private set; }
+            public ImmutableYakkaSettings Settings { get; private set; }
+
+            public IActorRef RespondTo { get; }
         }
 
         public class LoadSettingsRequest
         {
+            public LoadSettingsRequest(IActorRef respondTo)
+            {
+                RespondTo = respondTo;
+            }
+            
+            public IActorRef RespondTo { get; }
         }
 
         public class LoadSettingsResponse
         {
-            public LoadSettingsResponse(YakkaSettings settings)
+            public LoadSettingsResponse(ImmutableYakkaSettings settings)
             {
                 Settings = settings;
             }
 
-            public YakkaSettings Settings { get; private set; }
+            public ImmutableYakkaSettings Settings { get; private set; }
         }
 
         public class RequestCurrentSettingsRequest
         {
+            public RequestCurrentSettingsRequest(IActorRef respondTo)
+            {
+                RespondTo = respondTo;
+            }
+
+            public IActorRef RespondTo { get; }
         }
 
         public class RequestCurrentSettingsResponse
         {
-            public RequestCurrentSettingsResponse(YakkaSettings settings)
+            public RequestCurrentSettingsResponse(ImmutableYakkaSettings settings)
             {
                 Settings = settings;
             }
 
-            public YakkaSettings Settings { get; private set; }
+            public ImmutableYakkaSettings Settings { get; private set; }
         }
 
         #endregion
 
 
         private IActorRef _worker;
-        private YakkaSettings _currentSettings;
+
+        //We only do a full round-trip on first load
+        //Otherwise we cache the first-loaded and all subsequent saves
+        private ImmutableYakkaSettings _currentSettings;
 
         public IStash Stash { get; set; }
 
         private readonly ILoggingAdapter _logger = Context.GetLogger();
-
-        //Todo: cache last settings saved/loaded, and then save async
-        //Todo: Only full round trip load on first startup
 
         public SettingsActor()
         {
@@ -84,20 +99,28 @@ namespace Yakka.Actors
 
         private void HandleSaveSettingsRequest(SaveSettingsRequest msg)
         {
+            _currentSettings = msg.Settings;
+
             var workerProps = Context.DI().Props<SettingsPersistenceWorkerActor>();
             _worker = Context.ActorOf(workerProps);
 
-            _worker.Tell(new SettingsPersistenceWorkerActor.InitiateSave(msg.Settings, Sender), Self);
+            _worker.Tell(new SettingsPersistenceWorkerActor.InitiateSave(msg.Settings, msg.RespondTo), Self);
 
             Become(Working);
         }
 
         private void HandleLoadSettingsRequest(LoadSettingsRequest msg)
         {
+            if (_currentSettings != null)
+            {
+                msg.RespondTo.Tell(_currentSettings);
+                return;
+            }
+
             var workerProps = Context.DI().Props<SettingsPersistenceWorkerActor>();
             _worker = Context.ActorOf(workerProps);
 
-            _worker.Tell(new SettingsPersistenceWorkerActor.InitiateLoad(Sender), Self);
+            _worker.Tell(new SettingsPersistenceWorkerActor.InitiateLoad(msg.RespondTo), Self);
 
             Become(Working);
         }
@@ -106,26 +129,24 @@ namespace Yakka.Actors
         {
             Receive<SaveSettingsRequest>(msg => Stash.Stash());
             Receive<LoadSettingsRequest>(msg => Stash.Stash());
-
-            //RequestCurrentState -> serve up
-            Receive<RequestCurrentSettingsRequest>(msg => { Sender.Tell(new RequestCurrentSettingsResponse(_currentSettings)); });
+            Receive<RequestCurrentSettingsRequest>(msg => Stash.Stash());
 
             //Receive worker response messages & kill worker
             Receive<SettingsPersistenceWorkerActor.LoadSuccess>(msg =>
             {
-                Sender.Tell(msg.Settings);
+                msg.RespondTo.Tell(msg.Settings);
                 Stash.UnstashAll();
                 Become(Available);
             });
             Receive<SettingsPersistenceWorkerActor.Failure>(msg =>
             {
-                //Todo: sort this later
+                //Todo: sort these later
                 Stash.UnstashAll();
                 Become(Available);
             });
             Receive<SettingsPersistenceWorkerActor.SaveSuccess>(msg =>
             {
-                //Todo: should have some sort of response?
+                msg.RespondTo.Tell(msg.Settings);
                 Stash.UnstashAll();
                 Become(Available);
             });

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Event;
 using Yakka.Common.Paths;
@@ -13,24 +12,31 @@ namespace Yakka.Actors.UI.Input
 
         internal class SaveSettings
         {
-            public SaveSettings(YakkaSettings settings)
+            public SaveSettings(ImmutableYakkaSettings settings, IActorRef respondTo)
             {
                 Settings = settings;
+                RespondTo = respondTo;
             }
 
-            public YakkaSettings Settings { get; private set; }
+            public ImmutableYakkaSettings Settings { get; private set; }
+
+            public IActorRef RespondTo { get; }
         }
 
         internal class LoadSettings
         {
+            public LoadSettings(IActorRef respondTo)
+            {
+                RespondTo = respondTo;
+            }
+
+            public IActorRef RespondTo { get; }
         }
 
         #endregion
         
         private readonly ILoggingAdapter _logger = Context.GetLogger();
-
         private IActorRef _settingsActor;
-        //private IActorRef _updateActor;
 
         public SettingsInputActor()
         {
@@ -40,32 +46,23 @@ namespace Yakka.Actors.UI.Input
             Receive<LoadSettings>(msg => HandleLoadSettings(msg));
         }
 
-        protected override void PreStart()
+        protected override async void PreStart()
         {
             //Resolve necessary actor references to avoid the cost of selecting by path for each message
-
-            //Resolve the actorRef to the settings actor
             var selection = Context.ActorSelection(ClientActorPaths.SettingsActor.Path);
-            //_settingsActor = selection.Anchor; //Todo: Maybe ResolveOne()
-            var t = selection.ResolveOne(TimeSpan.FromMilliseconds(500));
-            t.Wait();
-            _settingsActor = t.Result;//Todo: Maybe ResolveOne()
-
-            ////Resolve the reference to out viewmodel
-            //selection = Context.ActorSelection(ClientActorPaths.SettingsViewModelActor.Path);
-            //_updateActor = selection.Anchor;
+            _settingsActor = await selection.ResolveOne(TimeSpan.FromMilliseconds(500));
 
             base.PreStart();
         }
 
         private void HandleSaveSettings(SaveSettings msg)
         {
-            _settingsActor.Tell(new SettingsActor.SaveSettingsRequest(msg.Settings), Context.Sender);
+            _settingsActor.Tell(new SettingsActor.SaveSettingsRequest(msg.Settings, msg.RespondTo), Self);
         }
 
         private void HandleLoadSettings(LoadSettings msg)
         {
-            _settingsActor.Tell(new SettingsActor.LoadSettingsRequest(), Context.Sender);
+            _settingsActor.Tell(new SettingsActor.LoadSettingsRequest(msg.RespondTo), Self);
         }
     }
 }

@@ -17,7 +17,9 @@ namespace Yakka.Features.Settings
         private bool _rememberSettings;
 
         private readonly IActorRef _inputActor;
-        private IActorRef _updater;
+        private readonly IActorRef _updater;
+
+        private ImmutableYakkaSettings _lastSettings;
 
         public SettingsViewModel(ActorSystem system)
         {
@@ -31,16 +33,6 @@ namespace Yakka.Features.Settings
             _updater = system.ActorOf(Props.Create(() => new SettingsUpdateActor(this)), ClientActorPaths.SettingsViewModelActor.Name);
         }
 
-        /// <summary>
-        /// Called when initializing.
-        /// </summary>
-        protected override void OnInitialize()
-        {
-            base.OnInitialize();
-
-            _inputActor.Tell(new SettingsInputActor.LoadSettings(), _updater);
-        }
-
         public string ServerAddress
         {
             get { return _serverAddress; }
@@ -49,6 +41,8 @@ namespace Yakka.Features.Settings
                 if (value == _serverAddress) return;
                 _serverAddress = value;
                 NotifyOfPropertyChange(() => ServerAddress);
+                NotifyOfPropertyChange(() => CanAcceptButton);
+                NotifyOfPropertyChange(() => CanCancelButton);
             }
         }
 
@@ -60,6 +54,8 @@ namespace Yakka.Features.Settings
                 if (value == _serverPort) return;
                 _serverPort = value;
                 NotifyOfPropertyChange(() => ServerPort);
+                NotifyOfPropertyChange(() => CanAcceptButton);
+                NotifyOfPropertyChange(() => CanCancelButton);
             }
         }
 
@@ -71,6 +67,8 @@ namespace Yakka.Features.Settings
                 if (value == _username) return;
                 _username = value;
                 NotifyOfPropertyChange(() => Username);
+                NotifyOfPropertyChange(() => CanAcceptButton);
+                NotifyOfPropertyChange(() => CanCancelButton);
             }
         }
 
@@ -82,6 +80,8 @@ namespace Yakka.Features.Settings
                 if (value == _rememberSettings) return;
                 _rememberSettings = value;
                 NotifyOfPropertyChange(() => RememberSettings);
+                NotifyOfPropertyChange(() => CanAcceptButton);
+                NotifyOfPropertyChange(() => CanCancelButton);
             }
         }
 
@@ -93,6 +93,8 @@ namespace Yakka.Features.Settings
                 if (value == _connectAutomatically) return;
                 _connectAutomatically = value;
                 NotifyOfPropertyChange(() => ConnectAutomatically);
+                NotifyOfPropertyChange(() => CanAcceptButton);
+                NotifyOfPropertyChange(() => CanCancelButton);
             }
         }
 
@@ -104,12 +106,14 @@ namespace Yakka.Features.Settings
                 if (value == _launchOnStartup) return;
                 _launchOnStartup = value;
                 NotifyOfPropertyChange(() => LaunchOnStartup);
+                NotifyOfPropertyChange(() => CanAcceptButton);
+                NotifyOfPropertyChange(() => CanCancelButton);
             }
         }
 
         public void AcceptButton()
         {
-            _inputActor.Tell(new SettingsInputActor.SaveSettings(new YakkaSettings
+            var setting = new YakkaSettings
             {
                 ConnectAutomatically = ConnectAutomatically,
                 RememberSettings = RememberSettings,
@@ -117,7 +121,9 @@ namespace Yakka.Features.Settings
                 ServerAddress = ServerAddress,
                 ServerPort = ServerPort,
                 Username = Username
-            }), _updater);
+            };
+
+            _inputActor.Tell(new SettingsInputActor.SaveSettings(setting.AsImmutable(), _updater));
         }
 
         public bool CanAcceptButton
@@ -127,19 +133,44 @@ namespace Yakka.Features.Settings
 
         private bool IsValid()
         {
+            if (string.IsNullOrWhiteSpace(ServerAddress))
+                return false;
+
+            if (string.IsNullOrWhiteSpace(Username))
+                return false;
+
+            if (ServerPort < 1024 || ServerPort > 65535)
+                return false;
+
             return true;
         }
 
         public void CancelButton()
         {
-            _inputActor.Tell(new SettingsInputActor.LoadSettings(), _updater);
+            _inputActor.Tell(new SettingsInputActor.LoadSettings(_updater));
         }
 
         public bool CanCancelButton { get { return IsChanged(); } }
 
         private bool IsChanged()
         {
-            return true;
+            if (_lastSettings == null)
+                return true;
+
+            return _lastSettings.ConnectAutomatically != ConnectAutomatically
+                   || _lastSettings.LaunchOnStartup != LaunchOnStartup
+                   || _lastSettings.RememberSettings != RememberSettings
+                   || _lastSettings.ServerAddress != ServerAddress
+                   || _lastSettings.ServerPort != ServerPort
+                   || _lastSettings.Username != Username;
+        }
+
+        public void UpdateSettings(ImmutableYakkaSettings msg)
+        {
+            _lastSettings = msg;
+
+            NotifyOfPropertyChange(() => CanAcceptButton);
+            NotifyOfPropertyChange(() => CanCancelButton);
         }
     }
 }
