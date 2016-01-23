@@ -1,10 +1,7 @@
-﻿using System.Threading.Tasks;
-using Akka.Actor;
-using Akka.Actor.Dsl;
+﻿using Akka.Actor;
 using Akka.DI.Core;
 using Akka.Event;
 using Yakka.DataModels;
-using Settings = Yakka.Properties.Settings;
 
 namespace Yakka.Actors
 {
@@ -66,8 +63,7 @@ namespace Yakka.Actors
         }
 
         #endregion
-
-
+        
         private IActorRef _worker;
 
         //We only do a full round-trip on first load
@@ -94,7 +90,8 @@ namespace Yakka.Actors
             Receive<SaveSettingsRequest>(msg => HandleSaveSettingsRequest(msg));
             Receive<LoadSettingsRequest>(msg => HandleLoadSettingsRequest(msg));
             
-            Receive<RequestCurrentSettingsRequest>(msg => { Sender.Tell(new RequestCurrentSettingsResponse(_currentSettings)); });
+            //Todo: handle if _settings = null
+            Receive<RequestCurrentSettingsRequest>(msg => Sender.Tell(new RequestCurrentSettingsResponse(_currentSettings)));
         }
 
         private void HandleSaveSettingsRequest(SaveSettingsRequest msg)
