@@ -5,3 +5,7 @@ Yakka.Client.Prototype/bin/
 Yakka.Client.Prototype/obj/
 Yakka.Common/obj/
 Yakka.Common/bin/
+Yakka/bin/
+Yakka/obj/
+Yakka.Tests/obj/
+Yakka.Tests/bin/

@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yakka.Server", "Yakka.Server\Yakka.Server.csproj", "{D149E9DF-DD26-408A-8502-BBD753126A0D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yakka.Client.Prototype", "Yakka.Client.Prototype\Yakka.Client.Prototype.csproj", "{648A0C08-85D7-4BB4-95C8-442E60C2BAB8}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yakka.Common", "Yakka.Common\Yakka.Common.csproj", "{F92514E8-EAF7-4BBF-951C-A98C88DD9FDF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yakka", "Yakka\Yakka.csproj", "{A401F7C4-9D4C-4455-B699-7520540AF93A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yakka.Tests", "Yakka.Tests\Yakka.Tests.csproj", "{F4F19C36-F34B-4E95-9E1A-FC4113632303}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,14 +21,18 @@ Global
 		{D149E9DF-DD26-408A-8502-BBD753126A0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D149E9DF-DD26-408A-8502-BBD753126A0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D149E9DF-DD26-408A-8502-BBD753126A0D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{648A0C08-85D7-4BB4-95C8-442E60C2BAB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{648A0C08-85D7-4BB4-95C8-442E60C2BAB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{648A0C08-85D7-4BB4-95C8-442E60C2BAB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{648A0C08-85D7-4BB4-95C8-442E60C2BAB8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F92514E8-EAF7-4BBF-951C-A98C88DD9FDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F92514E8-EAF7-4BBF-951C-A98C88DD9FDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F92514E8-EAF7-4BBF-951C-A98C88DD9FDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F92514E8-EAF7-4BBF-951C-A98C88DD9FDF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A401F7C4-9D4C-4455-B699-7520540AF93A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A401F7C4-9D4C-4455-B699-7520540AF93A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A401F7C4-9D4C-4455-B699-7520540AF93A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A401F7C4-9D4C-4455-B699-7520540AF93A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4F19C36-F34B-4E95-9E1A-FC4113632303}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4F19C36-F34B-4E95-9E1A-FC4113632303}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4F19C36-F34B-4E95-9E1A-FC4113632303}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4F19C36-F34B-4E95-9E1A-FC4113632303}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,7 +1,5 @@
-﻿using System;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using Akka.Actor;
-using Yakka.Client.Prototype.Messages;
 
 namespace Yakka.Client.Prototype.Actors
 {

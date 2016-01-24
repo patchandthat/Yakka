@@ -1,12 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Akka.Actor;
+using Akka.Event;
 
 namespace Yakka.Server.Actors
 {
-    class MessageRouterActor
+    class ConversationActor : ReceiveActor
     {
+        private readonly ILoggingAdapter _logger = Context.GetLogger();
+
+        public ConversationActor()
+        {
+            _logger.Debug("Instantiating ConversationActor {0}", Context.Self.Path.ToStringWithAddress());
+        }
     }
 }
