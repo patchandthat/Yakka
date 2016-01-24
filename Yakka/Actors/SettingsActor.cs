@@ -44,12 +44,6 @@ namespace Yakka.Actors
 
         public class RequestCurrentSettingsRequest
         {
-            public RequestCurrentSettingsRequest(IActorRef respondTo)
-            {
-                RespondTo = respondTo;
-            }
-
-            public IActorRef RespondTo { get; }
         }
 
         public class RequestCurrentSettingsResponse
@@ -81,21 +75,38 @@ namespace Yakka.Actors
 
         private void Available()
         {
+            _logger.Debug("Entering available state");
+
             if (_worker != null)
             {
+                _logger.Debug("Shutting down worker");
                 Context.Stop(_worker);
                 _worker = null;
             }
 
             Receive<SaveSettingsRequest>(msg => HandleSaveSettingsRequest(msg));
             Receive<LoadSettingsRequest>(msg => HandleLoadSettingsRequest(msg));
-            
-            //Todo: handle if _settings = null
-            Receive<RequestCurrentSettingsRequest>(msg => Sender.Tell(new RequestCurrentSettingsResponse(_currentSettings)));
+            Receive<RequestCurrentSettingsRequest>(msg => HandleGetCurrentSettingsRequest());
+        }
+
+        private void HandleGetCurrentSettingsRequest()
+        {
+            _logger.Debug("Handling request for current settings");
+            if (_currentSettings == null)
+            {
+                _logger.Debug("Deferring request. Doing intial load of settings");
+                Stash.Stash();
+                Self.Tell(new LoadSettingsRequest(Context.System.DeadLetters));
+            }
+            else
+            {
+                Sender.Tell(new RequestCurrentSettingsResponse(_currentSettings));
+            }
         }
 
         private void HandleSaveSettingsRequest(SaveSettingsRequest msg)
         {
+            _logger.Debug("Handling save settings request");
             _currentSettings = msg.Settings;
 
             var workerProps = Context.DI().Props<SettingsPersistenceWorkerActor>();
@@ -108,6 +119,7 @@ namespace Yakka.Actors
 
         private void HandleLoadSettingsRequest(LoadSettingsRequest msg)
         {
+            _logger.Debug("Handling save settings request");
             if (_currentSettings != null)
             {
                 msg.RespondTo.Tell(_currentSettings);
@@ -124,13 +136,28 @@ namespace Yakka.Actors
 
         private void Working()
         {
-            Receive<SaveSettingsRequest>(msg => Stash.Stash());
-            Receive<LoadSettingsRequest>(msg => Stash.Stash());
-            Receive<RequestCurrentSettingsRequest>(msg => Stash.Stash());
+            _logger.Debug("Entering working state");
 
-            //Receive worker response messages & kill worker
+            Receive<SaveSettingsRequest>(msg =>
+            {
+                _logger.Debug("Deferring {0}", msg.GetType());
+                Stash.Stash();
+            });
+            Receive<LoadSettingsRequest>(msg =>
+            {
+                _logger.Debug("Deferring {0}", msg.GetType());
+                Stash.Stash();
+            });
+            Receive<RequestCurrentSettingsRequest>(msg =>
+            {
+                _logger.Debug("Deferring {0}", msg.GetType());
+                Stash.Stash();
+            });
+
             Receive<SettingsPersistenceWorkerActor.LoadSuccess>(msg =>
             {
+                _logger.Debug("Load success");
+                _currentSettings = msg.Settings;
                 msg.RespondTo.Tell(msg.Settings);
                 Stash.UnstashAll();
                 Become(Available);
@@ -143,6 +170,7 @@ namespace Yakka.Actors
             });
             Receive<SettingsPersistenceWorkerActor.SaveSuccess>(msg =>
             {
+                _logger.Debug("Save success");
                 msg.RespondTo.Tell(msg.Settings);
                 Stash.UnstashAll();
                 Become(Available);

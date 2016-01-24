@@ -47,6 +47,7 @@ akka {{
 
             var clientName = string.Format("Client{0}", ClientId);
             _clientActorSystem = ActorSystem.Create(clientName, config);
+
             var settingsActor = _clientActorSystem.ActorOf(Props.Create(() => new SettingsActor()), ClientActorPaths.SettingsActor.Name);
 
             Initialize();

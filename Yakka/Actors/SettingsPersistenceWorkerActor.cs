@@ -90,7 +90,7 @@ namespace Yakka.Actors
 
         private void BeginSave(InitiateSave msg)
         {
-            _logger.Debug("Saving settings: {0}", msg);
+            _logger.Debug("Saving settings: {0}", msg.Settings);
 
             _storage.SaveSettings(msg.Settings.AsMutable());
 
@@ -99,7 +99,7 @@ namespace Yakka.Actors
 
         private void BeginLoad(InitiateLoad msg)
         {
-            _logger.Debug("Loading settings: {0}", msg);
+            _logger.Debug("Loading settings for: {0}", msg.RespondTo);
 
             var settings = _storage.LoadSettings();
 
