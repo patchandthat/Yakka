@@ -93,7 +93,6 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SettingsActorTests.cs" />
-    <Compile Include="SettingsWorkerActorTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

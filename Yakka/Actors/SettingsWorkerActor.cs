@@ -1,12 +1,11 @@
-﻿using System;
-using Akka.Actor;
+﻿using Akka.Actor;
 using Akka.Event;
 using Yakka.DataLayer;
 using Yakka.DataModels;
 
 namespace Yakka.Actors
 {
-    class SettingsPersistenceWorkerActor : ReceiveActor
+    class SettingsWorkerActor : ReceiveActor
     {
         #region Messages
 
@@ -40,10 +39,13 @@ namespace Yakka.Actors
 
         public class Failure
         {
-            public Failure(IActorRef respondTo)
+            public Failure(string messageType, IActorRef respondTo)
             {
                 RespondTo = respondTo;
+                MessageType = messageType;
             }
+
+            public string MessageType { get; }
 
             public IActorRef RespondTo { get; }
         }
@@ -78,7 +80,7 @@ namespace Yakka.Actors
         private readonly ILoggingAdapter _logger = Context.GetLogger();
         private readonly IYakkaDb _storage;
 
-        public SettingsPersistenceWorkerActor(IYakkaDb storage)
+        public SettingsWorkerActor(IYakkaDb storage)
         {
             _storage = storage;
 
@@ -86,38 +88,36 @@ namespace Yakka.Actors
             Receive<InitiateLoad>(msg => BeginLoad(msg));
         }
 
-        //Todo: error handling/supervision
-
         private void BeginSave(InitiateSave msg)
         {
             _logger.Debug("Saving settings: {0}", msg.Settings);
 
-            _storage.SaveSettings(msg.Settings.AsMutable());
-
-            Sender.Tell(new SaveSuccess(msg.Settings, msg.RespondTo));
+            try
+            {
+                _storage.SaveSettings(msg.Settings.AsMutable());
+                Sender.Tell(new SaveSuccess(msg.Settings, msg.RespondTo));
+            }
+            catch (System.Data.SQLite.SQLiteException ex)
+            {
+                _logger.Debug("Save failure: {0}", ex.Message);
+                Sender.Tell(new Failure(msg.GetType().ToString(), msg.RespondTo));
+            }
         }
 
         private void BeginLoad(InitiateLoad msg)
         {
             _logger.Debug("Loading settings for: {0}", msg.RespondTo);
 
-            var settings = _storage.LoadSettings();
-
-            Sender.Tell(new LoadSuccess(settings.AsImmutable(), msg.RespondTo));
-        }
-
-        protected override SupervisorStrategy SupervisorStrategy()
-        {
-            return new OneForOneStrategy(
-                maxNrOfRetries: 3,
-                withinTimeMilliseconds: 100,
-                localOnlyDecider: x =>
-                {
-                    //Todo: Handle exception types here, etc
-                    if (x is OutOfMemoryException) return Directive.Escalate;
-
-                    return Directive.Restart;
-                });
+            try
+            {
+                var settings = _storage.LoadSettings();
+                Sender.Tell(new LoadSuccess(settings.AsImmutable(), msg.RespondTo));
+            }
+            catch (System.Data.SQLite.SQLiteException ex)
+            {
+                _logger.Debug("Load failure: {0}", ex.Message);
+                Sender.Tell(new Failure(msg.GetType().ToString(), msg.RespondTo));
+            }
         }
     }
 }

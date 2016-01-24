@@ -1,6 +1,7 @@
 ﻿using Akka.Actor;
 using Akka.DI.AutoFac;
 using Akka.DI.Core;
+using Akka.TestKit.TestActors;
 using Xunit;
 using Akka.TestKit.Xunit2;
 using Autofac;
@@ -36,7 +37,7 @@ namespace Yakka.Tests
             var fakeDb = A.Fake<IYakkaDb>();
 
             builder.RegisterInstance(fakeDb).As<IYakkaDb>();
-            builder.RegisterType<SettingsPersistenceWorkerActor>();
+            builder.RegisterType<SettingsWorkerActor>();
 
             _container = builder.Build();
             _resolver = new AutoFacDependencyResolver(_container, Sys);
@@ -45,11 +46,12 @@ namespace Yakka.Tests
         [Fact]
         public void On_save_settings_request_saves_data_to_database()
         {
-            var actor = Sys.ActorOf(Props.Create(() => new SettingsActor()));
+            IActorRef hole = Sys.ActorOf(BlackHoleActor.Props);
+            var actor = Sys.ActorOf(Props.Create(() => new SettingsActor(hole)));
             var dbFake = _container.Resolve<IYakkaDb>();
             var settingsToSave = _fixture.Create<YakkaSettings>().AsImmutable();
 
-            actor.Tell(new SettingsActor.SaveSettingsRequest(settingsToSave, Sys.DeadLetters));
+            actor.Tell(new SettingsActor.SaveSettingsRequest(settingsToSave, respondTo: Sys.DeadLetters));
             ExpectNoMsg();
 
             //Verify correct data was passed
@@ -68,7 +70,8 @@ namespace Yakka.Tests
         [Fact]
         public void On_save_settings_request_responds_to_ReplyTo_actor_with_correct_settings()
         {
-            var actor = Sys.ActorOf(Props.Create(() => new SettingsActor()));
+            IActorRef hole = Sys.ActorOf(BlackHoleActor.Props);
+            var actor = Sys.ActorOf(Props.Create(() => new SettingsActor(hole)));
             var settingsToSave = _fixture.Create<YakkaSettings>().AsImmutable();
 
             actor.Tell(new SettingsActor.SaveSettingsRequest(settingsToSave, respondTo: TestActor));
@@ -86,7 +89,8 @@ namespace Yakka.Tests
         [Fact]
         public void First_load_settings_request_fetches_from_database()
         {
-            var actor = Sys.ActorOf(Props.Create(() => new SettingsActor()));
+            IActorRef hole = Sys.ActorOf(BlackHoleActor.Props);
+            var actor = Sys.ActorOf(Props.Create(() => new SettingsActor(hole)));
             var dbFake = _container.Resolve<IYakkaDb>();
             var expectedSettings = _fixture.Create<YakkaSettings>();
             A.CallTo(() => dbFake.LoadSettings())
@@ -108,7 +112,8 @@ namespace Yakka.Tests
 
         [Fact] public void Subsequent_load_requests_do_not_hit_database()
         {
-            var actor = Sys.ActorOf(Props.Create(() => new SettingsActor()));
+            IActorRef hole = Sys.ActorOf(BlackHoleActor.Props);
+            var actor = Sys.ActorOf(Props.Create(() => new SettingsActor(hole)));
             var dbFake = _container.Resolve<IYakkaDb>();
             var expectedSettings = _fixture.Create<YakkaSettings>();
             A.CallTo(() => dbFake.LoadSettings())
@@ -125,11 +130,12 @@ namespace Yakka.Tests
         [Fact]
         public void Loading_after_saving_does_not_hit_database()
         {
-            var actor = Sys.ActorOf(Props.Create(() => new SettingsActor()));
+            IActorRef hole = Sys.ActorOf(BlackHoleActor.Props);
+            var actor = Sys.ActorOf(Props.Create(() => new SettingsActor(hole)));
             var dbFake = _container.Resolve<IYakkaDb>();
             var settingsToSave = _fixture.Create<YakkaSettings>().AsImmutable();
 
-            actor.Tell(new SettingsActor.SaveSettingsRequest(settingsToSave, Sys.DeadLetters));
+            actor.Tell(new SettingsActor.SaveSettingsRequest(settingsToSave, respondTo: Sys.DeadLetters));
             ExpectNoMsg();
             actor.Tell(new SettingsActor.LoadSettingsRequest(TestActor));
             var msg = ExpectMsg<ImmutableYakkaSettings>();
@@ -143,7 +149,8 @@ namespace Yakka.Tests
         [Fact]
         public void Requesting_current_settings_responds_to_sender_with_last_known_settings()
         {
-            var actor = Sys.ActorOf(Props.Create(() => new SettingsActor()));
+            IActorRef hole = Sys.ActorOf(BlackHoleActor.Props);
+            var actor = Sys.ActorOf(Props.Create(() => new SettingsActor(hole)));
             var settingsToSave = _fixture.Create<YakkaSettings>().AsImmutable();
             var db = _container.Resolve<IYakkaDb>();
 
@@ -161,7 +168,8 @@ namespace Yakka.Tests
         [Fact]
         public void Requesting_current_settings_loads_from_database_if_no_settings_known()
         {
-            var actor = Sys.ActorOf(Props.Create(() => new SettingsActor()));
+            IActorRef hole = Sys.ActorOf(BlackHoleActor.Props);
+            var actor = Sys.ActorOf(Props.Create(() => new SettingsActor(hole)));
             var settingsToLoad = _fixture.Create<YakkaSettings>();
             var db = _container.Resolve<IYakkaDb>();
             A.CallTo(() => db.LoadSettings())
@@ -174,10 +182,17 @@ namespace Yakka.Tests
                 .MustHaveHappened(Repeated.Exactly.Once);
         }
 
-        [Fact]
         public void Some_fault_tolerance_behaviours()
         {
-            Assert.True(false, "Todo");
+            /*
+                ToDo.
+
+                On save & load failures, if all retries have failed, I want the recipient to not receive any message
+                Instead an error handling actor be messaged with details of the failure, which can notify the user, because at this point there's no other corrective action to take
+
+                Not totally sure how I can write the assertion for this, 
+                I'm probably going to need to manually DI the test actor in as the errorhandler recipient, as the settings actor is a root level actor
+            */
         }
     }
 }

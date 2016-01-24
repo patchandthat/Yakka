@@ -20,5 +20,7 @@
         public static readonly ActorMetaData InfoInputActor = new ActorMetaData("InfoInputActor");
 
         public static readonly ActorMetaData SettingsActor = new ActorMetaData("SettingsActor");
+
+        public static readonly ActorMetaData ErrorDialogActor = new ActorMetaData("ErrorDialogActor");
     }
 }

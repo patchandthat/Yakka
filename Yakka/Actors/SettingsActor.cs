@@ -1,6 +1,7 @@
 ﻿using Akka.Actor;
 using Akka.DI.Core;
 using Akka.Event;
+using Yakka.Common.Paths;
 using Yakka.DataModels;
 
 namespace Yakka.Actors
@@ -59,6 +60,7 @@ namespace Yakka.Actors
         #endregion
         
         private IActorRef _worker;
+        private readonly IActorRef _errorHandler;
 
         //We only do a full round-trip on first load
         //Otherwise we cache the first-loaded and all subsequent saves
@@ -68,9 +70,18 @@ namespace Yakka.Actors
 
         private readonly ILoggingAdapter _logger = Context.GetLogger();
 
-        public SettingsActor()
+        public SettingsActor(IActorRef errorHandler)
         {
+            _errorHandler = errorHandler;
             Become(Available);
+        }
+
+        protected override SupervisorStrategy SupervisorStrategy()
+        {
+            return new OneForOneStrategy(
+                maxNrOfRetries: 3,
+                withinTimeMilliseconds: 100,
+                localOnlyDecider: x => Directive.Stop);
         }
 
         private void Available()
@@ -109,10 +120,10 @@ namespace Yakka.Actors
             _logger.Debug("Handling save settings request");
             _currentSettings = msg.Settings;
 
-            var workerProps = Context.DI().Props<SettingsPersistenceWorkerActor>();
+            var workerProps = Context.DI().Props<SettingsWorkerActor>();
             _worker = Context.ActorOf(workerProps);
 
-            _worker.Tell(new SettingsPersistenceWorkerActor.InitiateSave(msg.Settings, msg.RespondTo), Self);
+            _worker.Tell(new SettingsWorkerActor.InitiateSave(msg.Settings, msg.RespondTo), Self);
 
             Become(Working);
         }
@@ -126,10 +137,10 @@ namespace Yakka.Actors
                 return;
             }
 
-            var workerProps = Context.DI().Props<SettingsPersistenceWorkerActor>();
+            var workerProps = Context.DI().Props<SettingsWorkerActor>();
             _worker = Context.ActorOf(workerProps);
 
-            _worker.Tell(new SettingsPersistenceWorkerActor.InitiateLoad(msg.RespondTo), Self);
+            _worker.Tell(new SettingsWorkerActor.InitiateLoad(msg.RespondTo), Self);
 
             Become(Working);
         }
@@ -154,7 +165,7 @@ namespace Yakka.Actors
                 Stash.Stash();
             });
 
-            Receive<SettingsPersistenceWorkerActor.LoadSuccess>(msg =>
+            Receive<SettingsWorkerActor.LoadSuccess>(msg =>
             {
                 _logger.Debug("Load success");
                 _currentSettings = msg.Settings;
@@ -162,13 +173,14 @@ namespace Yakka.Actors
                 Stash.UnstashAll();
                 Become(Available);
             });
-            Receive<SettingsPersistenceWorkerActor.Failure>(msg =>
+            Receive<SettingsWorkerActor.Failure>(msg =>
             {
-                //Todo: sort these later
+                _errorHandler.Tell(new ErrorDialogActor.ErrorMessage($"Failed to process {msg.MessageType} for {msg.RespondTo}"));
+
                 Stash.UnstashAll();
                 Become(Available);
             });
-            Receive<SettingsPersistenceWorkerActor.SaveSuccess>(msg =>
+            Receive<SettingsWorkerActor.SaveSuccess>(msg =>
             {
                 _logger.Debug("Save success");
                 msg.RespondTo.Tell(msg.Settings);

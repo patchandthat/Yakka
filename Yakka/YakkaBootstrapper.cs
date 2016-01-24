@@ -48,7 +48,11 @@ akka {{
             var clientName = string.Format("Client{0}", ClientId);
             _clientActorSystem = ActorSystem.Create(clientName, config);
 
-            var settingsActor = _clientActorSystem.ActorOf(Props.Create(() => new SettingsActor()), ClientActorPaths.SettingsActor.Name);
+            //Create root level actors
+            //Todo: Going to think about whether this happens by hand here, or after types are registered with autofac
+            //var errorProps = _clientActorSystem.DI().Props<ErrorDialogActor>();
+            var errorHandler = _clientActorSystem.ActorOf(Props.Create(() => new ErrorDialogActor()), ClientActorPaths.ErrorDialogActor.Name);
+            var settingsActor = _clientActorSystem.ActorOf(Props.Create(() => new SettingsActor(errorHandler)), ClientActorPaths.SettingsActor.Name);
 
             Initialize();
         }

@@ -182,8 +182,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Compile Include="Actors\ErrorDialogActor.cs" />
     <Compile Include="Actors\SettingsActor.cs" />
-    <Compile Include="Actors\SettingsPersistenceWorkerActor.cs" />
+    <Compile Include="Actors\SettingsWorkerActor.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
