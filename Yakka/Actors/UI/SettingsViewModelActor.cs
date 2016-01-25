@@ -56,7 +56,7 @@ namespace Yakka.Actors.UI
         {
             _settingsViewModel.Username = msg.Username;
             _settingsViewModel.ConnectAutomatically = msg.ConnectAutomatically;
-            _settingsViewModel.LaunchOnStartup = msg.ConnectAutomatically;
+            _settingsViewModel.LaunchOnStartup = msg.LaunchOnStartup;
             _settingsViewModel.RememberSettings = msg.RememberSettings;
             _settingsViewModel.ServerAddress = msg.ServerAddress;
             _settingsViewModel.ServerPort = msg.ServerPort;

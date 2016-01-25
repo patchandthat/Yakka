@@ -27,10 +27,10 @@ namespace Yakka.Features.Shell
 
             //Todo: This is probably better done using the autofac akka module somehow. See if you can figure it out
             //Input handler actor
-            _inputActor = system.ActorOf(Props.Create(() => new ShellInputActor()), ClientActorPaths.ShellInputActor.Name);
+            //_inputActor = system.ActorOf(Props.Create(() => new ShellInputActor()), ClientActorPaths.ShellInputActor.Name);
 
             //UI updating actor
-            system.ActorOf(Props.Create(() => new ShellUpdateActor(this)), ClientActorPaths.ShellViewModelActor.Name);
+            //system.ActorOf(Props.Create(() => new ShellUpdateActor(this)), ClientActorPaths.ShellViewModelActor.Name);
         }
 
         private enum Screens

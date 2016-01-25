@@ -10,6 +10,7 @@ using Akka.DI.Core;
 using Autofac;
 using Caliburn.Micro;
 using Yakka.Actors;
+using Yakka.Common;
 using Yakka.Common.Paths;
 using Yakka.DataLayer;
 using Yakka.Features.Conversations;
@@ -68,6 +69,7 @@ akka {{
             builder.RegisterType<EventAggregator>().As<IEventAggregator>().SingleInstance();
 
             builder.RegisterType<SqliteDb>().As<IYakkaDb>();
+            builder.RegisterType<StartupRegistryKey>().As<IStartupRegistryKey>();
 
             var assembly = Assembly.GetExecutingAssembly();
             builder.RegisterAssemblyTypes(assembly)

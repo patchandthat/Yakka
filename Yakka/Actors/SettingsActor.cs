@@ -1,6 +1,7 @@
 ﻿using Akka.Actor;
 using Akka.DI.Core;
 using Akka.Event;
+using Yakka.Common;
 using Yakka.DataModels;
 
 namespace Yakka.Actors
@@ -39,7 +40,8 @@ namespace Yakka.Actors
 
         #endregion
         
-        private IActorRef _worker;
+        private IActorRef _dbWorker;
+        private IActorRef _regWorker;
         private readonly IActorRef _errorHandler;
 
         //We only do a full round-trip on first load
@@ -68,11 +70,11 @@ namespace Yakka.Actors
         {
             _logger.Debug("Entering available state");
 
-            if (_worker != null)
+            if (_dbWorker != null)
             {
                 _logger.Debug("Shutting down worker");
-                Context.Stop(_worker);
-                _worker = null;
+                Context.Stop(_dbWorker);
+                _dbWorker = null;
             }
 
             Receive<SaveSettingsRequest>(msg => HandleSaveSettingsRequest(msg));
@@ -101,10 +103,10 @@ namespace Yakka.Actors
             _currentSettings = msg.Settings;
 
             var workerProps = Context.DI().Props<SettingsWorkerActor>();
-            _worker = Context.ActorOf(workerProps);
+            _dbWorker = Context.ActorOf(workerProps);
 
-            _worker.Tell(new SettingsWorkerActor.InitiateSave(msg.Settings, Sender), Self);
-
+            _dbWorker.Tell(new SettingsWorkerActor.InitiateSave(msg.Settings, Sender), Self);
+            
             Become(Working);
         }
 
@@ -118,9 +120,9 @@ namespace Yakka.Actors
             }
 
             var workerProps = Context.DI().Props<SettingsWorkerActor>();
-            _worker = Context.ActorOf(workerProps);
+            _dbWorker = Context.ActorOf(workerProps);
 
-            _worker.Tell(new SettingsWorkerActor.InitiateLoad(Sender), Self);
+            _dbWorker.Tell(new SettingsWorkerActor.InitiateLoad(Sender), Self);
 
             Become(Working);
         }

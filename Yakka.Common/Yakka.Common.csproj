@@ -68,6 +68,7 @@
     <Compile Include="Paths\ClientActorPaths.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Paths\ServerActorPaths.cs" />
+    <Compile Include="StartupRegKey.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

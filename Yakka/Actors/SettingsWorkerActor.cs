@@ -1,5 +1,7 @@
-﻿using Akka.Actor;
+﻿using System.Security;
+using Akka.Actor;
 using Akka.Event;
+using Yakka.Common;
 using Yakka.DataLayer;
 using Yakka.DataModels;
 
@@ -79,10 +81,12 @@ namespace Yakka.Actors
 
         private readonly ILoggingAdapter _logger = Context.GetLogger();
         private readonly IYakkaDb _storage;
+        private readonly IStartupRegistryKey _reg;
 
-        public SettingsWorkerActor(IYakkaDb storage)
+        public SettingsWorkerActor(IYakkaDb storage, IStartupRegistryKey reg)
         {
             _storage = storage;
+            _reg = reg;
 
             Receive<InitiateSave>(msg => BeginSave(msg));
             Receive<InitiateLoad>(msg => BeginLoad(msg));
@@ -95,9 +99,15 @@ namespace Yakka.Actors
             try
             {
                 _storage.SaveSettings(msg.Settings.AsMutable());
+                _reg.SetStartOnBoot(msg.Settings.LaunchOnStartup);
                 Sender.Tell(new SaveSuccess(msg.Settings, msg.RespondTo));
             }
             catch (System.Data.SQLite.SQLiteException ex)
+            {
+                _logger.Debug("Save failure: {0}", ex.Message);
+                Sender.Tell(new Failure(msg.GetType().ToString(), msg.RespondTo));
+            }
+            catch (SecurityException ex)
             {
                 _logger.Debug("Save failure: {0}", ex.Message);
                 Sender.Tell(new Failure(msg.GetType().ToString(), msg.RespondTo));

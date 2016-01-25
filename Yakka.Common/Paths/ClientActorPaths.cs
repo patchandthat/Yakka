@@ -12,13 +12,6 @@
         public static readonly ActorMetaData ConversationViewModelActor = new ActorMetaData("ConversationViewModelActor", ConversationsViewModelActor);
         public static readonly ActorMetaData InfoViewModelActor = new ActorMetaData("InfoViewModelActor");
 
-        //Viewmodels have a ref to these actors and are used to fire messages into the actor system
-        //Todo: cleanup
-        public static readonly ActorMetaData ShellInputActor = new ActorMetaData("REMOVE");
-        public static readonly ActorMetaData HomeInputActor = new ActorMetaData("REMOVE");
-        public static readonly ActorMetaData ConversationsInputActor = new ActorMetaData("REMOVE");
-        public static readonly ActorMetaData InfoInputActor = new ActorMetaData("REMOVE");
-
         public static readonly ActorMetaData SettingsActor = new ActorMetaData("SettingsActor");
 
         public static readonly ActorMetaData ErrorDialogActor = new ActorMetaData("ErrorDialogActor");

@@ -98,6 +98,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Yakka.Common\Yakka.Common.csproj">
+      <Project>{F92514E8-EAF7-4BBF-951C-A98C88DD9FDF}</Project>
+      <Name>Yakka.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Yakka\Yakka.csproj">
       <Project>{a401f7c4-9d4c-4455-b699-7520540af93a}</Project>
       <Name>Yakka</Name>

@@ -194,7 +194,7 @@
     <Compile Include="Actors\UI\Update\ConversationsUpdateActor.cs" />
     <Compile Include="Actors\UI\Input\HomeInputActor.cs" />
     <Compile Include="Actors\UI\Update\HomeUpdateActor.cs" />
-    <Compile Include="Actors\UI\Input\InfoPageInputActor.cs" />
+    <Compile Include="Actors\UI\InfoViewModelActor.cs" />
     <Compile Include="Actors\UI\Update\InfoPageUpdateActor.cs" />
     <Compile Include="Actors\UI\Input\ShellInputActor.cs" />
     <Compile Include="Actors\UI\Update\ShellUpdateActor.cs" />

@@ -8,6 +8,7 @@ using Autofac;
 using FakeItEasy;
 using Ploeh.AutoFixture;
 using Yakka.Actors;
+using Yakka.Common;
 using Yakka.DataLayer;
 using Yakka.DataModels;
 
@@ -35,8 +36,10 @@ namespace Yakka.Tests
             var builder = new ContainerBuilder();
 
             var fakeDb = A.Fake<IYakkaDb>();
+            var fakeReg = A.Fake<IStartupRegistryKey>();
 
             builder.RegisterInstance(fakeDb).As<IYakkaDb>();
+            builder.RegisterInstance(fakeReg).As<IStartupRegistryKey>();
             builder.RegisterType<SettingsWorkerActor>();
 
             _container = builder.Build();
@@ -64,6 +67,25 @@ namespace Yakka.Tests
                         && s.ConnectAutomatically == settingsToSave.ConnectAutomatically
                         && s.LaunchOnStartup == settingsToSave.LaunchOnStartup
                         && s.RememberSettings == settingsToSave.RememberSettings)))
+                .MustHaveHappened();
+        }
+
+        [Fact]
+        public void On_save_settings_request_sets_startup_registry_key()
+        {
+            IActorRef hole = Sys.ActorOf(BlackHoleActor.Props);
+            var actor = Sys.ActorOf(Props.Create(() => new SettingsActor(hole)));
+            var keyFake = _container.Resolve<IStartupRegistryKey>();
+            var settingsToSave = _fixture.Create<YakkaSettings>().AsImmutable();
+
+            actor.Tell(new SettingsActor.SaveSettingsRequest(settingsToSave));
+            var msg = ExpectMsg<ImmutableYakkaSettings>();
+
+            //Verify correct data was passed
+            A.CallTo(() =>
+                keyFake.SetStartOnBoot(
+                    A<bool>.That.Matches(
+                        b => b == settingsToSave.LaunchOnStartup)))
                 .MustHaveHappened();
         }
 
