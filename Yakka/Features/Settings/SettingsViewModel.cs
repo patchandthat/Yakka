@@ -1,7 +1,6 @@
 ﻿using Akka.Actor;
 using Caliburn.Micro;
-using Yakka.Actors.UI.Input;
-using Yakka.Actors.UI.Update;
+using Yakka.Actors.UI;
 using Yakka.Common.Paths;
 using Yakka.DataModels;
 
@@ -16,8 +15,7 @@ namespace Yakka.Features.Settings
         private bool _connectAutomatically;
         private bool _rememberSettings;
 
-        private readonly IActorRef _inputActor;
-        private readonly IActorRef _updater;
+        private readonly IActorRef _vmActor;
 
         private ImmutableYakkaSettings _lastSettings;
 
@@ -25,12 +23,8 @@ namespace Yakka.Features.Settings
         {
             DisplayName = "Settings";
 
-            //Todo: This is probably better done using the autofac akka module somehow. See if you can figure it out
-            //Input handler actor
-            _inputActor = system.ActorOf(Props.Create(() => new SettingsInputActor()), ClientActorPaths.SettingsInputActor.Name);
-
-            //UI updating actor
-            _updater = system.ActorOf(Props.Create(() => new SettingsUpdateActor(this)), ClientActorPaths.SettingsViewModelActor.Name);
+            //Can use the DI if we register the viewmodels as single instance.  This will work for the most part, may need to fallback to this method for conversations
+            _vmActor = system.ActorOf(Props.Create(() => new SettingsViewModelActor(this)), ClientActorPaths.SettingsViewModelActor.Name);
         }
 
         public string ServerAddress
@@ -123,7 +117,7 @@ namespace Yakka.Features.Settings
                 Username = Username
             };
 
-            _inputActor.Tell(new SettingsInputActor.SaveSettings(setting.AsImmutable(), _updater));
+            _vmActor.Tell(new SettingsViewModelActor.SaveSettings(setting.AsImmutable()));
         }
 
         public bool CanAcceptButton
@@ -147,7 +141,7 @@ namespace Yakka.Features.Settings
 
         public void CancelButton()
         {
-            _inputActor.Tell(new SettingsInputActor.LoadSettings(_updater));
+            _vmActor.Tell(new SettingsViewModelActor.LoadSettings());
         }
 
         public bool CanCancelButton { get { return IsChanged(); } }

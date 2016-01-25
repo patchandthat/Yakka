@@ -1,7 +1,6 @@
 ﻿using Akka.Actor;
 using Akka.DI.Core;
 using Akka.Event;
-using Yakka.Common.Paths;
 using Yakka.DataModels;
 
 namespace Yakka.Actors
@@ -12,25 +11,16 @@ namespace Yakka.Actors
 
         public class SaveSettingsRequest
         {
-            public SaveSettingsRequest(ImmutableYakkaSettings settings, IActorRef respondTo)
+            public SaveSettingsRequest(ImmutableYakkaSettings settings)
             {
                 Settings = settings;
-                RespondTo = respondTo;
             }
 
             public ImmutableYakkaSettings Settings { get; private set; }
-
-            public IActorRef RespondTo { get; }
         }
 
         public class LoadSettingsRequest
         {
-            public LoadSettingsRequest(IActorRef respondTo)
-            {
-                RespondTo = respondTo;
-            }
-            
-            public IActorRef RespondTo { get; }
         }
 
         public class LoadSettingsResponse
@@ -107,7 +97,7 @@ namespace Yakka.Actors
             {
                 _logger.Debug("Deferring request. Doing intial load of settings");
                 Stash.Stash();
-                Self.Tell(new LoadSettingsRequest(Context.System.DeadLetters));
+                Self.Tell(new LoadSettingsRequest(), Sender);
             }
             else
             {
@@ -123,7 +113,7 @@ namespace Yakka.Actors
             var workerProps = Context.DI().Props<SettingsWorkerActor>();
             _worker = Context.ActorOf(workerProps);
 
-            _worker.Tell(new SettingsWorkerActor.InitiateSave(msg.Settings, msg.RespondTo), Self);
+            _worker.Tell(new SettingsWorkerActor.InitiateSave(msg.Settings, Sender), Self);
 
             Become(Working);
         }
@@ -133,14 +123,14 @@ namespace Yakka.Actors
             _logger.Debug("Handling save settings request");
             if (_currentSettings != null)
             {
-                msg.RespondTo.Tell(_currentSettings);
+                Sender.Tell(_currentSettings);
                 return;
             }
 
             var workerProps = Context.DI().Props<SettingsWorkerActor>();
             _worker = Context.ActorOf(workerProps);
 
-            _worker.Tell(new SettingsWorkerActor.InitiateLoad(msg.RespondTo), Self);
+            _worker.Tell(new SettingsWorkerActor.InitiateLoad(Sender), Self);
 
             Become(Working);
         }

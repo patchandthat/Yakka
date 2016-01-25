@@ -3,49 +3,46 @@ using Akka.Actor;
 using Akka.Event;
 using Yakka.Common.Paths;
 using Yakka.DataModels;
+using Yakka.Features.Settings;
 
-namespace Yakka.Actors.UI.Input
+namespace Yakka.Actors.UI
 {
-    internal class SettingsInputActor : ReceiveActor
+    class SettingsViewModelActor : ReceiveActor
     {
         #region Messages
 
         internal class SaveSettings
         {
-            public SaveSettings(ImmutableYakkaSettings settings, IActorRef respondTo)
+            public SaveSettings(ImmutableYakkaSettings settings)
             {
                 Settings = settings;
-                RespondTo = respondTo;
             }
 
             public ImmutableYakkaSettings Settings { get; private set; }
-
-            public IActorRef RespondTo { get; }
         }
 
         internal class LoadSettings
         {
-            public LoadSettings(IActorRef respondTo)
-            {
-                RespondTo = respondTo;
-            }
-
-            public IActorRef RespondTo { get; }
         }
 
         #endregion
-        
+
+        private readonly SettingsViewModel _settingsViewModel;
+
         private readonly ILoggingAdapter _logger = Context.GetLogger();
+
         private IActorRef _settingsActor;
 
-        public SettingsInputActor()
+        public SettingsViewModelActor(SettingsViewModel settingsViewModel)
         {
             _logger.Debug("Initialising {0} at {1}", GetType().FullName, Context.Self.Path.ToStringWithAddress());
+            _settingsViewModel = settingsViewModel;
 
+            Receive<ImmutableYakkaSettings>(msg => HandleSettingsUpdate(msg));
             Receive<SaveSettings>(msg => HandleSaveSettings(msg));
             Receive<LoadSettings>(msg => HandleLoadSettings(msg));
         }
-
+        
         protected override async void PreStart()
         {
             //Resolve necessary actor references to avoid the cost of selecting by path for each message
@@ -55,14 +52,26 @@ namespace Yakka.Actors.UI.Input
             base.PreStart();
         }
 
+        private void HandleSettingsUpdate(ImmutableYakkaSettings msg)
+        {
+            _settingsViewModel.Username = msg.Username;
+            _settingsViewModel.ConnectAutomatically = msg.ConnectAutomatically;
+            _settingsViewModel.LaunchOnStartup = msg.ConnectAutomatically;
+            _settingsViewModel.RememberSettings = msg.RememberSettings;
+            _settingsViewModel.ServerAddress = msg.ServerAddress;
+            _settingsViewModel.ServerPort = msg.ServerPort;
+
+            _settingsViewModel.UpdateSettings(msg);
+        }
+
         private void HandleSaveSettings(SaveSettings msg)
         {
-            _settingsActor.Tell(new SettingsActor.SaveSettingsRequest(msg.Settings, msg.RespondTo), Self);
+            _settingsActor.Tell(new SettingsActor.SaveSettingsRequest(msg.Settings), Self);
         }
 
         private void HandleLoadSettings(LoadSettings msg)
         {
-            _settingsActor.Tell(new SettingsActor.LoadSettingsRequest(msg.RespondTo), Self);
+            _settingsActor.Tell(new SettingsActor.LoadSettingsRequest(), Self);
         }
     }
 }

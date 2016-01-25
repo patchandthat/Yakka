@@ -51,7 +51,7 @@ namespace Yakka.Tests
             var dbFake = _container.Resolve<IYakkaDb>();
             var settingsToSave = _fixture.Create<YakkaSettings>().AsImmutable();
 
-            actor.Tell(new SettingsActor.SaveSettingsRequest(settingsToSave, respondTo: Sys.DeadLetters));
+            actor.Tell(new SettingsActor.SaveSettingsRequest(settingsToSave));
             ExpectNoMsg();
 
             //Verify correct data was passed
@@ -74,7 +74,7 @@ namespace Yakka.Tests
             var actor = Sys.ActorOf(Props.Create(() => new SettingsActor(hole)));
             var settingsToSave = _fixture.Create<YakkaSettings>().AsImmutable();
 
-            actor.Tell(new SettingsActor.SaveSettingsRequest(settingsToSave, respondTo: TestActor));
+            actor.Tell(new SettingsActor.SaveSettingsRequest(settingsToSave));
             var msg = ExpectMsg<ImmutableYakkaSettings>();
 
             //Verify response message matches saved data
@@ -96,7 +96,7 @@ namespace Yakka.Tests
             A.CallTo(() => dbFake.LoadSettings())
                 .Returns(expectedSettings);
 
-            actor.Tell(new SettingsActor.LoadSettingsRequest(respondTo: TestActor));
+            actor.Tell(new SettingsActor.LoadSettingsRequest());
             var msg = ExpectMsg<ImmutableYakkaSettings>();
 
             A.CallTo(() => dbFake.LoadSettings())
@@ -119,8 +119,8 @@ namespace Yakka.Tests
             A.CallTo(() => dbFake.LoadSettings())
                 .Returns(expectedSettings);
 
-            actor.Tell(new SettingsActor.LoadSettingsRequest(respondTo: TestActor));
-            actor.Tell(new SettingsActor.LoadSettingsRequest(respondTo: TestActor));
+            actor.Tell(new SettingsActor.LoadSettingsRequest());
+            actor.Tell(new SettingsActor.LoadSettingsRequest());
             var msg = ExpectMsg<ImmutableYakkaSettings>();
 
             A.CallTo(() => dbFake.LoadSettings())
@@ -135,9 +135,9 @@ namespace Yakka.Tests
             var dbFake = _container.Resolve<IYakkaDb>();
             var settingsToSave = _fixture.Create<YakkaSettings>().AsImmutable();
 
-            actor.Tell(new SettingsActor.SaveSettingsRequest(settingsToSave, respondTo: Sys.DeadLetters));
+            actor.Tell(new SettingsActor.SaveSettingsRequest(settingsToSave));
             ExpectNoMsg();
-            actor.Tell(new SettingsActor.LoadSettingsRequest(TestActor));
+            actor.Tell(new SettingsActor.LoadSettingsRequest());
             var msg = ExpectMsg<ImmutableYakkaSettings>();
 
             A.CallTo(() => dbFake.LoadSettings())
@@ -154,7 +154,7 @@ namespace Yakka.Tests
             var settingsToSave = _fixture.Create<YakkaSettings>().AsImmutable();
             var db = _container.Resolve<IYakkaDb>();
 
-            actor.Tell(new SettingsActor.SaveSettingsRequest(settingsToSave, Sys.DeadLetters));
+            actor.Tell(new SettingsActor.SaveSettingsRequest(settingsToSave));
             ExpectNoMsg();
 
             actor.Tell(new SettingsActor.RequestCurrentSettingsRequest());

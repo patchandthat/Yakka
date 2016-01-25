@@ -185,6 +185,7 @@
     <Compile Include="Actors\ErrorDialogActor.cs" />
     <Compile Include="Actors\SettingsActor.cs" />
     <Compile Include="Actors\SettingsWorkerActor.cs" />
+    <Compile Include="Actors\UI\SettingsViewModelActor.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -195,8 +196,6 @@
     <Compile Include="Actors\UI\Update\HomeUpdateActor.cs" />
     <Compile Include="Actors\UI\Input\InfoPageInputActor.cs" />
     <Compile Include="Actors\UI\Update\InfoPageUpdateActor.cs" />
-    <Compile Include="Actors\UI\Input\SettingsInputActor.cs" />
-    <Compile Include="Actors\UI\Update\SettingsUpdateActor.cs" />
     <Compile Include="Actors\UI\Input\ShellInputActor.cs" />
     <Compile Include="Actors\UI\Update\ShellUpdateActor.cs" />
     <Compile Include="DataLayer\IYakkaDB.cs" />
