@@ -52,7 +52,7 @@ namespace Yakka.Tests
             var settingsToSave = _fixture.Create<YakkaSettings>().AsImmutable();
 
             actor.Tell(new SettingsActor.SaveSettingsRequest(settingsToSave));
-            ExpectNoMsg();
+            var msg = ExpectMsg<ImmutableYakkaSettings>();
 
             //Verify correct data was passed
             A.CallTo(() =>
@@ -136,9 +136,9 @@ namespace Yakka.Tests
             var settingsToSave = _fixture.Create<YakkaSettings>().AsImmutable();
 
             actor.Tell(new SettingsActor.SaveSettingsRequest(settingsToSave));
-            ExpectNoMsg();
-            actor.Tell(new SettingsActor.LoadSettingsRequest());
             var msg = ExpectMsg<ImmutableYakkaSettings>();
+            actor.Tell(new SettingsActor.LoadSettingsRequest());
+            msg = ExpectMsg<ImmutableYakkaSettings>();
 
             A.CallTo(() => dbFake.LoadSettings())
                 .MustNotHaveHappened();
@@ -155,12 +155,12 @@ namespace Yakka.Tests
             var db = _container.Resolve<IYakkaDb>();
 
             actor.Tell(new SettingsActor.SaveSettingsRequest(settingsToSave));
-            ExpectNoMsg();
+            var settingsMsg = ExpectMsg<ImmutableYakkaSettings>();
 
             actor.Tell(new SettingsActor.RequestCurrentSettingsRequest());
-            var msg = ExpectMsg<SettingsActor.RequestCurrentSettingsResponse>();
+            var responseMsg = ExpectMsg<ImmutableYakkaSettings>();
 
-            Assert.Same(settingsToSave, msg.Settings);
+            Assert.Same(settingsToSave, responseMsg);
             A.CallTo(() => db.LoadSettings())
                 .MustNotHaveHappened();
         }
@@ -176,7 +176,7 @@ namespace Yakka.Tests
                 .Returns(settingsToLoad);
 
             actor.Tell(new SettingsActor.RequestCurrentSettingsRequest());
-            var msg = ExpectMsg<SettingsActor.RequestCurrentSettingsResponse>();
+            var msg = ExpectMsg<ImmutableYakkaSettings>();
 
             A.CallTo(() => db.LoadSettings())
                 .MustHaveHappened(Repeated.Exactly.Once);

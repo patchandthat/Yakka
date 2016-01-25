@@ -99,8 +99,8 @@ akka {{
             var settings = new Dictionary<string, object>
             {
                 {"SizeToContent", SizeToContent.Manual},
-                {"Width", 750},
-                {"Height", 500},
+                {"Width", 650},
+                {"Height", 425},
             };
 
             DisplayRootViewFor<ShellViewModel>(settings);

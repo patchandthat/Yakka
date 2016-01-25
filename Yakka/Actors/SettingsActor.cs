@@ -37,16 +37,6 @@ namespace Yakka.Actors
         {
         }
 
-        public class RequestCurrentSettingsResponse
-        {
-            public RequestCurrentSettingsResponse(ImmutableYakkaSettings settings)
-            {
-                Settings = settings;
-            }
-
-            public ImmutableYakkaSettings Settings { get; private set; }
-        }
-
         #endregion
         
         private IActorRef _worker;
@@ -101,7 +91,7 @@ namespace Yakka.Actors
             }
             else
             {
-                Sender.Tell(new RequestCurrentSettingsResponse(_currentSettings));
+                Sender.Tell(_currentSettings);
             }
         }
 
