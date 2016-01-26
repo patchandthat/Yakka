@@ -117,7 +117,7 @@ namespace Yakka.Features.Settings
                 Username = Username
             };
 
-            _vmActor.Tell(new SettingsViewModelActor.SaveSettings(setting.AsImmutable()));
+            _vmActor.Tell(new SettingsViewModelActor.SaveSettings(setting.ToImmutable()));
         }
 
         public bool CanAcceptButton

@@ -98,7 +98,7 @@ namespace Yakka.Actors
 
             try
             {
-                _storage.SaveSettings(msg.Settings.AsMutable());
+                _storage.SaveSettings(msg.Settings.ToMutable());
                 _reg.SetStartOnBoot(msg.Settings.LaunchOnStartup);
                 Sender.Tell(new SaveSuccess(msg.Settings, msg.RespondTo));
             }
@@ -121,7 +121,7 @@ namespace Yakka.Actors
             try
             {
                 var settings = _storage.LoadSettings();
-                Sender.Tell(new LoadSuccess(settings.AsImmutable(), msg.RespondTo));
+                Sender.Tell(new LoadSuccess(settings.ToImmutable(), msg.RespondTo));
             }
             catch (System.Data.SQLite.SQLiteException ex)
             {

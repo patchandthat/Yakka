@@ -23,18 +23,5 @@ namespace Yakka.DataModels
         public bool ConnectAutomatically { get; }
 
         public bool LaunchOnStartup { get; }
-
-        public YakkaSettings AsMutable()
-        {
-            return new YakkaSettings()
-            {
-                ConnectAutomatically = ConnectAutomatically,
-                ServerPort = ServerPort,
-                Username = Username,
-                LaunchOnStartup = LaunchOnStartup,
-                RememberSettings = RememberSettings,
-                ServerAddress = ServerAddress
-            };
-        }
     }
 }

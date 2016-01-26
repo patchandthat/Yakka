@@ -201,6 +201,7 @@
     <Compile Include="DataLayer\IYakkaDB.cs" />
     <Compile Include="DataLayer\SqliteDb.cs" />
     <Compile Include="DataModels\ImmutableYakkaSettings.cs" />
+    <Compile Include="DataModels\SettingsExtension.cs" />
     <Compile Include="DataModels\YakkaSettings.cs" />
     <Compile Include="Features\Conversations\ConversationViewModel.cs" />
     <Compile Include="YakkaBootstrapper.cs" />

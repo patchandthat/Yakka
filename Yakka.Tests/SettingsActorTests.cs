@@ -52,7 +52,7 @@ namespace Yakka.Tests
             IActorRef hole = Sys.ActorOf(BlackHoleActor.Props);
             var actor = Sys.ActorOf(Props.Create(() => new SettingsActor(hole)));
             var dbFake = _container.Resolve<IYakkaDb>();
-            var settingsToSave = _fixture.Create<YakkaSettings>().AsImmutable();
+            var settingsToSave = _fixture.Create<YakkaSettings>().ToImmutable();
 
             actor.Tell(new SettingsActor.SaveSettingsRequest(settingsToSave));
             var msg = ExpectMsg<ImmutableYakkaSettings>();
@@ -76,7 +76,7 @@ namespace Yakka.Tests
             IActorRef hole = Sys.ActorOf(BlackHoleActor.Props);
             var actor = Sys.ActorOf(Props.Create(() => new SettingsActor(hole)));
             var keyFake = _container.Resolve<IStartupRegistryKey>();
-            var settingsToSave = _fixture.Create<YakkaSettings>().AsImmutable();
+            var settingsToSave = _fixture.Create<YakkaSettings>().ToImmutable();
 
             actor.Tell(new SettingsActor.SaveSettingsRequest(settingsToSave));
             var msg = ExpectMsg<ImmutableYakkaSettings>();
@@ -94,7 +94,7 @@ namespace Yakka.Tests
         {
             IActorRef hole = Sys.ActorOf(BlackHoleActor.Props);
             var actor = Sys.ActorOf(Props.Create(() => new SettingsActor(hole)));
-            var settingsToSave = _fixture.Create<YakkaSettings>().AsImmutable();
+            var settingsToSave = _fixture.Create<YakkaSettings>().ToImmutable();
 
             actor.Tell(new SettingsActor.SaveSettingsRequest(settingsToSave));
             var msg = ExpectMsg<ImmutableYakkaSettings>();
@@ -155,7 +155,7 @@ namespace Yakka.Tests
             IActorRef hole = Sys.ActorOf(BlackHoleActor.Props);
             var actor = Sys.ActorOf(Props.Create(() => new SettingsActor(hole)));
             var dbFake = _container.Resolve<IYakkaDb>();
-            var settingsToSave = _fixture.Create<YakkaSettings>().AsImmutable();
+            var settingsToSave = _fixture.Create<YakkaSettings>().ToImmutable();
 
             actor.Tell(new SettingsActor.SaveSettingsRequest(settingsToSave));
             var msg = ExpectMsg<ImmutableYakkaSettings>();
@@ -173,7 +173,7 @@ namespace Yakka.Tests
         {
             IActorRef hole = Sys.ActorOf(BlackHoleActor.Props);
             var actor = Sys.ActorOf(Props.Create(() => new SettingsActor(hole)));
-            var settingsToSave = _fixture.Create<YakkaSettings>().AsImmutable();
+            var settingsToSave = _fixture.Create<YakkaSettings>().ToImmutable();
             var db = _container.Resolve<IYakkaDb>();
 
             actor.Tell(new SettingsActor.SaveSettingsRequest(settingsToSave));

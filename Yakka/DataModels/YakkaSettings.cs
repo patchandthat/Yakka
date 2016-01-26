@@ -2,9 +2,6 @@
 {
     class YakkaSettings
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="T:System.Object"/> class.
-        /// </summary>
         public YakkaSettings()
         {
             ServerAddress = "";
@@ -22,16 +19,5 @@
         public bool ConnectAutomatically { get; set; }
 
         public bool LaunchOnStartup { get; set; }
-
-        public ImmutableYakkaSettings AsImmutable()
-        {
-            return new ImmutableYakkaSettings(
-                ServerAddress,
-                ServerPort,
-                Username,
-                RememberSettings,
-                ConnectAutomatically,
-                LaunchOnStartup);
-        }
     }
 }
