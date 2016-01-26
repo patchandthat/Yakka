@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Windows;
 using Akka.Actor;
 using Caliburn.Micro;
-using Yakka.Actors.UI.Input;
-using Yakka.Actors.UI.Update;
+using MahApps.Metro.Controls.Dialogs;
+using Yakka.Actors;
 using Yakka.Common.Paths;
 using Yakka.Features.Conversations;
 using Yakka.Features.HomeScreen;
@@ -13,24 +16,22 @@ namespace Yakka.Features.Shell
 {
     class ShellViewModel : Screen
     {
+        private readonly IWindowManager _windowManager;
         private IScreen _activeContent;
+        private ResourceDictionary DialogDictionary = new ResourceDictionary() { Source = new Uri("pack://application:,,,/MaterialDesignThemes.MahApps;component/Themes/MaterialDesignTheme.MahApps.Dialogs.xaml") };
 
         private readonly Dictionary<Screens, Screen> _screens = new Dictionary<Screens, Screen>();
-        private readonly IActorRef _inputActor;
 
-        public ShellViewModel(HomeViewModel home, SettingsViewModel settings, InfoPageViewModel infoPage, ConversationsViewModel convos, ActorSystem system)
+        public ShellViewModel(HomeViewModel home, SettingsViewModel settings, InfoPageViewModel infoPage, ConversationsViewModel convos, ActorSystem system, IWindowManager windowManager)
         {
+            _windowManager = windowManager;
             _screens.Add(Screens.Home, home);
             _screens.Add(Screens.Settings, settings);
             _screens.Add(Screens.Info, infoPage);
             _screens.Add(Screens.Conversations, convos);
 
-            //Todo: This is probably better done using the autofac akka module somehow. See if you can figure it out
-            //Input handler actor
-            //_inputActor = system.ActorOf(Props.Create(() => new ShellInputActor()), ClientActorPaths.ShellInputActor.Name);
-
-            //UI updating actor
-            //system.ActorOf(Props.Create(() => new ShellUpdateActor(this)), ClientActorPaths.ShellViewModelActor.Name);
+            system.ActorSelection(ClientActorPaths.ErrorDialogActor.Path)
+                .Tell(new ErrorDialogActor.RegisterShell(this));
         }
 
         private enum Screens
@@ -72,7 +73,7 @@ namespace Yakka.Features.Shell
 
         public void ConnectButton()
         {
-            
+            DebugShowDialog();
         }
 
         public void HomeButton()
@@ -93,6 +94,30 @@ namespace Yakka.Features.Shell
         public void InfoButton()
         {
             ActiveContent = _screens[Screens.Info];
+        }
+
+        public void DebugShowDialog()
+        {
+            var settings = new MetroDialogSettings()
+            {
+                CustomResourceDictionary = DialogDictionary,
+                SuppressDefaultResources = true
+            };
+
+            try
+            {
+                Task<MessageDialogResult> tResult = DialogCoordinator.Instance.ShowMessageAsync(this, "DIALOG TITLE", "MESSAGE: TODO", MessageDialogStyle.Affirmative, settings);
+            }
+            catch (Exception ex)
+            {
+                //inspect me
+                throw;
+            }
+        }
+
+        public void DebugShowDialog2()
+        {
+            //Todo: read http://dragablz.net/2015/10/09/wpf-dialog-boxes-in-material-design-in-xaml-toolkit/
         }
     }
 }

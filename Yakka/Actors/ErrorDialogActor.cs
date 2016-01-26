@@ -1,5 +1,6 @@
 ﻿using Akka.Actor;
 using Akka.Event;
+using Yakka.Features.Shell;
 
 namespace Yakka.Actors
 {
@@ -15,19 +16,33 @@ namespace Yakka.Actors
             public string Message { get; }
         }
 
+        public class RegisterShell
+        {
+            public RegisterShell(ShellViewModel shell)
+            {
+                Shell = shell;
+            }
+
+            public ShellViewModel Shell { get; }
+        }
+
         private readonly ILoggingAdapter _logger = Context.GetLogger();
-        
+        private ShellViewModel _shell;
+
         public ErrorDialogActor()
         {
             Receive<ErrorMessage>(msg => HandleError(msg));
+            Receive<RegisterShell>(msg => _shell = msg.Shell);
         }
 
         private void HandleError(ErrorMessage errorMessage)
         {
             _logger.Warning(errorMessage.Message);
 
-            //Todo: Notify user
-            //Probably need some register message to be called on startup after ui is initialised
+            if (_shell != null)
+            {
+                //Todo: show dialog
+            }
         }
     }
 }

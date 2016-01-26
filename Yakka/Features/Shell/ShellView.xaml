@@ -7,6 +7,10 @@
         xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
+        
+        xmlns:dialogs="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+        dialogs:DialogParticipation.Register="{Binding}"
+        
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}"
         BorderBrush="{DynamicResource MaterialDesignTextBoxBorder}" BorderThickness="1"
@@ -72,6 +76,12 @@
         </wpf:ColorZone>
         
         <controls:TransitioningContentControl x:Name="ActiveContent" Margin="8"></controls:TransitioningContentControl>
+        
+        <!--<wpf:DialogHost>
+            <wpf:DialogHost.DialogContent>
+                
+            </wpf:DialogHost.DialogContent>
+        </wpf:DialogHost>-->
     </DockPanel>
 
 </controls:MetroWindow>
