@@ -1,4 +1,5 @@
-﻿using Akka.Actor;
+﻿using System.Threading.Tasks;
+using Akka.Actor;
 using Akka.Event;
 using Yakka.Features.Shell;
 
@@ -34,14 +35,19 @@ namespace Yakka.Actors
         public ErrorDialogActor()
         {
             Receive<ErrorMessage>(msg => HandleError(msg));
-            Receive<RegisterShell>(msg => _shell = msg.Shell);
+            Receive<RegisterShell>(msg => HandleRegisterShell(msg));
+        }
+
+        private void HandleRegisterShell(RegisterShell msg)
+        {
+            _shell = msg.Shell;
         }
 
         private void HandleError(ErrorMessage errorMessage)
         {
             _logger.Warning(errorMessage.LogMessage);
 
-            _shell?.QueueErrorDialog(errorMessage.UserFriendlyMessage);
+            _shell?.QueueErrorDialog(errorMessage);
         }
     }
 }

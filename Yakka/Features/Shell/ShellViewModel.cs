@@ -1,6 +1,8 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Windows;
 using Akka.Actor;
 using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
@@ -19,7 +21,7 @@ namespace Yakka.Features.Shell
         private IScreen _activeContent;
 
         private readonly Dictionary<Screens, Screen> _screens = new Dictionary<Screens, Screen>();
-        private readonly ConcurrentQueue<ErrorDialog> _errorDialogs = new ConcurrentQueue<ErrorDialog>();
+        private readonly ConcurrentQueue<ErrorDialogActor.ErrorMessage> _errorDialogs = new ConcurrentQueue<ErrorDialogActor.ErrorMessage>();
 
         public ShellViewModel(HomeViewModel home, SettingsViewModel settings, InfoPageViewModel infoPage, ConversationsViewModel convos, ActorSystem system)
         {
@@ -73,7 +75,7 @@ namespace Yakka.Features.Shell
         
         public void ConnectButton()
         {
-            QueueErrorDialog("Connecting is not yet implemented.");
+            QueueErrorDialog(new ErrorDialogActor.ErrorMessage("","Connecting is not yet implemented."));
         }
 
         public void HomeButton()
@@ -96,17 +98,9 @@ namespace Yakka.Features.Shell
             ActiveContent = _screens[Screens.Info];
         }
 
-        public void QueueErrorDialog(string errorMessage)
+        public void QueueErrorDialog(ErrorDialogActor.ErrorMessage errorMessage)
         {
-            var dialog = new ErrorDialog()
-            {
-                MessageTextBlock =
-                {
-                    Text = errorMessage
-                }
-            };
-
-            _errorDialogs.Enqueue(dialog);
+            _errorDialogs.Enqueue(errorMessage);
         }
 
         private async void ProcessErrorDialogQueue()
@@ -115,12 +109,12 @@ namespace Yakka.Features.Shell
             {
                 if (!_errorDialogs.IsEmpty)
                 {
-                    ErrorDialog dlg;
-                    if (_errorDialogs.TryDequeue(out dlg))
+                    ErrorDialogActor.ErrorMessage message;
+                    if (_errorDialogs.TryDequeue(out message))
                     {
-                        await dlg.Dispatcher.Invoke(async () =>
+                        await Application.Current.Dispatcher.Invoke(async () =>
                          {
-                             var d = dlg;
+                             var d = message;
                              await ShowDialog(d);
                          });
                     }
@@ -131,9 +125,17 @@ namespace Yakka.Features.Shell
             // ReSharper disable once FunctionNeverReturns
         }
 
-        private Task<object> ShowDialog(ErrorDialog errorDialog)
+        private Task<object> ShowDialog(ErrorDialogActor.ErrorMessage errorMessage)
         {
-            return DialogHost.Show(errorDialog);
+            var dialog = new ErrorDialog()
+            {
+                MessageTextBlock =
+                {
+                    Text = errorMessage.UserFriendlyMessage
+                }
+            };
+
+            return DialogHost.Show(dialog);
         }
     }
 }
