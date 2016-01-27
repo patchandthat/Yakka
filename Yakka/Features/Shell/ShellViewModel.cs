@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Windows;
 using Akka.Actor;
 using Caliburn.Micro;
 using MahApps.Metro.Controls.Dialogs;
+using MaterialDesignThemes.Wpf;
 using Yakka.Actors;
 using Yakka.Common.Paths;
 using Yakka.Features.Conversations;
+using Yakka.Features.Dialogs;
 using Yakka.Features.HomeScreen;
 using Yakka.Features.InfoPage;
 using Yakka.Features.Settings;
@@ -16,15 +17,12 @@ namespace Yakka.Features.Shell
 {
     class ShellViewModel : Screen
     {
-        private readonly IWindowManager _windowManager;
         private IScreen _activeContent;
-        private ResourceDictionary DialogDictionary = new ResourceDictionary() { Source = new Uri("pack://application:,,,/MaterialDesignThemes.MahApps;component/Themes/MaterialDesignTheme.MahApps.Dialogs.xaml") };
 
         private readonly Dictionary<Screens, Screen> _screens = new Dictionary<Screens, Screen>();
 
-        public ShellViewModel(HomeViewModel home, SettingsViewModel settings, InfoPageViewModel infoPage, ConversationsViewModel convos, ActorSystem system, IWindowManager windowManager)
+        public ShellViewModel(HomeViewModel home, SettingsViewModel settings, InfoPageViewModel infoPage, ConversationsViewModel convos, ActorSystem system)
         {
-            _windowManager = windowManager;
             _screens.Add(Screens.Home, home);
             _screens.Add(Screens.Settings, settings);
             _screens.Add(Screens.Info, infoPage);
@@ -96,28 +94,23 @@ namespace Yakka.Features.Shell
             ActiveContent = _screens[Screens.Info];
         }
 
-        public void DebugShowDialog()
-        {
-            var settings = new MetroDialogSettings()
-            {
-                CustomResourceDictionary = DialogDictionary,
-                SuppressDefaultResources = true
-            };
-
-            try
-            {
-                Task<MessageDialogResult> tResult = DialogCoordinator.Instance.ShowMessageAsync(this, "DIALOG TITLE", "MESSAGE: TODO", MessageDialogStyle.Affirmative, settings);
-            }
-            catch (Exception ex)
-            {
-                //inspect me
-                throw;
-            }
-        }
-
-        public void DebugShowDialog2()
+        public async void DebugShowDialog()
         {
             //Todo: read http://dragablz.net/2015/10/09/wpf-dialog-boxes-in-material-design-in-xaml-toolkit/
+            //Take a look at https://github.com/Codeusa/SteamCleaner - uses this dialog method nicely. Look at CleanerUtilities.CleanData()
+
+            const string myText = "Todo: this stuff is not yet supported.";
+
+            var dialog = new ErrorDialog()
+            {
+                MessageTextBlock =
+                {
+                    Text = myText
+                }
+            };
+
+            //Todo: Need to take protective steps, if this is re-entered while the dialog is open it's gonna go bang
+            var result = await DialogHost.Show(dialog);
         }
     }
 }
