@@ -8,12 +8,14 @@ namespace Yakka.Actors
     {
         public class ErrorMessage
         {
-            public ErrorMessage(string message)
+            public ErrorMessage(string logMessage, string userFriendlyMessage)
             {
-                Message = message;
+                LogMessage = logMessage;
+                UserFriendlyMessage = userFriendlyMessage;
             }
 
-            public string Message { get; }
+            public string LogMessage { get; }
+            public string UserFriendlyMessage { get; }
         }
 
         public class RegisterShell
@@ -37,12 +39,9 @@ namespace Yakka.Actors
 
         private void HandleError(ErrorMessage errorMessage)
         {
-            _logger.Warning(errorMessage.Message);
+            _logger.Warning(errorMessage.LogMessage);
 
-            if (_shell != null)
-            {
-                //Todo: show dialog
-            }
+            _shell?.QueueErrorDialog(errorMessage.UserFriendlyMessage);
         }
     }
 }

@@ -1,9 +1,8 @@
-﻿using System;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Akka.Actor;
 using Caliburn.Micro;
-using MahApps.Metro.Controls.Dialogs;
 using MaterialDesignThemes.Wpf;
 using Yakka.Actors;
 using Yakka.Common.Paths;
@@ -20,6 +19,7 @@ namespace Yakka.Features.Shell
         private IScreen _activeContent;
 
         private readonly Dictionary<Screens, Screen> _screens = new Dictionary<Screens, Screen>();
+        private readonly ConcurrentQueue<ErrorDialog> _errorDialogs = new ConcurrentQueue<ErrorDialog>();
 
         public ShellViewModel(HomeViewModel home, SettingsViewModel settings, InfoPageViewModel infoPage, ConversationsViewModel convos, ActorSystem system)
         {
@@ -63,15 +63,17 @@ namespace Yakka.Features.Shell
             ActiveContent = _screens[Screens.Home];
 
             //Do first load initialisation
-            var settings = _screens[Screens.Settings] as SettingsViewModel;
+            var settings = (SettingsViewModel) _screens[Screens.Settings];
             settings.CancelButton();
 
             base.OnInitialize();
-        }
 
+            Task.Run(() => { ProcessErrorDialogQueue(); });
+        }
+        
         public void ConnectButton()
         {
-            DebugShowDialog();
+            QueueErrorDialog("Connecting is not yet implemented.");
         }
 
         public void HomeButton()
@@ -94,23 +96,44 @@ namespace Yakka.Features.Shell
             ActiveContent = _screens[Screens.Info];
         }
 
-        public async void DebugShowDialog()
+        public void QueueErrorDialog(string errorMessage)
         {
-            //Todo: read http://dragablz.net/2015/10/09/wpf-dialog-boxes-in-material-design-in-xaml-toolkit/
-            //Take a look at https://github.com/Codeusa/SteamCleaner - uses this dialog method nicely. Look at CleanerUtilities.CleanData()
-
-            const string myText = "Todo: this stuff is not yet supported.";
-
             var dialog = new ErrorDialog()
             {
                 MessageTextBlock =
                 {
-                    Text = myText
+                    Text = errorMessage
                 }
             };
 
-            //Todo: Need to take protective steps, if this is re-entered while the dialog is open it's gonna go bang
-            var result = await DialogHost.Show(dialog);
+            _errorDialogs.Enqueue(dialog);
+        }
+
+        private async void ProcessErrorDialogQueue()
+        {
+            while (true)
+            {
+                if (!_errorDialogs.IsEmpty)
+                {
+                    ErrorDialog dlg;
+                    if (_errorDialogs.TryDequeue(out dlg))
+                    {
+                        await dlg.Dispatcher.Invoke(async () =>
+                         {
+                             var d = dlg;
+                             await ShowDialog(d);
+                         });
+                    }
+                }
+
+                await Task.Delay(500);
+            }
+            // ReSharper disable once FunctionNeverReturns
+        }
+
+        private Task<object> ShowDialog(ErrorDialog errorDialog)
+        {
+            return DialogHost.Show(errorDialog);
         }
     }
 }

@@ -157,7 +157,12 @@ namespace Yakka.Actors
             });
             Receive<SettingsWorkerActor.Failure>(msg =>
             {
-                _errorHandler.Tell(new ErrorDialogActor.ErrorMessage($"Failed to process {msg.MessageType} for {msg.RespondTo}"));
+                _errorHandler.Tell(
+                    new ErrorDialogActor.ErrorMessage(
+                        $"Failed to process {msg.MessageType} for {msg.RespondTo}",
+                        msg.MessageType.Contains("Save") 
+                            ? "Failed to save settings." 
+                            : "Failed to load settings."));
 
                 Stash.UnstashAll();
                 Become(Available);
