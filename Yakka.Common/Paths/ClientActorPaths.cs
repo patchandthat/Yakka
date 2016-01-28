@@ -13,7 +13,9 @@
         public static readonly ActorMetaData InfoViewModelActor = new ActorMetaData("InfoViewModelActor");
 
         public static readonly ActorMetaData SettingsActor = new ActorMetaData("SettingsActor");
-
+        public static readonly ActorMetaData SettingsWorkerActor = new ActorMetaData("SettingsWorkerActor", SettingsActor);
         public static readonly ActorMetaData ErrorDialogActor = new ActorMetaData("ErrorDialogActor");
+        public static readonly ActorMetaData ConnectionActor = new ActorMetaData("ConnectionActor");
+        public static readonly ActorMetaData HeartbeatActor = new ActorMetaData("HeartbeatActor", ConnectionActor);
     }
 }

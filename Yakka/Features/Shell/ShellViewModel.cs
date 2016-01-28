@@ -7,6 +7,7 @@ using Akka.Actor;
 using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
 using Yakka.Actors;
+using Yakka.Common.Actors.LocationAgnostic;
 using Yakka.Common.Paths;
 using Yakka.Features.Conversations;
 using Yakka.Features.Dialogs;
@@ -22,6 +23,7 @@ namespace Yakka.Features.Shell
 
         private readonly Dictionary<Screens, Screen> _screens = new Dictionary<Screens, Screen>();
         private readonly ConcurrentQueue<ErrorDialogActor.ErrorMessage> _errorDialogs = new ConcurrentQueue<ErrorDialogActor.ErrorMessage>();
+        private readonly IActorRef _connectionActor;
 
         public ShellViewModel(HomeViewModel home, SettingsViewModel settings, InfoPageViewModel infoPage, ConversationsViewModel convos, ActorSystem system)
         {
@@ -32,6 +34,9 @@ namespace Yakka.Features.Shell
 
             system.ActorSelection(ClientActorPaths.ErrorDialogActor.Path)
                 .Tell(new ErrorDialogActor.RegisterShell(this));
+
+            _connectionActor = system.ActorOf(Props.Create(() => new ConnectionActor()),
+                ClientActorPaths.ConnectionActor.Name);
         }
 
         private enum Screens
@@ -70,12 +75,13 @@ namespace Yakka.Features.Shell
 
             base.OnInitialize();
 
-            Task.Run(() => { ProcessErrorDialogQueue(); });
+            Task.Run(() => ProcessErrorDialogQueue());
         }
         
         public void ConnectButton()
         {
-            QueueErrorDialog(new ErrorDialogActor.ErrorMessage("","Connecting is not yet implemented."));
+            _connectionActor.Tell(new ConnectionActor.ConnectRequest(ClientStatus.Online));
+            //QueueErrorDialog(new ErrorDialogActor.ErrorMessage("","Connecting is not yet implemented."));
         }
 
         public void HomeButton()
@@ -112,11 +118,12 @@ namespace Yakka.Features.Shell
                     ErrorDialogActor.ErrorMessage message;
                     if (_errorDialogs.TryDequeue(out message))
                     {
-                        await Application.Current.Dispatcher.Invoke(async () =>
-                         {
-                             var d = message;
-                             await ShowDialog(d);
-                         });
+                        await Application.Current.Dispatcher.Invoke(
+                            async () =>
+                            {
+                                var d = message;
+                                await ShowDialog(d);
+                            });
                     }
                 }
 

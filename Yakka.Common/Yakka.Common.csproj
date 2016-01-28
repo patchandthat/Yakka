@@ -64,9 +64,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Actors\Client\ConnectionActor.cs" />
     <Compile Include="Actors\LocationAgnostic\CommonConnectionMessages.cs" />
-    <Compile Include="Actors\Server\ConnectionActor.cs" />
     <Compile Include="Paths\ActorMetadata.cs" />
     <Compile Include="Paths\ClientActorPaths.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

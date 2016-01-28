@@ -186,7 +186,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Compile Include="Actors\ConnectionActor.cs" />
     <Compile Include="Actors\ErrorDialogActor.cs" />
+    <Compile Include="Actors\HeartbeatActor.cs" />
     <Compile Include="Actors\SettingsActor.cs" />
     <Compile Include="Actors\SettingsWorkerActor.cs" />
     <Compile Include="Actors\UI\SettingsViewModelActor.cs" />
@@ -204,9 +206,9 @@
     <Compile Include="Actors\UI\Update\ShellUpdateActor.cs" />
     <Compile Include="DataLayer\IYakkaDB.cs" />
     <Compile Include="DataLayer\SqliteDb.cs" />
-    <Compile Include="DataModels\ImmutableYakkaSettings.cs" />
-    <Compile Include="DataModels\SettingsExtension.cs" />
-    <Compile Include="DataModels\YakkaSettings.cs" />
+    <Compile Include="DataLayer\ImmutableYakkaSettings.cs" />
+    <Compile Include="DataLayer\SettingsExtension.cs" />
+    <Compile Include="DataLayer\YakkaSettings.cs" />
     <Compile Include="Features\Conversations\ConversationViewModel.cs" />
     <Compile Include="Features\Dialogs\ErrorDialog.xaml.cs">
       <DependentUpon>ErrorDialog.xaml</DependentUpon>

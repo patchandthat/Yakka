@@ -8,7 +8,15 @@ namespace Yakka.Common.Actors.LocationAgnostic
     {
         public class ConnectionRequest
         {
+            public ConnectionRequest(Guid clientId, ClientStatus initialStatus)
+            {
+                ClientId = clientId;
+                InitialStatus = initialStatus;
+            }
+
             public Guid ClientId { get; }
+
+            public ClientStatus InitialStatus { get; }
         }
 
         public class ConnectionResponse
@@ -17,6 +25,18 @@ namespace Yakka.Common.Actors.LocationAgnostic
             public IActorRef ActiveClientsActor { get; }
             public IActorRef HearbeatReceiver { get; }
         }
+
+        public class Heartbeat
+        {
+            public Heartbeat(ClientStatus status)
+            {
+                Status = status;
+            }
+
+            public ClientStatus Status { get; }
+        }
+
+        public class Disconnect { }
     }
 
     public class ConnectedClient

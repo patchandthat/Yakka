@@ -2,6 +2,7 @@
 using Akka.DI.Core;
 using Akka.Event;
 using Yakka.Common;
+using Yakka.Common.Paths;
 using Yakka.DataModels;
 
 namespace Yakka.Actors
@@ -120,7 +121,7 @@ namespace Yakka.Actors
             }
 
             var workerProps = Context.DI().Props<SettingsWorkerActor>();
-            _dbWorker = Context.ActorOf(workerProps);
+            _dbWorker = Context.ActorOf(workerProps, ClientActorPaths.SettingsWorkerActor.Name);
 
             _dbWorker.Tell(new SettingsWorkerActor.InitiateLoad(Sender), Self);
 

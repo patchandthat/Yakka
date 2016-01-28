@@ -88,14 +88,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Actors\ConnectedClientsStateActor.cs" />
-    <Compile Include="Actors\ChatCoordinatorActor.cs" />
-    <Compile Include="Actors\ClientCoordinatorActor.cs" />
-    <Compile Include="Actors\ConversationActor.cs" />
-    <Compile Include="Actors\ConversationCoordinatorActor.cs" />
-    <Compile Include="Actors\ShoutHandlerActor.cs" />
-    <Compile Include="Actors\WhisperHandlerActor.cs" />
-    <Compile Include="Actors\ConsoleWriterActor.cs" />
+    <Compile Include="Actors\Prototype\ConnectedClientsStateActor.cs" />
+    <Compile Include="Actors\Prototype\ChatCoordinatorActor.cs" />
+    <Compile Include="Actors\Prototype\ClientCoordinatorActor.cs" />
+    <Compile Include="Actors\Prototype\ConversationActor.cs" />
+    <Compile Include="Actors\Prototype\ConversationCoordinatorActor.cs" />
+    <Compile Include="Actors\New\ConnectionActor.cs" />
+    <Compile Include="Actors\Prototype\ShoutHandlerActor.cs" />
+    <Compile Include="Actors\Prototype\WhisperHandlerActor.cs" />
+    <Compile Include="Actors\Prototype\ConsoleWriterActor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerMetadata.cs" />
@@ -114,7 +115,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Actors\Structure.txt" />
+    <Content Include="Actors\Prototype\Structure.txt" />
     <Content Include="logfile.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

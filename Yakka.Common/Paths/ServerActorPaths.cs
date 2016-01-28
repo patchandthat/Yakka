@@ -12,5 +12,9 @@
         public static readonly ActorMetaData ChatCoordinator = new ActorMetaData("ChatCoordinator");
 
         public static readonly ActorMetaData ExampleChild = new ActorMetaData("ChildName", ConsoleActor);
+
+        //
+        
+        public static readonly ActorMetaData ConnectionActor = new ActorMetaData("ConnectionActor");
     }
 }

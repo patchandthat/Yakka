@@ -1,12 +1,13 @@
 ﻿using System.Net;
 using System.Reflection;
+using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Configuration;
 using Akka.DI.AutoFac;
 using Akka.Routing;
 using Autofac;
 using Yakka.Common.Paths;
-using Yakka.Server.Actors;
+using Yakka.Server.Actors.New;
 
 namespace Yakka.Server
 {
@@ -39,11 +40,13 @@ namespace Yakka.Server
             var resolver = new AutoFacDependencyResolver(container, system);
 
             //Create root level actors
-            var clients = system.ActorOf(Props.Create(() => new ClientCoordinatorActor()), ServerActorPaths.ClientCoordinator.Name);
-            var chat = system.ActorOf(Props.Create(() => new ChatCoordinatorActor()), ServerActorPaths.ChatCoordinator.Name);
-            var router = system.ActorOf(Props.Empty.WithRouter(new BroadcastGroup(new []{chat, clients})), ServerActorPaths.MessageRouter.Name);
+            //var clients = system.ActorOf(Props.Create(() => new ClientCoordinatorActor()), ServerActorPaths.ClientCoordinator.Name);
+            //var chat = system.ActorOf(Props.Create(() => new ChatCoordinatorActor()), ServerActorPaths.ChatCoordinator.Name);
+            //var router = system.ActorOf(Props.Empty.WithRouter(new BroadcastGroup(new []{chat, clients})), ServerActorPaths.MessageRouter.Name);
 
-            system.AwaitTermination();
+            var connectionHandler = system.ActorOf(Props.Create(() => new ConnectionActor()), ServerActorPaths.ConnectionActor.Name);
+
+            system.WhenTerminated.Wait();
         }
 
         private static IContainer ConfigureAutofacContainer()

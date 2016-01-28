@@ -1,7 +1,7 @@
 ﻿using Akka.Actor;
 using Yakka.Common.Actors.LocationAgnostic;
 
-namespace Yakka.Common.Actors.Server
+namespace Yakka.Server.Actors.New
 {
     class ConnectionActor : ReceiveActor
     {
@@ -12,7 +12,7 @@ namespace Yakka.Common.Actors.Server
 
         private void HandleConnectionRequest(CommonConnectionMessages.ConnectionRequest msg)
         {
-            throw new System.NotImplementedException();
+            Sender.Tell(new CommonConnectionMessages.ConnectionResponse(), Self);
         }
     }
 }
