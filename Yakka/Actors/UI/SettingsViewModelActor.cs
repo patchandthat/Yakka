@@ -43,11 +43,14 @@ namespace Yakka.Actors.UI
             Receive<LoadSettings>(msg => HandleLoadSettings(msg));
         }
         
-        protected override async void PreStart()
+        protected override void PreStart()
         {
             //Resolve necessary actor references to avoid the cost of selecting by path for each message
             var selection = Context.ActorSelection(ClientActorPaths.SettingsActor.Path);
-            _settingsActor = await selection.ResolveOne(TimeSpan.FromMilliseconds(500));
+            var selectTask = selection.ResolveOne(TimeSpan.FromMilliseconds(500));
+            selectTask.Wait();
+
+            _settingsActor = selectTask.Result;
 
             base.PreStart();
         }
