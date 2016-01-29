@@ -48,7 +48,6 @@ namespace Yakka.Actors.UI
             //Resolve necessary actor references to avoid the cost of selecting by path for each message
             var selection = Context.ActorSelection(ClientActorPaths.SettingsActor.Path);
             var selectTask = selection.ResolveOne(TimeSpan.FromMilliseconds(500));
-            selectTask.Wait();
 
             _settingsActor = selectTask.Result;
 

@@ -62,8 +62,6 @@ namespace Yakka.Actors
         {
             _cancelHeartbeat?.Cancel(false);
             _cancelHeartbeat = null;
-
-            _target.Tell(new CommonConnectionMessages.Disconnect());
         }
 
         private void HandleSendHeartbeat()

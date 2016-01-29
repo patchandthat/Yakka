@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.DI.Core;
 using Yakka.Common.Actors.LocationAgnostic;
@@ -63,8 +62,6 @@ namespace Yakka.Actors
             var settingsSelector =
                 Context.ActorSelection(ClientActorPaths.SettingsActor.Path)
                        .ResolveOne(TimeSpan.FromMilliseconds(500));
-
-            Task.WaitAll(errorSelector, settingsSelector);
             
             _errorActor = errorSelector.Result;
             _settingsActor = settingsSelector.Result;

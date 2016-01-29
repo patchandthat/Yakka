@@ -1,10 +1,8 @@
 ﻿using System.Net;
 using System.Reflection;
-using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Configuration;
 using Akka.DI.AutoFac;
-using Akka.Routing;
 using Autofac;
 using Yakka.Common.Paths;
 using Yakka.Server.Actors.New;
