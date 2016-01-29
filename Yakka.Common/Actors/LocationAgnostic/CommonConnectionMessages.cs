@@ -8,19 +8,29 @@ namespace Yakka.Common.Actors.LocationAgnostic
     {
         public class ConnectionRequest
         {
-            public ConnectionRequest(Guid clientId, ClientStatus initialStatus)
+            public ConnectionRequest(Guid clientId, ClientStatus initialStatus, string username)
             {
                 ClientId = clientId;
                 InitialStatus = initialStatus;
+                Username = username;
             }
 
             public Guid ClientId { get; }
 
             public ClientStatus InitialStatus { get; }
+
+            public string Username { get; }
         }
 
         public class ConnectionResponse
         {
+            public ConnectionResponse(IActorRef activeClientsActor, IActorRef hearbeatReceiver, IEnumerable<ConnectedClient> connectedClients)
+            {
+                ActiveClientsActor = activeClientsActor;
+                HearbeatReceiver = hearbeatReceiver;
+                ConnectedClients = connectedClients;
+            }
+
             public IEnumerable<ConnectedClient> ConnectedClients { get; }
             public IActorRef ActiveClientsActor { get; }
             public IActorRef HearbeatReceiver { get; }

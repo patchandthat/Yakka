@@ -2,7 +2,7 @@
 
 namespace Yakka.Server.Actors
 {
-    class ConversationActor : ReceiveActor
+    class HeartbeatMonitorActor : ReceiveActor
     {
     }
 }

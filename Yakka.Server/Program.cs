@@ -1,21 +1,25 @@
 ﻿using System.Net;
 using System.Reflection;
 using Akka.Actor;
+using Akka.Actor.Dsl;
 using Akka.Configuration;
 using Akka.DI.AutoFac;
 using Autofac;
 using Yakka.Common.Paths;
-using Yakka.Server.Actors.New;
+using Yakka.Server.Actors;
 
 namespace Yakka.Server
 {
     class Program
     {
+        //Todo: Use http://topshelf-project.com/ or something similar to allow this to be run as a service if need be
+        /// <param name="args"></param>
         static void Main(string[] args)
         {
             ServerMetadata.Hostname = Dns.GetHostName();
             ServerMetadata.Port = 8081;
 
+            //Todo: eventually shift this to config file
             string configHocon = string.Format(
 @"akka {{
     loglevel = DEBUG
@@ -38,11 +42,9 @@ namespace Yakka.Server
             var resolver = new AutoFacDependencyResolver(container, system);
 
             //Create root level actors
-            //var clients = system.ActorOf(Props.Create(() => new ClientCoordinatorActor()), ServerActorPaths.ClientCoordinator.Name);
-            //var chat = system.ActorOf(Props.Create(() => new ChatCoordinatorActor()), ServerActorPaths.ChatCoordinator.Name);
-            //var router = system.ActorOf(Props.Empty.WithRouter(new BroadcastGroup(new []{chat, clients})), ServerActorPaths.MessageRouter.Name);
-
-            var connectionHandler = system.ActorOf(Props.Create(() => new ConnectionActor()), ServerActorPaths.ConnectionActor.Name);
+            system.ActorOf(Props.Create(() => new ConsoleWriterActor()), ServerActorPaths.ConsoleActor.Name);
+            system.ActorOf(Props.Create(() => new ConnectionActor()), ServerActorPaths.ConnectionActor.Name);
+            system.ActorOf(Props.Create(() => new ClientsActor()), ServerActorPaths.ClientsActor.Name);
 
             system.WhenTerminated.Wait();
         }

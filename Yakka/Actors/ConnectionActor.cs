@@ -104,7 +104,7 @@ namespace Yakka.Actors
                 Context.ActorSelection(
                     $"akka.tcp://YakkaServer@{settings.ServerAddress}:{settings.ServerPort}/user/ConnectionActor");
 
-            selection.Tell(new CommonConnectionMessages.ConnectionRequest(YakkaBootstrapper.ClientId, msg.InitialStatus), Self);
+            selection.Tell(new CommonConnectionMessages.ConnectionRequest(YakkaBootstrapper.ClientId, msg.InitialStatus, msg.Settings.Username), Self);
         }
 
         private class ConnectWithSettings

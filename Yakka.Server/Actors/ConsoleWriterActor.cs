@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 using Akka.Actor;
 using Akka.Event;
+using Yakka.Common.Actors.LocationAgnostic;
 
 namespace Yakka.Server.Actors
 {
@@ -16,22 +16,27 @@ namespace Yakka.Server.Actors
                 Clients = clients;
             }
 
-            public IEnumerable<ConnectedUserInfo> Clients { get; private set; }
+            public IEnumerable<ConnectedUserInfo> Clients { get; }
         }
 
         public class ConnectedUserInfo
         {
-            public string Name { get; set; }
-            public Guid ClientGuid { get; set; }
-            public DateTime LastActivity { get; set; }
-            public ActorPath ClientActorPath { get; set; }
+            public ConnectedUserInfo(string name, Guid id, DateTime lastActivity, ClientStatus status)
+            {
+                Name = name;
+                Id = id;
+                LastActivity = lastActivity;
+                Status = status;
+            }
 
-            /// <summary>
-            /// Returns a string that represents the current object.
-            /// </summary>
-            /// <returns>
-            /// A string that represents the current object.
-            /// </returns>
+            public string Name { get; }
+
+            public Guid Id { get; }
+
+            public DateTime LastActivity { get; }
+
+            public ClientStatus Status { get; }
+
             public override string ToString()
             {
                 return Name;
@@ -46,10 +51,10 @@ namespace Yakka.Server.Actors
             _logger.Debug("Instantiating ConsoleWriterActor {0}", Context.Self.Path.ToStringWithAddress());
             _version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 
-            Receive<WriteConnectedClients>(message => HandleConnectedClientList(message));
+            Receive<WriteConnectedClients>(message => HandleWriteConnectedClients(message));
         }
 
-        private void HandleConnectedClientList(WriteConnectedClients message)
+        private void HandleWriteConnectedClients(WriteConnectedClients message)
         {
             Console.Clear();
 
@@ -72,13 +77,12 @@ namespace Yakka.Server.Actors
         private void WriteConnectedClientList(IEnumerable<ConnectedUserInfo> clients)
         {
             var clientList = clients.ToList();
-
-            Console.WriteLine("=== {0} Connected users ===", clientList.Count());
+            int users = clientList.Count();
+            Console.WriteLine("=== {0} Connected user{1} ===", users, users != 1 ? "s": "");
 
             foreach (var client in clientList)
             {
-                //Console.WriteLine($"{client.ClientGuid}: {client.Name} - Last activity {client.LastActivity.ToString("HH:mm:ss")}");
-                Console.WriteLine("{0}: {1} - Last activity {2}", client.ClientGuid, client.Name, client.LastActivity.ToString("HH:mm:ss"));
+                Console.WriteLine("({1}) {2} - Last activity {3} - ID:{0}", client.Id, client.Status.ToString(), client.Name, client.LastActivity.ToString("HH:mm:ss"));
             }
         }
     }
