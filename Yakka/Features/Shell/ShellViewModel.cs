@@ -7,7 +7,7 @@ using Akka.Actor;
 using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
 using Yakka.Actors;
-using Yakka.Common.Actors.LocationAgnostic;
+using Yakka.Common.Messages;
 using Yakka.Common.Paths;
 using Yakka.Features.Conversations;
 using Yakka.Features.Dialogs;

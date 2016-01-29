@@ -4,7 +4,7 @@ using System.Linq;
 using Akka.Actor;
 using Akka.DI.Core;
 using Akka.Event;
-using Yakka.Common.Actors.LocationAgnostic;
+using Yakka.Common.Messages;
 using Yakka.Common.Paths;
 
 namespace Yakka.Server.Actors
@@ -24,6 +24,19 @@ namespace Yakka.Server.Actors
 
             public Guid Id { get; }
             public string Username { get; }
+            public ClientStatus Status { get; }
+        }
+
+        public class ClientStatusChanged
+        {
+            public ClientStatusChanged(Guid client, ClientStatus status)
+            {
+                Client = client;
+                Status = status;
+            }
+
+            public Guid Client { get; }
+
             public ClientStatus Status { get; }
         }
 
@@ -54,6 +67,7 @@ namespace Yakka.Server.Actors
         {
             Receive<WriteClientList>(msg => WriteClientsToConsole());
             Receive<NewClient>(msg => NewClientConnection(msg));
+            Receive<ConnectionMessages.ConnectionLost>(msg => HandleLostConnection(msg));
         }
 
         protected override void PreStart()
@@ -108,14 +122,23 @@ namespace Yakka.Server.Actors
                 _clients.Add(msg.Id, new ClientData(msg.Id, msg.Username, msg.Status, DateTime.UtcNow));
             }
 
-            //Todo: create heartbeat handler for new client, pass the reference to it back to the client, client begins heartbeat.
-            //Let the monitor publish client state changes to the parent (this)
             var prop = Context.DI().Props<HeartbeatMonitorActor>();
             var monitor = Context.ActorOf(prop, msg.Id.ToString());
+            monitor.Tell(new HeartbeatMonitorActor.AssignClient(msg.Id, msg.Status));
             _monitors.Add(msg.Id, monitor);
 
             IEnumerable<ConnectedClient> clients = null;
-            Sender.Tell(new CommonConnectionMessages.ConnectionResponse(Self, monitor, clients));
+            Sender.Tell(new ConnectionMessages.ConnectionResponse(Self, monitor, clients));
+        }
+
+        private void HandleLostConnection(ConnectionMessages.ConnectionLost msg)
+        {
+            var monitor = _monitors[msg.Client];
+
+            _monitors.Remove(msg.Client);
+            _clients.Remove(msg.Client);
+
+            Context.Stop(monitor);
         }
     }
 }

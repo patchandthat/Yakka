@@ -1,21 +1,12 @@
 ﻿using System;
 using Akka.Actor;
 using Akka.DI.Core;
-using Yakka.Common.Actors.LocationAgnostic;
+using Yakka.Common.Messages;
 using Yakka.Common.Paths;
 using Yakka.DataModels;
 
 namespace Yakka.Actors
 {
-    //Has a child actor for doing the heartbeat
-    //Need to pass status changes to the child
-    //So we likely need state-machine connected/disconnected states
-
-    /// <summary>
-    /// Connection actor is responsible for handling messages directly from the client app 
-    /// and initiating connections with the server
-    /// This actor then delegates maintaining connection to a child heartbeat actor
-    /// </summary>
     public class ConnectionActor : ReceiveActor
     {
         #region Messages
@@ -32,12 +23,27 @@ namespace Yakka.Actors
 
         public class ChangeStatus
         {
-            
+            public ChangeStatus(ClientStatus status)
+            {
+                Status = status;
+            }
+
+            public ClientStatus Status { get; }
         }
 
-        public class Disconnect
+        public class Disconnect { }
+
+        private class ConnectWithSettings
         {
-            
+            public ConnectWithSettings(ImmutableYakkaSettings settings, ClientStatus initialStatus)
+            {
+                Settings = settings;
+                InitialStatus = initialStatus;
+            }
+
+            public ImmutableYakkaSettings Settings { get; }
+
+            public ClientStatus InitialStatus { get; }
         }
 
         #endregion
@@ -72,7 +78,7 @@ namespace Yakka.Actors
         private void Disconnected()
         {
             Receive<ConnectRequest>(msg => HandleConnectRequest(msg));
-            Receive<CommonConnectionMessages.ConnectionResponse>(msg => HandleConnectionResponse(msg));
+            Receive<ConnectionMessages.ConnectionResponse>(msg => HandleConnectionResponse(msg));
             Receive<ConnectWithSettings>(msg => HandleConnectWithSettings(msg));
         }
 
@@ -80,6 +86,7 @@ namespace Yakka.Actors
         {
             Receive<ChangeStatus>(msg => HandleChangeStatus(msg));
             Receive<Disconnect>(msg => HandleDisconnect(msg));
+            Receive<ConnectionMessages.ConnectionLost>(msg => HandleLostConnection(msg));
         }
 
         #region When disconnected
@@ -104,23 +111,10 @@ namespace Yakka.Actors
                 Context.ActorSelection(
                     $"akka.tcp://YakkaServer@{settings.ServerAddress}:{settings.ServerPort}/user/ConnectionActor");
 
-            selection.Tell(new CommonConnectionMessages.ConnectionRequest(YakkaBootstrapper.ClientId, msg.InitialStatus, msg.Settings.Username), Self);
+            selection.Tell(new ConnectionMessages.ConnectionRequest(YakkaBootstrapper.ClientId, msg.InitialStatus, msg.Settings.Username), Self);
         }
 
-        private class ConnectWithSettings
-        {
-            public ConnectWithSettings(ImmutableYakkaSettings settings, ClientStatus initialStatus)
-            {
-                Settings = settings;
-                InitialStatus = initialStatus;
-            }
-
-            public  ImmutableYakkaSettings Settings { get; }
-
-            public ClientStatus InitialStatus { get; }
-        }
-
-        private void HandleConnectionResponse(CommonConnectionMessages.ConnectionResponse msg)
+        private void HandleConnectionResponse(ConnectionMessages.ConnectionResponse msg)
         {
             var prop = Context.DI().Props<HeartbeatActor>();
             _heartbeatActor = Context.ActorOf(prop, ClientActorPaths.HeartbeatActor.Name);
@@ -133,13 +127,23 @@ namespace Yakka.Actors
         #region When connected
         private void HandleChangeStatus(ChangeStatus msg)
         {
-            //Tell hb actor
+            _heartbeatActor.Tell(new HeartbeatActor.ChangeStatus(msg.Status));
         }
 
         private void HandleDisconnect(Disconnect msg)
         {
-            //Shutdown HB actor
-            //Send server disconenct message
+            _heartbeatActor.Tell(new ConnectionMessages.Disconnect());
+            _heartbeatActor.Tell(PoisonPill.Instance);
+            _heartbeatActor = null;
+
+            Become(Disconnected);
+        }
+
+        private void HandleLostConnection(ConnectionMessages.ConnectionLost msg)
+        {
+            Context.Stop(_heartbeatActor);
+            _heartbeatActor = null;
+            _errorActor.Tell(new ErrorDialogActor.ErrorMessage("Dropped connection", "Connection to the server was lost"));
 
             Become(Disconnected);
         }

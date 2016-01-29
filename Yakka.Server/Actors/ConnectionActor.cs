@@ -1,7 +1,7 @@
 ﻿using System;
 using Akka.Actor;
 using Akka.Event;
-using Yakka.Common.Actors.LocationAgnostic;
+using Yakka.Common.Messages;
 using Yakka.Common.Paths;
 
 namespace Yakka.Server.Actors
@@ -14,10 +14,10 @@ namespace Yakka.Server.Actors
 
         public ConnectionActor()
         {
-            Receive<CommonConnectionMessages.ConnectionRequest>(msg => HandleConnectionRequest(msg));
+            Receive<ConnectionMessages.ConnectionRequest>(msg => HandleConnectionRequest(msg));
         }
 
-        private void HandleConnectionRequest(CommonConnectionMessages.ConnectionRequest msg)
+        private void HandleConnectionRequest(ConnectionMessages.ConnectionRequest msg)
         {
             if (_clients == null)
             {
@@ -29,7 +29,7 @@ namespace Yakka.Server.Actors
                 if (_clients == null)
                 {
                     _logger.Error("ConnctionActor was unable to acquire an actor reference to the ClientsActor");
-                    //Sender.Tell(ERROR);
+                    //todo: Sender.Tell(ERROR);
                 }
             }
 

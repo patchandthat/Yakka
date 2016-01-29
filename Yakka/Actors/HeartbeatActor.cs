@@ -1,6 +1,6 @@
 ﻿using System;
 using Akka.Actor;
-using Yakka.Common.Actors.LocationAgnostic;
+using Yakka.Common.Messages;
 
 namespace Yakka.Actors
 {
@@ -9,6 +9,8 @@ namespace Yakka.Actors
         private IActorRef _target;
         private ICancelable _cancelHeartbeat;
         private ClientStatus _status;
+        private DateTime _lastAck = DateTime.UtcNow;
+        private bool _timedOut;
 
         public class BeginHeartbeat
         {
@@ -24,9 +26,7 @@ namespace Yakka.Actors
 
         private class SendHeartbeat { }
 
-        public class StopHeartbeat
-        {
-        }
+        public class StopHeartbeat { }
 
         public class ChangeStatus
         {
@@ -44,6 +44,8 @@ namespace Yakka.Actors
             Receive<StopHeartbeat>(msg => HandleStopHeartbeat());
             Receive<SendHeartbeat>(msg => HandleSendHeartbeat());
             Receive<ChangeStatus>(msg => _status = msg.NewStatus);
+            Receive<ConnectionMessages.Disconnect>(msg => _target.Tell(msg));
+            Receive<ConnectionMessages.HeartbeatAcknowledged>(msg => HandleAck(msg));
         }
 
         private void HandleBeginHeartbeat(BeginHeartbeat msg)
@@ -51,8 +53,8 @@ namespace Yakka.Actors
             _status = msg.Status;
             _target = msg.HeartbeatTarget;
             _cancelHeartbeat = Context.System.Scheduler.ScheduleTellRepeatedlyCancelable(
-                TimeSpan.FromSeconds(2),
-                TimeSpan.FromSeconds(2),
+                TimeSpan.FromSeconds(1),
+                TimeSpan.FromSeconds(1),
                 Self,
                 new SendHeartbeat(),
                 Self);
@@ -66,7 +68,23 @@ namespace Yakka.Actors
 
         private void HandleSendHeartbeat()
         {
-            _target.Tell(new CommonConnectionMessages.Heartbeat(_status), Self);
+            _target.Tell(new ConnectionMessages.Heartbeat(_status), Self);
+
+            if (DateTime.UtcNow - _lastAck > ConnectionMessages.TimeoutPeriod && !_timedOut)
+                Timeout();
+        }
+
+        private void HandleAck(ConnectionMessages.HeartbeatAcknowledged msg)
+        {
+            _lastAck = DateTime.UtcNow;
+        }
+
+        private void Timeout()
+        {
+            _timedOut = true;
+            _cancelHeartbeat?.Cancel(false);
+            _cancelHeartbeat = null;
+            Context.Parent.Tell(new ConnectionMessages.ConnectionLost());
         }
     }
 }

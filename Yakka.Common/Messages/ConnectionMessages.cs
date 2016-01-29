@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using Akka.Actor;
 
-namespace Yakka.Common.Actors.LocationAgnostic
+namespace Yakka.Common.Messages
 {
-    public class CommonConnectionMessages
+    public class ConnectionMessages
     {
+        public static readonly TimeSpan TimeoutPeriod = TimeSpan.FromSeconds(7);
+
         public class ConnectionRequest
         {
             public ConnectionRequest(Guid clientId, ClientStatus initialStatus, string username)
@@ -44,6 +46,22 @@ namespace Yakka.Common.Actors.LocationAgnostic
             }
 
             public ClientStatus Status { get; }
+        }
+
+        public class HeartbeatAcknowledged { }
+
+        public class ConnectionLost
+        {
+            public ConnectionLost()
+            {
+            }
+
+            public ConnectionLost(Guid client)
+            {
+                Client = client;
+            }
+
+            public Guid Client { get; }
         }
 
         public class Disconnect { }

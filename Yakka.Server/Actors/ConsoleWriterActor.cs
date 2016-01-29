@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Akka.Actor;
 using Akka.Event;
-using Yakka.Common.Actors.LocationAgnostic;
+using Yakka.Common.Messages;
 
 namespace Yakka.Server.Actors
 {
