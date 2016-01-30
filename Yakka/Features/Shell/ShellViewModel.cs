@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
@@ -7,6 +6,7 @@ using Akka.Actor;
 using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
 using Yakka.Actors;
+using Yakka.Actors.UI;
 using Yakka.Common.Messages;
 using Yakka.Common.Paths;
 using Yakka.Features.Conversations;
@@ -23,7 +23,8 @@ namespace Yakka.Features.Shell
 
         private readonly Dictionary<Screens, Screen> _screens = new Dictionary<Screens, Screen>();
         private readonly ConcurrentQueue<ErrorDialogActor.ErrorMessage> _errorDialogs = new ConcurrentQueue<ErrorDialogActor.ErrorMessage>();
-        private readonly IActorRef _connectionActor;
+
+        private readonly IActorRef _shellViewModelActor;
 
         public ShellViewModel(HomeViewModel home, SettingsViewModel settings, InfoPageViewModel infoPage, ConversationsViewModel convos, ActorSystem system)
         {
@@ -35,8 +36,8 @@ namespace Yakka.Features.Shell
             system.ActorSelection(ClientActorPaths.ErrorDialogActor.Path)
                 .Tell(new ErrorDialogActor.RegisterShell(this));
 
-            _connectionActor = system.ActorOf(Props.Create(() => new ConnectionActor()),
-                ClientActorPaths.ConnectionActor.Name);
+            _shellViewModelActor = system.ActorOf(Props.Create(() => new ShellViewModelActor(this)),
+                ClientActorPaths.ShellViewModelActor.Name);
         }
 
         private enum Screens
@@ -80,7 +81,7 @@ namespace Yakka.Features.Shell
         
         public void ConnectButton()
         {
-            _connectionActor.Tell(new ConnectionActor.ConnectRequest(ClientStatus.Online));
+            _shellViewModelActor.Tell(new ConnectionActor.ConnectRequest(ClientStatus.Online));
             //QueueErrorDialog(new ErrorDialogActor.ErrorMessage("","Connecting is not yet implemented."));
         }
 

@@ -191,19 +191,14 @@
     <Compile Include="Actors\HeartbeatActor.cs" />
     <Compile Include="Actors\SettingsActor.cs" />
     <Compile Include="Actors\SettingsWorkerActor.cs" />
+    <Compile Include="Actors\UI\HomeViewModelActor.cs" />
+    <Compile Include="Actors\UI\ShellViewModelActor.cs" />
     <Compile Include="Actors\UI\SettingsViewModelActor.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Actors\UI\Input\ConversationsInputActor.cs" />
-    <Compile Include="Actors\UI\Update\ConversationsUpdateActor.cs" />
-    <Compile Include="Actors\UI\Input\HomeInputActor.cs" />
-    <Compile Include="Actors\UI\Update\HomeUpdateActor.cs" />
     <Compile Include="Actors\UI\InfoViewModelActor.cs" />
-    <Compile Include="Actors\UI\Update\InfoPageUpdateActor.cs" />
-    <Compile Include="Actors\UI\Input\ShellInputActor.cs" />
-    <Compile Include="Actors\UI\Update\ShellUpdateActor.cs" />
     <Compile Include="DataLayer\IYakkaDB.cs" />
     <Compile Include="DataLayer\SqliteDb.cs" />
     <Compile Include="DataLayer\ImmutableYakkaSettings.cs" />
