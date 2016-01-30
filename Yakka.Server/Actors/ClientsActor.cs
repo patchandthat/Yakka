@@ -127,7 +127,9 @@ namespace Yakka.Server.Actors
             monitor.Tell(new HeartbeatMonitorActor.AssignClient(msg.Id, msg.Status));
             _monitors.Add(msg.Id, monitor);
 
-            IEnumerable<ConnectedClient> clients = null;
+            IEnumerable<ConnectedClient> clients =
+                _clients.Values.Where(c => c.Status != ClientStatus.Offline)
+                        .Select(c => new ConnectedClient(c.Id, c.Username, c.Status)).ToList();
             Sender.Tell(new ConnectionMessages.ConnectionResponse(Self, monitor, clients));
         }
 

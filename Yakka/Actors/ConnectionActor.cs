@@ -120,6 +120,8 @@ namespace Yakka.Actors
             _heartbeatActor = Context.ActorOf(prop, ClientActorPaths.HeartbeatActor.Name);
             _heartbeatActor.Tell(new HeartbeatActor.BeginHeartbeat(msg.HearbeatReceiver, _status));
 
+            //Todo: process conencted client list
+
             Become(Connected);
         }
         #endregion
