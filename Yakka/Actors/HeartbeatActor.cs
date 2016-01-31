@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Akka.Actor;
 using Yakka.Common.Messages;
 
@@ -26,8 +27,6 @@ namespace Yakka.Actors
 
         private class SendHeartbeat { }
 
-        public class StopHeartbeat { }
-
         public class ChangeStatus
         {
             public ChangeStatus(ClientStatus newStatus)
@@ -41,11 +40,16 @@ namespace Yakka.Actors
         public HeartbeatActor()
         {
             Receive<BeginHeartbeat>(msg => HandleBeginHeartbeat(msg));
-            Receive<StopHeartbeat>(msg => HandleStopHeartbeat());
             Receive<SendHeartbeat>(msg => HandleSendHeartbeat());
             Receive<ChangeStatus>(msg => _status = msg.NewStatus);
-            Receive<ConnectionMessages.Disconnect>(msg => _target.Tell(msg));
+            Receive<ConnectionMessages.Disconnect>(msg => HandleDisconnect(msg));
             Receive<ConnectionMessages.HeartbeatAcknowledged>(msg => HandleAck(msg));
+        }
+
+        private void HandleDisconnect(ConnectionMessages.Disconnect msg)
+        {
+            StopHeartbeat();
+            _target.Tell(msg);
         }
 
         private void HandleBeginHeartbeat(BeginHeartbeat msg)
@@ -60,7 +64,7 @@ namespace Yakka.Actors
                 Self);
         }
 
-        private void HandleStopHeartbeat()
+        private void StopHeartbeat()
         {
             _cancelHeartbeat?.Cancel(false);
             _cancelHeartbeat = null;

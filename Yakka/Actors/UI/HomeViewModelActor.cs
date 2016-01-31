@@ -12,6 +12,7 @@ namespace Yakka.Actors.UI
             _homeViewModel = homeViewModel;
         }
 
+        //todo
         //Set my status -> conn actor
         //Update VM with client list changes
         //Request conversation -> ActorRef target for this should be passed back in successful connect response

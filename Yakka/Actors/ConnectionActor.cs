@@ -1,6 +1,7 @@
 ﻿using System;
 using Akka.Actor;
 using Akka.DI.Core;
+using Yakka.Actors.UI;
 using Yakka.Common.Messages;
 using Yakka.Common.Paths;
 using Yakka.DataModels;
@@ -80,6 +81,10 @@ namespace Yakka.Actors
             Receive<ConnectRequest>(msg => HandleConnectRequest(msg));
             Receive<ConnectionMessages.ConnectionResponse>(msg => HandleConnectionResponse(msg));
             Receive<ConnectWithSettings>(msg => HandleConnectWithSettings(msg));
+            Receive<ReceiveTimeout>(msg => HandleConnectTimeout());
+
+            Context.ActorSelection(ClientActorPaths.ShellViewModelActor.Path)
+                   .Tell(new ShellViewModelActor.UpdateConnectionState(false));
         }
 
         private void Connected()
@@ -87,12 +92,19 @@ namespace Yakka.Actors
             Receive<ChangeStatus>(msg => HandleChangeStatus(msg));
             Receive<Disconnect>(msg => HandleDisconnect(msg));
             Receive<ConnectionMessages.ConnectionLost>(msg => HandleLostConnection(msg));
+            Receive<ReceiveTimeout>(msg =>
+                                    {
+                                        //Ignore, this is an unlikely but possible and harmless race condition
+                                        //we've had a response and become connected
+                                    });
+
+            Context.ActorSelection(ClientActorPaths.ShellViewModelActor.Path)
+                   .Tell(new ShellViewModelActor.UpdateConnectionState(true));
         }
 
         #region When disconnected
         private void HandleConnectRequest(ConnectRequest msg)
         {
-            //Todo: tidy this up.  Probably better to only send with the heartbeat rather than initial connection?
             _status = msg.InitialStatus;
 
             _settingsActor.Ask<ImmutableYakkaSettings>(new SettingsActor.RequestCurrentSettingsRequest())
@@ -112,10 +124,20 @@ namespace Yakka.Actors
                     $"akka.tcp://YakkaServer@{settings.ServerAddress}:{settings.ServerPort}/user/ConnectionActor");
 
             selection.Tell(new ConnectionMessages.ConnectionRequest(YakkaBootstrapper.ClientId, msg.InitialStatus, msg.Settings.Username), Self);
+
+            Context.SetReceiveTimeout(ConnectionMessages.TimeoutPeriod);
+        }
+
+        private void HandleConnectTimeout()
+        {
+            Context.SetReceiveTimeout(null);
+            _errorActor.Tell(new ErrorDialogActor.ErrorMessage("Timeout during connection", "Error: no response form the server."));
         }
 
         private void HandleConnectionResponse(ConnectionMessages.ConnectionResponse msg)
         {
+            Context.SetReceiveTimeout(null);
+
             var prop = Context.DI().Props<HeartbeatActor>();
             _heartbeatActor = Context.ActorOf(prop, ClientActorPaths.HeartbeatActor.Name);
             _heartbeatActor.Tell(new HeartbeatActor.BeginHeartbeat(msg.HearbeatReceiver, _status));

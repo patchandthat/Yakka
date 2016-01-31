@@ -22,8 +22,7 @@ namespace Yakka
     {
         private IContainer _container;
 
-        public static Guid ClientId => ClientGuid.Value;
-        private static readonly Lazy<Guid> ClientGuid = new Lazy<Guid>(Guid.NewGuid);
+        public static Guid ClientId { get; } = Guid.NewGuid();
 
         private static ActorSystem _clientActorSystem;
         private IDependencyResolver _resolver;
@@ -46,12 +45,10 @@ akka {{
 }}", Dns.GetHostName());
             var config = ConfigurationFactory.ParseString(hocon);
 
-            var clientName = string.Format("{0}", ClientId);
+            var clientName = $"{ClientId}";
             _clientActorSystem = ActorSystem.Create(clientName, config);
 
-            //Create root level actors
-            //Todo: Going to think about whether this happens by hand here, or after types are registered with autofac
-            //var errorProps = _clientActorSystem.DI().Props<ErrorDialogActor>();
+            //Create root level actors. This is the actual root of the actor system, the view model bridge actors exchange messages with these
             var errorHandler = _clientActorSystem.ActorOf(Props.Create(() => new ErrorDialogActor()), ClientActorPaths.ErrorDialogActor.Name);
             var settingsActor = _clientActorSystem.ActorOf(Props.Create(() => new SettingsActor(errorHandler)), ClientActorPaths.SettingsActor.Name);
             var connectionActor = _clientActorSystem.ActorOf(Props.Create(() => new ConnectionActor()), ClientActorPaths.ConnectionActor.Name);

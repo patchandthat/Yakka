@@ -25,6 +25,7 @@ namespace Yakka.Features.Shell
         private readonly ConcurrentQueue<ErrorDialogActor.ErrorMessage> _errorDialogs = new ConcurrentQueue<ErrorDialogActor.ErrorMessage>();
 
         private readonly IActorRef _shellViewModelActor;
+        private bool _isConnected;
 
         public ShellViewModel(HomeViewModel home, SettingsViewModel settings, InfoPageViewModel infoPage, ConversationsViewModel convos, ActorSystem system)
         {
@@ -62,8 +63,20 @@ namespace Yakka.Features.Shell
 
         public string ActiveContentName { get { return ActiveContent == null ? "" : ActiveContent.DisplayName ?? ""; } }
 
-        public string ConnectionState { get { return "Not connected"; } }
-        
+        public string ConnectionState => IsConnected ? "Connected" : "Not connected";
+
+        public bool IsConnected
+        {
+            get { return _isConnected; }
+            set
+            {
+                if (value == _isConnected) return;
+                _isConnected = value;
+                NotifyOfPropertyChange(() => IsConnected);
+                NotifyOfPropertyChange(() => ConnectionState);
+            }
+        }
+
         protected override void OnInitialize()
         {
             DisplayName = "Yakka";
@@ -81,8 +94,10 @@ namespace Yakka.Features.Shell
         
         public void ConnectButton()
         {
-            _shellViewModelActor.Tell(new ConnectionActor.ConnectRequest(ClientStatus.Online));
-            //QueueErrorDialog(new ErrorDialogActor.ErrorMessage("","Connecting is not yet implemented."));
+            object request = IsConnected
+                ? (object)new ConnectionActor.Disconnect()
+                : (object)new ConnectionActor.ConnectRequest(ClientStatus.Online);
+            _shellViewModelActor.Tell(request);
         }
 
         public void HomeButton()

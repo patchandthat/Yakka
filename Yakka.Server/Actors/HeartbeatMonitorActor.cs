@@ -26,7 +26,8 @@ namespace Yakka.Server.Actors
             Context.SetReceiveTimeout(ConnectionMessages.TimeoutPeriod);
             
             Receive<ConnectionMessages.Heartbeat>(msg => HandleHeartbeat(msg));
-            Receive<ReceiveTimeout>(msg => HandleTimeout());
+            Receive<ConnectionMessages.Disconnect>(msg => HandleDisconnection());
+            Receive<ReceiveTimeout>(msg => HandleDisconnection());
             Receive<AssignClient>(msg => HandleAssignClient(msg));
         }
 
@@ -47,7 +48,7 @@ namespace Yakka.Server.Actors
             Sender.Tell(new ConnectionMessages.HeartbeatAcknowledged());
         }
 
-        private void HandleTimeout()
+        private void HandleDisconnection()
         {
             Context.Parent.Tell(new ConnectionMessages.ConnectionLost(_clientId));
         }
