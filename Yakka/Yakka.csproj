@@ -170,6 +170,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Features\HomeScreen\ClientDataView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Features\HomeScreen\HomeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -186,6 +190,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Compile Include="Actors\ClientsActor.cs" />
     <Compile Include="Actors\ConnectionActor.cs" />
     <Compile Include="Actors\ErrorDialogActor.cs" />
     <Compile Include="Actors\HeartbeatActor.cs" />
@@ -208,6 +213,10 @@
     <Compile Include="Features\Dialogs\ErrorDialog.xaml.cs">
       <DependentUpon>ErrorDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Features\HomeScreen\ClientDataView.xaml.cs">
+      <DependentUpon>ClientDataView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Features\HomeScreen\ClientDataViewModel.cs" />
     <Compile Include="YakkaBootstrapper.cs" />
     <Compile Include="Features\Conversations\ConversationsView.xaml.cs">
       <DependentUpon>ConversationsView.xaml</DependentUpon>

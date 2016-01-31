@@ -10,11 +10,12 @@ namespace Yakka.Common.Messages
 
         public class ConnectionRequest
         {
-            public ConnectionRequest(Guid clientId, ClientStatus initialStatus, string username)
+            public ConnectionRequest(Guid clientId, ClientStatus initialStatus, string username, IActorRef clientsActor)
             {
                 ClientId = clientId;
                 InitialStatus = initialStatus;
                 Username = username;
+                ClientsHandler = clientsActor;
             }
 
             public Guid ClientId { get; }
@@ -22,6 +23,8 @@ namespace Yakka.Common.Messages
             public ClientStatus InitialStatus { get; }
 
             public string Username { get; }
+
+            public IActorRef ClientsHandler { get; }
         }
 
         public class ConnectionResponse
@@ -65,6 +68,36 @@ namespace Yakka.Common.Messages
         }
 
         public class Disconnect { }
+
+        public class ClientConnected
+        {
+            public ClientConnected(ConnectedClient client)
+            {
+                Client = client;
+            }
+
+            public ConnectedClient Client { get; }
+        }
+
+        public class ClientDisconnected
+        {
+            public ClientDisconnected(ConnectedClient client)
+            {
+                Client = client;
+            }
+
+            public ConnectedClient Client { get; }
+        }
+
+        public class ClientChanged
+        {
+            public ClientChanged(ConnectedClient client)
+            {
+                Client = client;
+            }
+
+            public ConnectedClient Client { get; }
+        }
     }
 
     public class ConnectedClient

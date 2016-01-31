@@ -25,7 +25,7 @@
         <DockPanel Margin="5" Grid.Column="1" Grid.Row="1">
             <Label Margin="5" DockPanel.Dock="Top">Connected users</Label>
             <Button Margin="5" DockPanel.Dock="Bottom">Message selected users</Button>
-            <ListBox Margin="5" DockPanel.Dock="Top"></ListBox>
+            <ListBox Margin="5" DockPanel.Dock="Top" x:Name="Clients"></ListBox>
         </DockPanel>
     </Grid>
 </UserControl>

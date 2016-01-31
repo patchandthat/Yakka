@@ -33,7 +33,7 @@ namespace Yakka.Server.Actors
                 }
             }
 
-            _clients.Tell(new ClientsActor.NewClient(msg.ClientId, msg.Username, msg.InitialStatus), Sender);
+            _clients.Tell(new ClientsActor.NewClient(msg.ClientId, msg.Username, msg.InitialStatus, msg.ClientsHandler), Sender);
         }
     }
 }

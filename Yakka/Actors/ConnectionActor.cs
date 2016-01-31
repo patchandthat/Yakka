@@ -52,6 +52,7 @@ namespace Yakka.Actors
         private IActorRef _settingsActor;
         private IActorRef _errorActor;
         private IActorRef _heartbeatActor;
+        private IActorRef _clientsActor;
         private ClientStatus _status;
 
         public ConnectionActor()
@@ -85,6 +86,10 @@ namespace Yakka.Actors
 
             Context.ActorSelection(ClientActorPaths.ShellViewModelActor.Path)
                    .Tell(new ShellViewModelActor.UpdateConnectionState(false));
+
+            //Todo: change this to notify the clients actor
+            Context.ActorSelection(ClientActorPaths.HomeViewModelActor.Path)
+                   .Tell(new HomeViewModelActor.NewClientList(new ConnectedClient[0]));
         }
 
         private void Connected()
@@ -123,7 +128,7 @@ namespace Yakka.Actors
                 Context.ActorSelection(
                     $"akka.tcp://YakkaServer@{settings.ServerAddress}:{settings.ServerPort}/user/ConnectionActor");
 
-            selection.Tell(new ConnectionMessages.ConnectionRequest(YakkaBootstrapper.ClientId, msg.InitialStatus, msg.Settings.Username), Self);
+            selection.Tell(new ConnectionMessages.ConnectionRequest(YakkaBootstrapper.ClientId, msg.InitialStatus, msg.Settings.Username, _clientsActor), Self);
 
             Context.SetReceiveTimeout(ConnectionMessages.TimeoutPeriod);
         }
@@ -142,7 +147,9 @@ namespace Yakka.Actors
             _heartbeatActor = Context.ActorOf(prop, ClientActorPaths.HeartbeatActor.Name);
             _heartbeatActor.Tell(new HeartbeatActor.BeginHeartbeat(msg.HearbeatReceiver, _status));
 
-            //Todo: process conencted client list
+            //Todo: move this type of action to the clients actor
+            Context.ActorSelection(ClientActorPaths.HomeViewModelActor.Path)
+                   .Tell(new HomeViewModelActor.NewClientList(msg.ConnectedClients));
 
             Become(Connected);
         }
