@@ -29,11 +29,18 @@ namespace Yakka.Server.Actors
                 if (_clients == null)
                 {
                     _logger.Error("ConnctionActor was unable to acquire an actor reference to the ClientsActor");
-                    //todo: Sender.Tell(ERROR);
+                    //todo: Sender.Tell(ERROR); ??
                 }
             }
 
-            _clients.Tell(new ClientsActor.NewClient(msg.ClientId, msg.Username, msg.InitialStatus, msg.ClientsHandler), Sender);
+            //bug: msg.ClientsHandler is null, but IActorRefs passed back to the client work fine...
+            var path = Sender.Path.Parent.Child(ClientActorPaths.ClientsActor.Name);
+            IActorRef clientsHandler =
+                Context.ActorSelection(path)
+                       .ResolveOne(TimeSpan.FromSeconds(1))
+                       .Result;
+
+            _clients.Tell(new ClientsActor.NewClient(msg.ClientId, msg.Username, msg.InitialStatus, clientsHandler), Sender);
         }
     }
 }

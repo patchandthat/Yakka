@@ -65,14 +65,18 @@ namespace Yakka.Actors
 
             var errorSelector =
                 Context.ActorSelection(ClientActorPaths.ErrorDialogActor.Path)
-                       .ResolveOne(TimeSpan.FromMilliseconds(500));
+                       .ResolveOne(TimeSpan.FromSeconds(1));
+            _errorActor = errorSelector.Result;
 
             var settingsSelector =
                 Context.ActorSelection(ClientActorPaths.SettingsActor.Path)
-                       .ResolveOne(TimeSpan.FromMilliseconds(500));
-            
-            _errorActor = errorSelector.Result;
+                       .ResolveOne(TimeSpan.FromSeconds(1));
             _settingsActor = settingsSelector.Result;
+
+            var clientsSelector =
+                Context.ActorSelection(ClientActorPaths.ClientsActor.Path)
+                       .ResolveOne(TimeSpan.FromSeconds(1));
+            _clientsActor = clientsSelector.Result;
 
             base.PreStart();
         }
@@ -87,9 +91,8 @@ namespace Yakka.Actors
             Context.ActorSelection(ClientActorPaths.ShellViewModelActor.Path)
                    .Tell(new ShellViewModelActor.UpdateConnectionState(false));
 
-            //Todo: change this to notify the clients actor
-            Context.ActorSelection(ClientActorPaths.HomeViewModelActor.Path)
-                   .Tell(new HomeViewModelActor.NewClientList(new ConnectedClient[0]));
+            Context.ActorSelection(ClientActorPaths.ClientsActor.Path)
+                   .Tell(new ClientTracking.NewClientList(new ConnectedClient[0]));
         }
 
         private void Connected()
@@ -100,7 +103,7 @@ namespace Yakka.Actors
             Receive<ReceiveTimeout>(msg =>
                                     {
                                         //Ignore, this is an unlikely but possible and harmless race condition
-                                        //we've had a response and become connected
+                                        //we've had a response and become connected at the same time the timeout fired
                                     });
 
             Context.ActorSelection(ClientActorPaths.ShellViewModelActor.Path)
@@ -124,11 +127,13 @@ namespace Yakka.Actors
         private void HandleConnectWithSettings(ConnectWithSettings msg)
         {
             var settings = msg.Settings;
-            var selection =
+            var server =
                 Context.ActorSelection(
-                    $"akka.tcp://YakkaServer@{settings.ServerAddress}:{settings.ServerPort}/user/ConnectionActor");
+                    $"akka.tcp://YakkaServer@{settings.ServerAddress}:{settings.ServerPort}/user/ConnectionActor")
+                       .ResolveOne(TimeSpan.FromSeconds(1))
+                       .Result;
 
-            selection.Tell(new ConnectionMessages.ConnectionRequest(YakkaBootstrapper.ClientId, msg.InitialStatus, msg.Settings.Username, _clientsActor), Self);
+            server.Tell(new ConnectionMessages.ConnectionRequest(YakkaBootstrapper.ClientId, msg.InitialStatus, msg.Settings.Username, _clientsActor), Self);
 
             Context.SetReceiveTimeout(ConnectionMessages.TimeoutPeriod);
         }
@@ -147,9 +152,8 @@ namespace Yakka.Actors
             _heartbeatActor = Context.ActorOf(prop, ClientActorPaths.HeartbeatActor.Name);
             _heartbeatActor.Tell(new HeartbeatActor.BeginHeartbeat(msg.HearbeatReceiver, _status));
 
-            //Todo: move this type of action to the clients actor
-            Context.ActorSelection(ClientActorPaths.HomeViewModelActor.Path)
-                   .Tell(new HomeViewModelActor.NewClientList(msg.ConnectedClients));
+            Context.ActorSelection(ClientActorPaths.ClientsActor.Path)
+                   .Tell(new ClientTracking.NewClientList(msg.ConnectedClients));
 
             Become(Connected);
         }

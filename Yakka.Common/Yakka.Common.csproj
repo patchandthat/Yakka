@@ -64,6 +64,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Messages\ClientStatus.cs" />
+    <Compile Include="Messages\ClientTracking.cs" />
+    <Compile Include="Messages\ConnectedClient.cs" />
     <Compile Include="Messages\ConnectionMessages.cs" />
     <Compile Include="Paths\ActorMetadata.cs" />
     <Compile Include="Paths\ClientActorPaths.cs" />

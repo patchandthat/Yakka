@@ -17,5 +17,6 @@
         public static readonly ActorMetaData ErrorDialogActor = new ActorMetaData("ErrorDialogActor");
         public static readonly ActorMetaData ConnectionActor = new ActorMetaData("ConnectionActor");
         public static readonly ActorMetaData HeartbeatActor = new ActorMetaData("HeartbeatActor", ConnectionActor);
+        public static readonly ActorMetaData ClientsActor = new ActorMetaData("ClientsActor");
     }
 }

@@ -51,6 +51,7 @@ akka {{
             //Create root level actors. This is the actual root of the actor system, the view model bridge actors exchange messages with these
             var errorHandler = _clientActorSystem.ActorOf(Props.Create(() => new ErrorDialogActor()), ClientActorPaths.ErrorDialogActor.Name);
             var settingsActor = _clientActorSystem.ActorOf(Props.Create(() => new SettingsActor(errorHandler)), ClientActorPaths.SettingsActor.Name);
+            var clientsActor = _clientActorSystem.ActorOf(Props.Create(() => new ClientsActor()), ClientActorPaths.ClientsActor.Name);
             var connectionActor = _clientActorSystem.ActorOf(Props.Create(() => new ConnectionActor()), ClientActorPaths.ConnectionActor.Name);
 
             Initialize();

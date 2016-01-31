@@ -78,8 +78,8 @@ namespace Yakka.Server.Actors
         protected override void PreStart()
         {
             _cancelOutput = Context.System.Scheduler.ScheduleTellRepeatedlyCancelable(
-                TimeSpan.FromSeconds(1),
-                TimeSpan.FromSeconds(1),
+                TimeSpan.FromMilliseconds(500),
+                TimeSpan.FromMilliseconds(500),
                 Self,
                 new WriteClientList(),
                 Self);
@@ -121,8 +121,9 @@ namespace Yakka.Server.Actors
         {
             if (_clients.ContainsKey(msg.Id))
             {
+                //Todo: consider ingoring this case, we're already connected, the message is a dupe
                 //Notify all of update
-                var changedClientMessage = new ConnectionMessages.ClientChanged(new ConnectedClient(msg.Id, msg.Username, msg.Status));
+                var changedClientMessage = new ClientTracking.ClientChanged(new ConnectedClient(msg.Id, msg.Username, msg.Status));
                 Parallel.ForEach(_clients.Values, data =>
                                                   {
                                                       if (data.Id != msg.Id)
@@ -134,7 +135,7 @@ namespace Yakka.Server.Actors
             else
             {
                 //Notify all of new client
-                var newClientMessage = new ConnectionMessages.ClientConnected(new ConnectedClient(msg.Id, msg.Username, msg.Status));
+                var newClientMessage = new ClientTracking.ClientConnected(new ConnectedClient(msg.Id, msg.Username, msg.Status));
                 Parallel.ForEach(_clients.Values, data => data.ClientsHandler.Tell(newClientMessage));
 
                 _clients.Add(msg.Id, new ClientData(msg.Id, msg.Username, msg.Status, DateTime.UtcNow, msg.ClientsHandler));
@@ -153,7 +154,7 @@ namespace Yakka.Server.Actors
         private void HandleLostConnection(ConnectionMessages.ConnectionLost msg)
         {
             var c = _clients.Values.First(x => x.Id == msg.Client);
-            var disconnectedClient = new ConnectionMessages.ClientDisconnected(new ConnectedClient(c.Id, c.Username, c.Status));
+            var disconnectedClient = new ClientTracking.ClientDisconnected(new ConnectedClient(c.Id, c.Username, c.Status));
 
             var monitor = _monitors[msg.Client];
             _monitors.Remove(msg.Client);
