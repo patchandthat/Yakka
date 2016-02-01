@@ -68,6 +68,7 @@
     <Compile Include="Messages\ClientTracking.cs" />
     <Compile Include="Messages\ConnectedClient.cs" />
     <Compile Include="Messages\ConnectionMessages.cs" />
+    <Compile Include="Messages\ShoutMessages.cs" />
     <Compile Include="Paths\ActorMetadata.cs" />
     <Compile Include="Paths\ClientActorPaths.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

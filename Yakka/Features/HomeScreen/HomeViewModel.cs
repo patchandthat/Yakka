@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Windows.Input;
 using Akka.Actor;
 using Caliburn.Micro;
 using Yakka.Actors.UI;
@@ -10,9 +13,40 @@ namespace Yakka.Features.HomeScreen
 {
     class HomeViewModel : Screen
     {
+        private const int MaxShoutHistory = 5000;
+
         private readonly IActorRef _homeViewModelActor;
 
         private IObservableCollection<ClientDataViewModel> _clients = new BindableCollection<ClientDataViewModel>();
+        private string _shoutMessage;
+
+        private List<ReceivedShout> _shouts = new List<ReceivedShout>();
+
+        public string Shouts
+        {
+            get
+            {
+                var sb = new StringBuilder();
+                foreach (ReceivedShout shout in _shouts)
+                {
+                    sb.AppendLine($"{shout.User} : {shout.Message}");
+                }
+
+                return sb.ToString();
+            }
+        }
+
+        private class ReceivedShout
+        {
+            public ReceivedShout(string user, string message)
+            {
+                User = user;
+                Message = message;
+            }
+
+            public string User { get; }
+            public string Message { get; }
+        }
 
         public HomeViewModel(ActorSystem system)
         {
@@ -20,6 +54,41 @@ namespace Yakka.Features.HomeScreen
 
             _homeViewModelActor = system.ActorOf(Props.Create(() => new HomeViewModelActor(this)),
                 ClientActorPaths.HomeViewModelActor.Name);
+        }
+
+        public string ShoutMessage
+        {
+            get { return _shoutMessage; }
+            set
+            {
+                if (value == _shoutMessage) return;
+                _shoutMessage = value;
+
+                NotifyOfPropertyChange(() => ShoutMessage);
+            }
+        }
+
+        public void SendShout(ActionExecutionContext context)
+        {
+            var keyArgs = context.EventArgs as KeyEventArgs;
+
+            if (keyArgs != null && keyArgs.Key == Key.Enter)
+            {
+                _homeViewModelActor.Tell(new ShoutMessages.OutgoingShout(_shoutMessage));
+                ShoutMessage = string.Empty;
+            }
+        }
+
+        public void ReceiveShout(ShoutMessages.IncomingShout msg)
+        {
+            _shouts.Add(new ReceivedShout(msg.User, msg.Message));
+
+            while (_shouts.Count > MaxShoutHistory)
+            {
+                _shouts.RemoveAt(0);
+            }
+
+            NotifyOfPropertyChange(() => Shouts);
         }
 
         public void SetClients(IEnumerable<ConnectedClient> clients)

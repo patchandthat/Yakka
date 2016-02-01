@@ -16,6 +16,9 @@ namespace Yakka.Actors.UI
             Receive<ClientTracking.ClientConnected>(msg => _viewModel.NewClient(msg.Client));
             Receive<ClientTracking.ClientDisconnected>(msg => _viewModel.ClientDisconnected(msg.Client));
             Receive<ClientTracking.ClientChanged>(msg => _viewModel.UpdatedClient(msg.Client));
+
+            //Todo: Receive<ShoutMessages.OutgoingShout>(msg => Tell server)
+            Receive<ShoutMessages.IncomingShout>(msg => _viewModel.ReceiveShout(msg));
         }
 
         //todo
