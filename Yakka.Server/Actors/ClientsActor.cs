@@ -78,8 +78,8 @@ namespace Yakka.Server.Actors
         protected override void PreStart()
         {
             _cancelOutput = Context.System.Scheduler.ScheduleTellRepeatedlyCancelable(
-                TimeSpan.FromMilliseconds(500),
-                TimeSpan.FromMilliseconds(500),
+                TimeSpan.FromMilliseconds(800),
+                TimeSpan.FromMilliseconds(200),
                 Self,
                 new WriteClientList(),
                 Self);

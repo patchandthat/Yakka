@@ -19,7 +19,7 @@ namespace Yakka.Features.Settings
 
         private ImmutableYakkaSettings _lastSettings;
 
-        public SettingsViewModel(ActorSystem system)
+        public SettingsViewModel(IActorRefFactory system)
         {
             DisplayName = "Settings";
 

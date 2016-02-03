@@ -1,5 +1,4 @@
 ﻿using Akka.Actor;
-using Akka.DI.Core;
 using Caliburn.Micro;
 using Yakka.Actors.UI;
 using Yakka.Common.Paths;
@@ -10,11 +9,11 @@ namespace Yakka.Features.InfoPage
     {
         private readonly IActorRef _infoViewModelActor;
 
-        public InfoPageViewModel(ActorSystem system)
+        public InfoPageViewModel(IActorRefFactory system)
         {
             DisplayName = "Info";
 
-            _infoViewModelActor = system.ActorOf(system.DI().Props<InfoViewModelActor>(), ClientActorPaths.InfoViewModelActor.Name);
+            _infoViewModelActor = system.ActorOf(Props.Create(() => new InfoViewModelActor()), ClientActorPaths.InfoViewModelActor.Name);
         }
 
         public void GitHubButton()

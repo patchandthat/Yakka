@@ -48,7 +48,7 @@ namespace Yakka.Features.HomeScreen
             public string Message { get; }
         }
 
-        public HomeViewModel(ActorSystem system)
+        public HomeViewModel(IActorRefFactory system)
         {
             DisplayName = "Home screen";
 

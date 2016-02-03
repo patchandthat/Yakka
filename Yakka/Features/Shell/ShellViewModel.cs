@@ -27,7 +27,7 @@ namespace Yakka.Features.Shell
         private readonly IActorRef _shellViewModelActor;
         private bool _isConnected;
 
-        public ShellViewModel(HomeViewModel home, SettingsViewModel settings, InfoPageViewModel infoPage, ConversationsViewModel convos, ActorSystem system)
+        public ShellViewModel(HomeViewModel home, SettingsViewModel settings, InfoPageViewModel infoPage, ConversationsViewModel convos, IActorRefFactory system)
         {
             _screens.Add(Screens.Home, home);
             _screens.Add(Screens.Settings, settings);

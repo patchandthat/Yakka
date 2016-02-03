@@ -85,7 +85,7 @@ akka {{
                 .Where(t => t.Name.EndsWith("Actor"))
                 .AsSelf();
 
-            builder.RegisterInstance(_clientActorSystem).As<ActorSystem>();
+            builder.RegisterInstance(_clientActorSystem).As<IActorRefFactory>();
 
             _container = builder.Build();
             _resolver = new AutoFacDependencyResolver(_container, _clientActorSystem);

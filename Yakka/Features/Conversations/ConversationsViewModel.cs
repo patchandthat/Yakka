@@ -5,7 +5,7 @@ namespace Yakka.Features.Conversations
 {
     class ConversationsViewModel : Screen
     {
-        public ConversationsViewModel(ActorSystem system)
+        public ConversationsViewModel(IActorRefFactory system)
         {
             DisplayName = "Conversations";
         }
