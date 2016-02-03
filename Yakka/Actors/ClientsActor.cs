@@ -30,7 +30,7 @@ namespace Yakka.Actors
                 }
                 catch (Exception)
                 {
-                    
+                    // ignored
                 }
             }
 

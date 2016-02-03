@@ -3,8 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Yakka.Features.Settings"
-             xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d" 
              d:DesignHeight="385" d:DesignWidth="525">
 
@@ -23,15 +21,14 @@
             <TextBox x:Name="ServerAddress" Margin="5"></TextBox>
             <Label Margin="5">Server port</Label>
             <TextBox Margin="5" x:Name="ServerPort"></TextBox>
-            <!--<controls:NumericUpDown x:Name="ServerPort" Margin="5" Minimum="1024" Maximum="65535" HideUpDownButtons="False"></controls:NumericUpDown>-->
             <Label Margin="5">Username</Label>
             <TextBox x:Name="Username" Margin="5"></TextBox>
         </StackPanel>
 
         <StackPanel Grid.Row="0" Grid.Column="1">
-            <CheckBox x:Name="RememberSettings" Margin="5">
+            <!--<CheckBox x:Name="RememberSettings" Margin="5">
                 <AccessText TextWrapping="Wrap" Text="_Remember these server settings."/>
-            </CheckBox>
+            </CheckBox>-->
             <CheckBox x:Name="ConnectAutomatically" Margin="5">
                 <AccessText TextWrapping="Wrap" Text="_Connect automatically when program starts."/>
             </CheckBox>

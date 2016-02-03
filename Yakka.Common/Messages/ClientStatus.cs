@@ -2,11 +2,9 @@
 {
     public enum ClientStatus
     {
-        Unknown,
-        Online,
+        Available,
         Away,
         Busy,
         DoNotDisturb,
-        Offline
     }
 }

@@ -18,7 +18,7 @@ namespace Yakka.Actors.UI
                 Settings = settings;
             }
 
-            public ImmutableYakkaSettings Settings { get; private set; }
+            public ImmutableYakkaSettings Settings { get; }
         }
 
         internal class LoadSettings
@@ -45,7 +45,6 @@ namespace Yakka.Actors.UI
         
         protected override void PreStart()
         {
-            //Resolve necessary actor references to avoid the cost of selecting by path for each message
             var selection = Context.ActorSelection(ClientActorPaths.SettingsActor.Path);
             var selectTask = selection.ResolveOne(TimeSpan.FromMilliseconds(500));
 
@@ -56,6 +55,8 @@ namespace Yakka.Actors.UI
 
         private void HandleSettingsUpdate(ImmutableYakkaSettings msg)
         {
+            bool firstLaunch = _settingsViewModel.ServerAddress == null;
+
             _settingsViewModel.Username = msg.Username;
             _settingsViewModel.ConnectAutomatically = msg.ConnectAutomatically;
             _settingsViewModel.LaunchOnStartup = msg.LaunchOnStartup;
@@ -64,6 +65,12 @@ namespace Yakka.Actors.UI
             _settingsViewModel.ServerPort = msg.ServerPort;
 
             _settingsViewModel.UpdateSettings(msg);
+
+            if (firstLaunch && msg.ConnectAutomatically)
+            {
+                Context.ActorSelection(ClientActorPaths.ShellViewModelActor.Path)
+                       .Tell(new ConnectionActor.ConnectRequest());
+            }
         }
 
         private void HandleSaveSettings(SaveSettings msg)

@@ -59,7 +59,7 @@
                     </Button>
 
                     <!-- Home -->
-                    <Button Style="{StaticResource MaterialDesignFloatingActionButton}" Margin="4" HorizontalAlignment="Left" DockPanel.Dock="Right" x:Name="HomeButton">
+                    <Button Style="{StaticResource MaterialDesignFloatingActionButton}" Margin="4" HorizontalAlignment="Right" DockPanel.Dock="Right" x:Name="HomeButton">
                         <Viewbox Width="36" Height="36">
                             <Canvas Width="24" Height="24">
                                 <Path Data="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" Fill="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}, Path=Foreground}" />
@@ -67,7 +67,8 @@
                         </Viewbox>
                     </Button>
 
-                    <TextBlock VerticalAlignment="Center" FontWeight="Bold" Margin="16" x:Name="ActiveContentName"></TextBlock>
+                    
+                    <!--<TextBlock VerticalAlignment="Center" FontWeight="Bold" Margin="16" x:Name="ActiveContentName"></TextBlock>-->
                 
                 </DockPanel>
             </wpf:ColorZone>

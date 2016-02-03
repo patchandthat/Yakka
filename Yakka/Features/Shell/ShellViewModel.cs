@@ -96,7 +96,7 @@ namespace Yakka.Features.Shell
         {
             object request = IsConnected
                 ? (object)new ConnectionActor.Disconnect()
-                : (object)new ConnectionActor.ConnectRequest(ClientStatus.Online);
+                : (object)new ConnectionActor.ConnectRequest();
             _shellViewModelActor.Tell(request);
         }
 

@@ -22,6 +22,9 @@ namespace Yakka.Actors.UI
 
             Receive<ShoutMessages.OutgoingShout>(msg => SendShout(msg));
             Receive<ShoutMessages.IncomingShout>(msg => _viewModel.ReceiveShout(msg));
+
+            Receive<ConnectionActor.ChangeStatus>(
+                msg => Context.ActorSelection(ClientActorPaths.ConnectionActor.Path).Tell(msg));
         }
 
         private void SendShout(ShoutMessages.OutgoingShout msg)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.DI.Core;
 using Akka.Event;
@@ -89,6 +90,8 @@ namespace Yakka.Server.Actors
             Receive<WriteClientList>(msg => WriteClientsToConsole());
             Receive<NewClient>(msg => NewClientConnection(msg));
             Receive<ConnectionMessages.ConnectionLost>(msg => HandleLostConnection(msg));
+            Receive<ClientStatusChanged>(msg => HandleStatusChanged(msg));
+
         }
 
         protected override void PreStart()
@@ -132,6 +135,7 @@ namespace Yakka.Server.Actors
             _output.Tell(new ConsoleWriterActor.WriteConnectedClients(info.ToList()));
         }
 
+        //Todo: Not very clear, break this up a bit
         private void NewClientConnection(NewClient msg)
         {
             if (!_clients.ContainsKey(msg.Id))
@@ -180,6 +184,19 @@ namespace Yakka.Server.Actors
             }
         }
 
-        //Todo: all client connects and disconencts should be passed to the messaging handler
+        private void HandleStatusChanged(ClientStatusChanged msg)
+        {
+            if (_clients.ContainsKey(msg.Client))
+            {
+                _clients[msg.Client].Status = msg.Status;
+
+                var c = _clients.Values.First(x => x.Id == msg.Client);
+                var changedClient = new ClientTracking.ClientChanged(new ConnectedClient(c.Id, c.Username, c.Status));
+                foreach (var client in _clients.Values)
+                {
+                    client.ClientsHandler.Tell(changedClient);
+                }
+            }
+        }
     }
 }

@@ -23,7 +23,6 @@ namespace Yakka.Features.Settings
         {
             DisplayName = "Settings";
 
-            //Can use the DI if we register the viewmodels as single instance.  This will work for the most part, may need to fallback to this method for conversations
             _vmActor = system.ActorOf(Props.Create(() => new SettingsViewModelActor(this)), ClientActorPaths.SettingsViewModelActor.Name);
         }
 
@@ -120,10 +119,7 @@ namespace Yakka.Features.Settings
             _vmActor.Tell(new SettingsViewModelActor.SaveSettings(setting.ToImmutable()));
         }
 
-        public bool CanAcceptButton
-        {
-            get { return IsValid() && IsChanged(); }
-        }
+        public bool CanAcceptButton => IsValid() && IsChanged();
 
         private bool IsValid()
         {

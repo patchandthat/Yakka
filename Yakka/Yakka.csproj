@@ -97,6 +97,10 @@
       <HintPath>..\packages\Helios.1.4.2\lib\net45\Helios.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Humanizer, Version=2.0.0.0, Culture=neutral, PublicKeyToken=979442b78dfc278e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Humanizer.Core.2.0.0\lib\dotnet\Humanizer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="MahApps.Metro, Version=1.2.0.0, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.2.0.0\lib\net45\MahApps.Metro.dll</HintPath>
       <Private>True</Private>

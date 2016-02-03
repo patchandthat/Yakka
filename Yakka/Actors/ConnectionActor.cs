@@ -24,15 +24,7 @@ namespace Yakka.Actors
 
         public class ConnectionLost { }
 
-        public class ConnectRequest
-        {
-            public ConnectRequest(ClientStatus initialStatus)
-            {
-                InitialStatus = initialStatus;
-            }
-
-            public ClientStatus InitialStatus { get; }
-        }
+        public class ConnectRequest { }
 
         public class ChangeStatus
         {
@@ -48,15 +40,12 @@ namespace Yakka.Actors
 
         private class ConnectWithSettings
         {
-            public ConnectWithSettings(ImmutableYakkaSettings settings, ClientStatus initialStatus)
+            public ConnectWithSettings(ImmutableYakkaSettings settings)
             {
                 Settings = settings;
-                InitialStatus = initialStatus;
             }
 
             public ImmutableYakkaSettings Settings { get; }
-
-            public ClientStatus InitialStatus { get; }
         }
 
         #endregion
@@ -66,7 +55,7 @@ namespace Yakka.Actors
         private IActorRef _heartbeatActor;
         private IActorRef _clientsActor;
         private IActorRef _messagingActor;
-        private ClientStatus _status;
+        private ClientStatus _status = ClientStatus.Available;
 
         protected override void PreStart()
         {
@@ -100,6 +89,7 @@ namespace Yakka.Actors
             Receive<ConnectionMessages.ConnectionResponse>(msg => HandleConnectionResponse(msg));
             Receive<ConnectWithSettings>(msg => HandleConnectWithSettings(msg));
             Receive<ReceiveTimeout>(msg => HandleConnectTimeout());
+            Receive<ChangeStatus>(msg => _status = msg.Status);
 
             Context.ActorSelection(ClientActorPaths.ShellViewModelActor.Path)
                    .Tell(new ShellViewModelActor.UpdateConnectionState(false));
@@ -127,13 +117,10 @@ namespace Yakka.Actors
         #region When disconnected
         private void HandleConnectRequest(ConnectRequest msg)
         {
-            _status = msg.InitialStatus;
-
             _settingsActor.Ask<ImmutableYakkaSettings>(new SettingsActor.RequestCurrentSettingsRequest())
                           .ContinueWith(task =>
                                         {
-                                            var status = msg.InitialStatus;
-                                            return new ConnectWithSettings(task.Result, status);
+                                            return new ConnectWithSettings(task.Result);
                                         })
                           .PipeTo(Self);
         }
@@ -143,11 +130,9 @@ namespace Yakka.Actors
             var settings = msg.Settings;
             var server =
                 Context.ActorSelection(
-                    $"akka.tcp://YakkaServer@{settings.ServerAddress}:{settings.ServerPort}/user/ConnectionActor")
-                       .ResolveOne(TimeSpan.FromSeconds(1))
-                       .Result;
+                    $"akka.tcp://YakkaServer@{settings.ServerAddress}:{settings.ServerPort}/user/ConnectionActor");
 
-            server.Tell(new ConnectionMessages.ConnectionRequest(YakkaBootstrapper.ClientId, msg.InitialStatus, msg.Settings.Username, _clientsActor), Self);
+            server.Tell(new ConnectionMessages.ConnectionRequest(YakkaBootstrapper.ClientId, _status, msg.Settings.Username, _clientsActor), Self);
 
             Context.SetReceiveTimeout(ConnectionMessages.TimeoutPeriod);
         }
@@ -177,6 +162,7 @@ namespace Yakka.Actors
         #region When connected
         private void HandleChangeStatus(ChangeStatus msg)
         {
+            _status = msg.Status;
             _heartbeatActor.Tell(new HeartbeatActor.ChangeStatus(msg.Status));
         }
 

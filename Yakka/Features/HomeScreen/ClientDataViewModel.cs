@@ -1,5 +1,6 @@
 using System;
 using Caliburn.Micro;
+using Humanizer;
 using Yakka.Common.Messages;
 
 namespace Yakka.Features.HomeScreen
@@ -7,6 +8,7 @@ namespace Yakka.Features.HomeScreen
     internal class ClientDataViewModel : PropertyChangedBase
     {
         private string _username;
+        private ClientStatus _status;
         public Guid Id { get; set; }
 
         public string Username
@@ -20,6 +22,18 @@ namespace Yakka.Features.HomeScreen
             }
         }
 
-        public ClientStatus Status { get; set; }
+        public string StatusString => Status.Humanize();
+
+        public ClientStatus Status
+        {
+            get { return _status; }
+            set
+            {
+                if (value == _status) return;
+                _status = value;
+                NotifyOfPropertyChange(() => Status);
+                NotifyOfPropertyChange(() => StatusString);
+            }
+        }
     }
 }

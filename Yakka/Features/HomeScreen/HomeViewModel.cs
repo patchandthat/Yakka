@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Input;
 using Akka.Actor;
 using Caliburn.Micro;
+using Humanizer;
+using Yakka.Actors;
 using Yakka.Actors.UI;
 using Yakka.Common.Messages;
 using Yakka.Common.Paths;
@@ -64,6 +67,29 @@ namespace Yakka.Features.HomeScreen
                 _shoutMessage = value;
 
                 NotifyOfPropertyChange(() => ShoutMessage);
+            }
+        }
+
+        private ClientStatus _visibilityState = ClientStatus.Available;
+        public BindableCollection<string> VisibilityStates
+        {
+            get
+            {
+                var states =
+                    (from ClientStatus status in Enum.GetValues(typeof (ClientStatus)) select status.Humanize())
+                        .AsEnumerable();
+                return new BindableCollection<string>(states);
+            }
+        }
+
+        public string SelectedVisibilityState
+        {
+            get { return _visibilityState.Humanize(); }
+            set
+            {
+                _visibilityState = value.DehumanizeTo<ClientStatus>();
+                NotifyOfPropertyChange(() => SelectedVisibilityState);
+                _homeViewModelActor.Tell(new ConnectionActor.ChangeStatus(_visibilityState));
             }
         }
 
