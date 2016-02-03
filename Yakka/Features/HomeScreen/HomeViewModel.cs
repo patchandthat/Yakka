@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Input;
@@ -20,7 +19,7 @@ namespace Yakka.Features.HomeScreen
         private IObservableCollection<ClientDataViewModel> _clients = new BindableCollection<ClientDataViewModel>();
         private string _shoutMessage;
 
-        private List<ReceivedShout> _shouts = new List<ReceivedShout>();
+        private readonly List<ReceivedShout> _shouts = new List<ReceivedShout>();
 
         public string Shouts
         {
@@ -74,7 +73,7 @@ namespace Yakka.Features.HomeScreen
 
             if (keyArgs != null && keyArgs.Key == Key.Enter)
             {
-                _homeViewModelActor.Tell(new ShoutMessages.OutgoingShout(_shoutMessage));
+                _homeViewModelActor.Tell(new ShoutMessages.OutgoingShout(YakkaBootstrapper.ClientId, _shoutMessage));
                 ShoutMessage = string.Empty;
             }
         }

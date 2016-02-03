@@ -2,8 +2,6 @@
 {
     public static class ClientActorPaths
     {
-        public static readonly ActorMetaData MessageRouter = new ActorMetaData("MessageRouter");
-
         //Root level ui integration points.  These actors will have a ref to the respective viewmodels.  The viewmodels take care of ui thread marshalling.
         public static readonly ActorMetaData ShellViewModelActor = new ActorMetaData("ShellViewModelActor");
         public static readonly ActorMetaData HomeViewModelActor = new ActorMetaData("HomeViewModelActor");
@@ -18,5 +16,7 @@
         public static readonly ActorMetaData ConnectionActor = new ActorMetaData("ConnectionActor");
         public static readonly ActorMetaData HeartbeatActor = new ActorMetaData("HeartbeatActor", ConnectionActor);
         public static readonly ActorMetaData ClientsActor = new ActorMetaData("ClientsActor");
+
+        public static readonly ActorMetaData ChatMessageRouter = new ActorMetaData("ChatMessageRouter");
     }
 }

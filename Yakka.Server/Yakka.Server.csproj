@@ -92,6 +92,7 @@
     <Compile Include="Actors\HeartbeatMonitorActor.cs" />
     <Compile Include="Actors\ConnectionActor.cs" />
     <Compile Include="Actors\ConsoleWriterActor.cs" />
+    <Compile Include="Actors\MessagingActor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerMetadata.cs" />

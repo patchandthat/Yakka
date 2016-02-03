@@ -1,5 +1,7 @@
-﻿using Akka.Actor;
+﻿using System;
+using Akka.Actor;
 using Yakka.Common.Messages;
+using Yakka.Common.Paths;
 using Yakka.Features.HomeScreen;
 
 namespace Yakka.Actors.UI
@@ -7,6 +9,7 @@ namespace Yakka.Actors.UI
     class HomeViewModelActor : ReceiveActor
     {
         private readonly HomeViewModel _viewModel;
+        private IActorRef _messager;
 
         public HomeViewModelActor(HomeViewModel viewModel)
         {
@@ -17,8 +20,21 @@ namespace Yakka.Actors.UI
             Receive<ClientTracking.ClientDisconnected>(msg => _viewModel.ClientDisconnected(msg.Client));
             Receive<ClientTracking.ClientChanged>(msg => _viewModel.UpdatedClient(msg.Client));
 
-            //Todo: Receive<ShoutMessages.OutgoingShout>(msg => Tell server)
+            Receive<ShoutMessages.OutgoingShout>(msg => SendShout(msg));
             Receive<ShoutMessages.IncomingShout>(msg => _viewModel.ReceiveShout(msg));
+        }
+
+        private void SendShout(ShoutMessages.OutgoingShout msg)
+        {
+            if (_messager == null)
+            {
+                _messager =
+                    Context.ActorSelection(ClientActorPaths.ChatMessageRouter.Path)
+                           .ResolveOne(TimeSpan.FromSeconds(1))
+                           .Result;
+            }
+
+            _messager.Tell(msg);
         }
 
         //todo

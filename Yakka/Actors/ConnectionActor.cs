@@ -12,6 +12,18 @@ namespace Yakka.Actors
     {
         #region Messages
 
+        public class ConnectionMade
+        {
+            public ConnectionMade(IActorRef serverMessagingActor)
+            {
+                ServerMessagingActor = serverMessagingActor;
+            }
+
+            public IActorRef ServerMessagingActor { get; }
+        }
+
+        public class ConnectionLost { }
+
         public class ConnectRequest
         {
             public ConnectRequest(ClientStatus initialStatus)
@@ -53,16 +65,11 @@ namespace Yakka.Actors
         private IActorRef _errorActor;
         private IActorRef _heartbeatActor;
         private IActorRef _clientsActor;
+        private IActorRef _messagingActor;
         private ClientStatus _status;
-
-        public ConnectionActor()
-        {
-        }
 
         protected override void PreStart()
         {
-            Become(Disconnected);
-
             var errorSelector =
                 Context.ActorSelection(ClientActorPaths.ErrorDialogActor.Path)
                        .ResolveOne(TimeSpan.FromSeconds(1));
@@ -78,6 +85,12 @@ namespace Yakka.Actors
                        .ResolveOne(TimeSpan.FromSeconds(1));
             _clientsActor = clientsSelector.Result;
 
+            _messagingActor =
+                Context.ActorSelection(ClientActorPaths.ChatMessageRouter.Path)
+                       .ResolveOne(TimeSpan.FromSeconds(1))
+                       .Result;
+
+            Become(Disconnected);
             base.PreStart();
         }
 
@@ -91,8 +104,9 @@ namespace Yakka.Actors
             Context.ActorSelection(ClientActorPaths.ShellViewModelActor.Path)
                    .Tell(new ShellViewModelActor.UpdateConnectionState(false));
 
-            Context.ActorSelection(ClientActorPaths.ClientsActor.Path)
-                   .Tell(new ClientTracking.NewClientList(new ConnectedClient[0]));
+            _clientsActor.Tell(new ClientTracking.NewClientList(new ConnectedClient[0]));
+
+            _messagingActor.Tell(new ConnectionLost());
         }
 
         private void Connected()
@@ -155,6 +169,7 @@ namespace Yakka.Actors
             Context.ActorSelection(ClientActorPaths.ClientsActor.Path)
                    .Tell(new ClientTracking.NewClientList(msg.ConnectedClients));
 
+            _messagingActor.Tell(new ConnectionMade(msg.MessageHandler));
             Become(Connected);
         }
         #endregion

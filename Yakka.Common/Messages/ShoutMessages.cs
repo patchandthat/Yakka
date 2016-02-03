@@ -1,14 +1,18 @@
-﻿namespace Yakka.Common.Messages
+﻿using System;
+
+namespace Yakka.Common.Messages
 {
     public class ShoutMessages
     {
         public class OutgoingShout
         {
-            public OutgoingShout(string message)
+            public OutgoingShout(Guid userId, string message)
             {
                 Message = message;
+                UserId = userId;
             }
 
+            public Guid UserId { get; }
             public string Message { get; }
         }
 

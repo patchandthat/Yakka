@@ -43,6 +43,7 @@ namespace Yakka.Server
 
             //Create root level actors
             system.ActorOf(Props.Create(() => new ConsoleWriterActor()), ServerActorPaths.ConsoleActor.Name);
+            system.ActorOf(Props.Create(() => new MessagingActor()), ServerActorPaths.ChatMessageRouter.Name);
             system.ActorOf(Props.Create(() => new ConnectionActor()), ServerActorPaths.ConnectionActor.Name);
             system.ActorOf(Props.Create(() => new ClientsActor()), ServerActorPaths.ClientsActor.Name);
 

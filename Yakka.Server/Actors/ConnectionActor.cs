@@ -1,6 +1,7 @@
 ﻿using System;
 using Akka.Actor;
 using Akka.Event;
+using Yakka.Common;
 using Yakka.Common.Messages;
 using Yakka.Common.Paths;
 
@@ -33,14 +34,17 @@ namespace Yakka.Server.Actors
                 }
             }
 
-            //bug: msg.ClientsHandler is null, but IActorRefs passed back to the client work fine...
-            var path = Sender.Path.Parent.Child(ClientActorPaths.ClientsActor.Name);
             IActorRef clientsHandler =
-                Context.ActorSelection(path)
+                Context.ActorSelection(Sender.Path.Sibling(ClientActorPaths.ClientsActor.Name))
                        .ResolveOne(TimeSpan.FromSeconds(1))
                        .Result;
 
-            _clients.Tell(new ClientsActor.NewClient(msg.ClientId, msg.Username, msg.InitialStatus, clientsHandler), Sender);
+            IActorRef messageHandler =
+                Context.ActorSelection(Sender.Path.Sibling(ClientActorPaths.ChatMessageRouter.Name))
+                       .ResolveOne(TimeSpan.FromSeconds(1))
+                       .Result;
+
+            _clients.Tell(new ClientsActor.NewClient(msg.ClientId, msg.Username, msg.InitialStatus, clientsHandler, messageHandler), Sender);
         }
     }
 }

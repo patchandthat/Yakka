@@ -29,16 +29,18 @@ namespace Yakka.Common.Messages
 
         public class ConnectionResponse
         {
-            public ConnectionResponse(IActorRef activeClientsActor, IActorRef hearbeatReceiver, IEnumerable<ConnectedClient> connectedClients)
+            public ConnectionResponse(IActorRef activeClientsActor, IActorRef hearbeatReceiver, IEnumerable<ConnectedClient> connectedClients, IActorRef messageHandler)
             {
                 ActiveClientsActor = activeClientsActor;
                 HearbeatReceiver = hearbeatReceiver;
                 ConnectedClients = connectedClients;
+                MessageHandler = messageHandler;
             }
 
             public IEnumerable<ConnectedClient> ConnectedClients { get; }
             public IActorRef ActiveClientsActor { get; }
             public IActorRef HearbeatReceiver { get; }
+            public IActorRef MessageHandler { get; }
         }
 
         public class Heartbeat
@@ -53,18 +55,19 @@ namespace Yakka.Common.Messages
 
         public class HeartbeatAcknowledged { }
 
+
         public class ConnectionLost
         {
             public ConnectionLost()
             {
             }
 
-            public ConnectionLost(Guid client)
+            public ConnectionLost(Guid clientId)
             {
-                Client = client;
+                ClientId = clientId;
             }
 
-            public Guid Client { get; }
+            public Guid ClientId { get; }
         }
 
         public class Disconnect { }

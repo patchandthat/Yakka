@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.DI.Core;
 using Akka.Event;
@@ -16,18 +15,20 @@ namespace Yakka.Server.Actors
 
         public class NewClient
         {
-            public NewClient(Guid id, string username, ClientStatus status, IActorRef clientsHandler)
+            public NewClient(Guid id, string username, ClientStatus status, IActorRef clientsHandler, IActorRef messageHandler)
             {
                 Id = id;
                 Username = username;
                 Status = status;
                 ClientsHandler = clientsHandler;
+                MessageHandler = messageHandler;
             }
 
             public Guid Id { get; }
             public string Username { get; }
             public ClientStatus Status { get; }
             public IActorRef ClientsHandler { get; }
+            public IActorRef MessageHandler { get; }
         }
 
         public class ClientStatusChanged
@@ -47,24 +48,39 @@ namespace Yakka.Server.Actors
         private readonly ILoggingAdapter _logger = Context.GetLogger();
         private IActorRef _output;
 
+        public IActorRef MessageHandler
+        {
+            get
+            {
+                if (_messageHandler != null)
+                    return _messageHandler;
+                
+                _messageHandler = Context.ActorSelection(ServerActorPaths.ChatMessageRouter.Path)
+                                         .ResolveOne(TimeSpan.FromSeconds(1))
+                                         .Result;
+
+                return _messageHandler;
+            }
+        }
+
+        private IActorRef _messageHandler;
+
         private readonly Dictionary<Guid, ClientData> _clients = new Dictionary<Guid, ClientData>();
         private readonly Dictionary<Guid, IActorRef> _monitors = new Dictionary<Guid, IActorRef>();
 
         private class ClientData
         {
-            public ClientData(Guid id, string username, ClientStatus status, DateTime lastActiveTime, IActorRef clientsHandler)
+            public ClientData(Guid id, string username, ClientStatus status, IActorRef clientsHandler)
             {
                 Id = id;
                 Username = username;
                 Status = status;
-                LastActiveTime = lastActiveTime;
                 ClientsHandler = clientsHandler;
             }
 
             public Guid Id { get; }
             public string Username { get; }
             public ClientStatus Status { get; set; }
-            public DateTime LastActiveTime { get; set; }
             public IActorRef ClientsHandler { get; }
         }
 
@@ -103,7 +119,7 @@ namespace Yakka.Server.Actors
         {
             var info =
                 _clients.Values.Select(
-                    c => new ConsoleWriterActor.ConnectedUserInfo(c.Username, c.Id, c.LastActiveTime, c.Status));
+                    c => new ConsoleWriterActor.ConnectedUserInfo(c.Username, c.Id, c.Status));
 
             if (_output == null)
             {
@@ -116,53 +132,54 @@ namespace Yakka.Server.Actors
             _output.Tell(new ConsoleWriterActor.WriteConnectedClients(info.ToList()));
         }
 
-        //Todo: this is doing too much
         private void NewClientConnection(NewClient msg)
         {
-            if (_clients.ContainsKey(msg.Id))
-            {
-                //Todo: consider ingoring this case, we're already connected, the message is a dupe
-                //Notify all of update
-                var changedClientMessage = new ClientTracking.ClientChanged(new ConnectedClient(msg.Id, msg.Username, msg.Status));
-                Parallel.ForEach(_clients.Values, data =>
-                                                  {
-                                                      if (data.Id != msg.Id)
-                                                          data.ClientsHandler.Tell(changedClientMessage);
-                                                  });
-                
-                _clients[msg.Id] = new ClientData(msg.Id, msg.Username, msg.Status, DateTime.UtcNow, msg.ClientsHandler);
-            }
-            else
+            if (!_clients.ContainsKey(msg.Id))
             {
                 //Notify all of new client
                 var newClientMessage = new ClientTracking.ClientConnected(new ConnectedClient(msg.Id, msg.Username, msg.Status));
-                Parallel.ForEach(_clients.Values, data => data.ClientsHandler.Tell(newClientMessage));
+                foreach (var client in _clients.Values)
+                {
+                    client.ClientsHandler.Tell(newClientMessage);
+                }
 
-                _clients.Add(msg.Id, new ClientData(msg.Id, msg.Username, msg.Status, DateTime.UtcNow, msg.ClientsHandler));
+                //Register new client
+                _clients.Add(msg.Id,
+                    new ClientData(msg.Id, msg.Username, msg.Status, msg.ClientsHandler));
+
+                //Spin up a heartbeat handler for new client
+                var prop = Context.DI().Props<HeartbeatMonitorActor>();
+                var monitor = Context.ActorOf(prop, msg.Id.ToString());
+                monitor.Tell(new HeartbeatMonitorActor.AssignClient(msg.Id, msg.Status));
+                _monitors.Add(msg.Id, monitor);
+
+                //Respond to connecting user with list of currently conencted users
+                IEnumerable<ConnectedClient> clients =
+                    _clients.Values.Select(c => new ConnectedClient(c.Id, c.Username, c.Status)).ToList();
+                Sender.Tell(new ConnectionMessages.ConnectionResponse(Self, monitor, clients, MessageHandler));
+
+                MessageHandler.Tell(new MessagingActor.AddUser(msg.Id, new User(msg.Username, msg.MessageHandler)));
             }
-
-            var prop = Context.DI().Props<HeartbeatMonitorActor>();
-            var monitor = Context.ActorOf(prop, msg.Id.ToString());
-            monitor.Tell(new HeartbeatMonitorActor.AssignClient(msg.Id, msg.Status));
-            _monitors.Add(msg.Id, monitor);
-
-            IEnumerable<ConnectedClient> clients =
-                _clients.Values.Select(c => new ConnectedClient(c.Id, c.Username, c.Status)).ToList();
-            Sender.Tell(new ConnectionMessages.ConnectionResponse(Self, monitor, clients));
         }
 
         private void HandleLostConnection(ConnectionMessages.ConnectionLost msg)
         {
-            var c = _clients.Values.First(x => x.Id == msg.Client);
+            MessageHandler.Tell(new MessagingActor.RemoveUser(msg.ClientId));
+
+            var c = _clients.Values.First(x => x.Id == msg.ClientId);
             var disconnectedClient = new ClientTracking.ClientDisconnected(new ConnectedClient(c.Id, c.Username, c.Status));
 
-            var monitor = _monitors[msg.Client];
-            _monitors.Remove(msg.Client);
-            _clients.Remove(msg.Client);
+            var monitor = _monitors[msg.ClientId];
+            _monitors.Remove(msg.ClientId);
+            _clients.Remove(msg.ClientId);
             Context.Stop(monitor);
 
-            //Notify all remaining clients of disconnect
-            Parallel.ForEach(_clients.Values, data => data.ClientsHandler.Tell(disconnectedClient));
+            foreach (var client in _clients.Values)
+            {
+                client.ClientsHandler.Tell(disconnectedClient);
+            }
         }
+
+        //Todo: all client connects and disconencts should be passed to the messaging handler
     }
 }

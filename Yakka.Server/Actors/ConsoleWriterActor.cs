@@ -21,19 +21,16 @@ namespace Yakka.Server.Actors
 
         public class ConnectedUserInfo
         {
-            public ConnectedUserInfo(string name, Guid id, DateTime lastActivity, ClientStatus status)
+            public ConnectedUserInfo(string name, Guid id, ClientStatus status)
             {
                 Name = name;
                 Id = id;
-                LastActivity = lastActivity;
                 Status = status;
             }
 
             public string Name { get; }
 
             public Guid Id { get; }
-
-            public DateTime LastActivity { get; }
 
             public ClientStatus Status { get; }
 
@@ -82,7 +79,7 @@ namespace Yakka.Server.Actors
 
             foreach (var client in clientList)
             {
-                Console.WriteLine("({1}) {2} - Last activity {3} - ID:{0}", client.Id, client.Status.ToString(), client.Name, client.LastActivity.ToString("HH:mm:ss"));
+                Console.WriteLine("({1}) {2} - ID:{0}", client.Id, client.Status, client.Name);
             }
         }
     }

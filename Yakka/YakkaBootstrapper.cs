@@ -52,6 +52,7 @@ akka {{
             var errorHandler = _clientActorSystem.ActorOf(Props.Create(() => new ErrorDialogActor()), ClientActorPaths.ErrorDialogActor.Name);
             var settingsActor = _clientActorSystem.ActorOf(Props.Create(() => new SettingsActor(errorHandler)), ClientActorPaths.SettingsActor.Name);
             var clientsActor = _clientActorSystem.ActorOf(Props.Create(() => new ClientsActor()), ClientActorPaths.ClientsActor.Name);
+            var messager = _clientActorSystem.ActorOf(Props.Create(() => new MessagingActor()), ClientActorPaths.ChatMessageRouter.Name);
             var connectionActor = _clientActorSystem.ActorOf(Props.Create(() => new ConnectionActor()), ClientActorPaths.ConnectionActor.Name);
 
             Initialize();
