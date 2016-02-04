@@ -202,6 +202,7 @@
     <Compile Include="Actors\SettingsActor.cs" />
     <Compile Include="Actors\SettingsWorkerActor.cs" />
     <Compile Include="Actors\UI\HomeViewModelActor.cs" />
+    <Compile Include="Actors\UI\NotificationActor.cs" />
     <Compile Include="Actors\UI\ShellViewModelActor.cs" />
     <Compile Include="Actors\UI\SettingsViewModelActor.cs" />
     <Compile Include="App.xaml.cs">
@@ -222,6 +223,8 @@
       <DependentUpon>ClientDataView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Features\HomeScreen\ClientDataViewModel.cs" />
+    <Compile Include="Util\FlashWindow.cs" />
+    <Compile Include="Util\INotifier.cs" />
     <Compile Include="YakkaBootstrapper.cs" />
     <Compile Include="Features\Conversations\ConversationsView.xaml.cs">
       <DependentUpon>ConversationsView.xaml</DependentUpon>

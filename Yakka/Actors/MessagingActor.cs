@@ -1,4 +1,5 @@
 ﻿using Akka.Actor;
+using Yakka.Actors.UI;
 using Yakka.Common.Messages;
 using Yakka.Common.Paths;
 
@@ -27,7 +28,11 @@ namespace Yakka.Actors
         {
             Receive<ConnectionActor.ConnectionLost>(msg => Become(Disconnected));
             Receive<ShoutMessages.OutgoingShout>(msg => _serverMessagingActor.Tell(msg));
-            Receive<ShoutMessages.IncomingShout>(msg => Context.ActorSelection(ClientActorPaths.HomeViewModelActor.Path).Tell(msg));
+            Receive<ShoutMessages.IncomingShout>(msg =>
+            {
+                Context.ActorSelection(ClientActorPaths.HomeViewModelActor.Path).Tell(msg);
+                Context.ActorSelection(ClientActorPaths.ShellViewModelActor.Path).Tell(new ShellViewModelActor.NotifyUser());
+            });
         }
     }
 }

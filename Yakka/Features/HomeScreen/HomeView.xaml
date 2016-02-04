@@ -18,7 +18,7 @@
 
         <DockPanel Margin="5" Grid.Column="0" Grid.Row="0">
             <!--ShoutBox-->
-            <TextBox Margin="5,15,5,5" 
+            <TextBox Margin="5,17,5,5" 
                      DockPanel.Dock="Top" 
                      x:Name="ShoutMessage" 
                      materialDesign:TextFieldAssist.Hint="Type a message to all users and hit enter"

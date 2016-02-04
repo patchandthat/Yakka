@@ -18,5 +18,6 @@
         public static readonly ActorMetaData ClientsActor = new ActorMetaData("ClientsActor");
 
         public static readonly ActorMetaData ChatMessageRouter = new ActorMetaData("ChatMessageRouter");
+        public static readonly ActorMetaData NotifierActor = new ActorMetaData("NotifierActor", ShellViewModelActor);
     }
 }

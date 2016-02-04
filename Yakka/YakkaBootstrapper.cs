@@ -15,6 +15,7 @@ using Yakka.Common.Paths;
 using Yakka.DataLayer;
 using Yakka.Features.Conversations;
 using Yakka.Features.Shell;
+using Yakka.Util;
 
 namespace Yakka
 {
@@ -70,6 +71,7 @@ akka {{
 
             builder.RegisterType<SqliteDb>().As<IYakkaDb>();
             builder.RegisterType<StartupRegistryKey>().As<IStartupRegistryKey>();
+            builder.RegisterType<FlashWindow>().As<INotifier>();
 
             var assembly = Assembly.GetExecutingAssembly();
             builder.RegisterAssemblyTypes(assembly)

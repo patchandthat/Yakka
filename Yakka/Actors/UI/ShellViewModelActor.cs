@@ -1,5 +1,6 @@
 ﻿using System;
 using Akka.Actor;
+using Akka.DI.Core;
 using Yakka.Common.Paths;
 using Yakka.Features.Shell;
 
@@ -17,8 +18,11 @@ namespace Yakka.Actors.UI
             public bool Connected { get; }
         }
 
+        public class NotifyUser { }
+
         private readonly ShellViewModel _shellViewModel;
         private IActorRef _connectionActor;
+        private IActorRef _notifierActor;
 
         public ShellViewModelActor(ShellViewModel shellViewModel)
         {
@@ -27,6 +31,26 @@ namespace Yakka.Actors.UI
             Receive<ConnectionActor.ConnectRequest>(msg => ForwardConnectionRequest(msg));
             Receive<ConnectionActor.Disconnect>(msg => ForwardDisconnectRequest(msg));
             Receive<UpdateConnectionState>(msg => _shellViewModel.IsConnected = msg.Connected);
+            Receive<NotifyUser>(msg =>
+            {
+                _notifierActor.Tell(msg);
+            });
+        }
+
+        protected override void PreStart()
+        {
+            var notifierProp = Context.DI().Props<NotificationActor>();
+            _notifierActor = Context.ActorOf(notifierProp);
+
+            base.PreStart();
+        }
+
+        protected override void PostStop()
+        {
+            Context.Stop(_notifierActor);
+            _notifierActor = null;
+
+            base.PostStop();
         }
 
         private void ForwardConnectionRequest(ConnectionActor.ConnectRequest msg)
