@@ -223,7 +223,9 @@
       <DependentUpon>ClientDataView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Features\HomeScreen\ClientDataViewModel.cs" />
-    <Compile Include="Util\FlashWindow.cs" />
+    <Compile Include="Util\FlashingWindowManager.cs" />
+    <Compile Include="Util\FlashWindowNotifier.cs" />
+    <Compile Include="Util\ICanFlashWindow.cs" />
     <Compile Include="Util\INotifier.cs" />
     <Compile Include="YakkaBootstrapper.cs" />
     <Compile Include="Features\Conversations\ConversationsView.xaml.cs">

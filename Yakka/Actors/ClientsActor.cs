@@ -24,9 +24,9 @@ namespace Yakka.Actors
                 try
                 {
                     _homeVm =
-                    Context.ActorSelection(ClientActorPaths.HomeViewModelActor.Path)
-                           .ResolveOne(TimeSpan.FromSeconds(1))
-                           .Result;
+                        Context.ActorSelection(ClientActorPaths.HomeViewModelActor.Path)
+                            .ResolveOne(TimeSpan.FromSeconds(1))
+                            .Result;
                 }
                 catch (Exception)
                 {

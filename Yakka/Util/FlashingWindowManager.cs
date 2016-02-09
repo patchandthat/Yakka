@@ -1,14 +1,38 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Interop;
+using Caliburn.Micro;
 
 namespace Yakka.Util
 {
-    class FlashWindow : INotifier
+    class FlashingWindowManager : WindowManager, ICanFlashWindow
     {
-        private IntPtr _mainWindowHWnd;
-        //private Window _window;
-        private Application _app;
+        public void Flash(Screen viewModel)
+        {
+            //Todo: Fix parameter so that it's not possible to pass the wrong thing in.
+            //Or throw
+
+            var window = viewModel.GetView() as Window;
+            if (window != null)
+            {
+                try
+                {
+                    //Private window.HwndSourceWindow could be obtained via reflection if taking the 'percussive maintenance' approach
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        var w = window;
+                        IntPtr handle = new WindowInteropHelper(w).Handle;
+                        Flash(handle, 5);
+                    });
+                }
+                catch (Exception ex)
+                {
+                    //examine me
+                    throw;
+                }
+            }
+        }
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -70,25 +94,6 @@ namespace Yakka.Util
         /// </summary>
         private const uint FLASHW_TIMERNOFG = 12;
 
-        public FlashWindow()
-        {
-            var cur = Application.Current;
-            _app = cur;
-        }
-
-        public void NotifyUser()
-        {
-            //todo: Find a decent way of getting a handle... this doesn't work
-            if (!_app.MainWindow.IsFocused)
-                FlashApplicationWindow();
-        }
-
-        private void FlashApplicationWindow()
-        {
-            InitializeHandle();
-            Flash(this._mainWindowHWnd, 5);
-        }
-
         /// <summary>
         /// Flash the spacified Window (Form) until it recieves focus.
         /// </summary>
@@ -129,24 +134,12 @@ namespace Yakka.Util
             return fi;
         }
 
-        private void StopFlashing()
+        private void StopFlashing(IntPtr handle)
         {
-            InitializeHandle();
-
             if (Win2000OrLater)
             {
-                FLASHWINFO fi = CreateFlashInfoStruct(this._mainWindowHWnd, FLASHW_STOP, uint.MaxValue, 0);
+                FLASHWINFO fi = CreateFlashInfoStruct(handle, FLASHW_STOP, uint.MaxValue, 0);
                 FlashWindowEx(ref fi);
-            }
-        }
-
-        private void InitializeHandle()
-        {
-            if (this._mainWindowHWnd == IntPtr.Zero)
-            {
-                // Delayed creation of Main Window IntPtr as Application.Current passed in to ctor does not have the MainWindow set at that time
-                var mainWindow = _app.MainWindow;
-                this._mainWindowHWnd = new System.Windows.Interop.WindowInteropHelper(mainWindow).Handle;
             }
         }
 
