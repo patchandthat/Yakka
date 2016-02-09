@@ -67,8 +67,7 @@ akka {{
             var builder = new ContainerBuilder();
 
             //var wm = new WindowManager();
-            builder.RegisterType<FlashingWindowManager>().As<IWindowManager>().SingleInstance();
-            builder.RegisterType<FlashingWindowManager>().As<ICanFlashWindow>().SingleInstance();
+            builder.RegisterType<WindowManager>().As<IWindowManager>().SingleInstance();
             builder.RegisterType<EventAggregator>().As<IEventAggregator>().SingleInstance();
 
             builder.RegisterType<SqliteDb>().As<IYakkaDb>();
