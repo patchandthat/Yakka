@@ -70,7 +70,20 @@ namespace Yakka.Features.HomeScreen
             }
         }
 
+        public IObservableCollection<ClientDataViewModel> Clients
+        {
+            get { return _clients; }
+            set
+            {
+                if (Equals(value, _clients)) return;
+                _clients = value;
+                NotifyOfPropertyChange(() => Clients);
+            }
+        }
+
         private ClientStatus _visibilityState = ClientStatus.Available;
+        private IObservableCollection<ClientDataViewModel> _selectedClients;
+
         public BindableCollection<string> VisibilityStates
         {
             get
@@ -155,15 +168,30 @@ namespace Yakka.Features.HomeScreen
             }
         }
 
-        public IObservableCollection<ClientDataViewModel> Clients
+        public void ChangeSelection(ClientDataViewModel sender)
         {
-            get { return _clients; }
-            set
+            if (sender != null)
             {
-                if (Equals(value, _clients)) return;
-                _clients = value;
-                NotifyOfPropertyChange(() => Clients);
+                sender.IsSelected = !sender.IsSelected;
+
+                NotifyOfPropertyChange(() => CanMessageSelectedUsers);
             }
+        }
+
+        public bool CanMessageSelectedUsers => Clients.Any(x => x.IsSelected);
+
+        public void MessageSelectedUsers()
+        {
+            object selections = new object();
+            _homeViewModelActor.Tell(new ConversationRequest(selections));
+        }
+    }
+
+    internal class ConversationRequest
+    {
+        public ConversationRequest(object selections)
+        {
+            throw new NotImplementedException();
         }
     }
 }

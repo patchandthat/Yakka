@@ -9,6 +9,7 @@ namespace Yakka.Features.HomeScreen
     {
         private string _username;
         private ClientStatus _status;
+        private bool _isSelected;
         public Guid Id { get; set; }
 
         public string Username
@@ -33,6 +34,17 @@ namespace Yakka.Features.HomeScreen
                 _status = value;
                 NotifyOfPropertyChange(() => Status);
                 NotifyOfPropertyChange(() => StatusString);
+            }
+        }
+
+        public bool IsSelected
+        {
+            get { return _isSelected; }
+            set
+            {
+                if (value == _isSelected) return;
+                _isSelected = value;
+                NotifyOfPropertyChange(() => IsSelected);
             }
         }
     }

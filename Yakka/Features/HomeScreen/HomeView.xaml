@@ -39,8 +39,12 @@
                       x:Name="VisibilityStates">
             </ComboBox>
             <Label Margin="5" DockPanel.Dock="Top">Connected users</Label>
-            <Button Margin="5" DockPanel.Dock="Bottom">Message selected users</Button>
-            <ListBox Margin="5" DockPanel.Dock="Top" x:Name="Clients"></ListBox>
+            <Button Margin="5" DockPanel.Dock="Bottom" x:Name="MessageSelectedUsers">Message selected users</Button>
+            <ListBox Margin="5" 
+                     DockPanel.Dock="Top" 
+                     x:Name="Clients" 
+                     SelectionMode="Extended" 
+                     cal:Message.Attach="[Event SelectionChanged] = [Action ChangeSelection($this)]" />
         </DockPanel>
     </Grid>
 </UserControl>
