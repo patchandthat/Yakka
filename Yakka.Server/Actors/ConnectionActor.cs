@@ -30,7 +30,6 @@ namespace Yakka.Server.Actors
                 if (_clients == null)
                 {
                     _logger.Error("ConnctionActor was unable to acquire an actor reference to the ClientsActor");
-                    //todo: Sender.Tell(ERROR); ??
                 }
             }
 

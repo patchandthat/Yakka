@@ -39,9 +39,5 @@ namespace Yakka.Actors.UI
 
             _messager.Tell(msg);
         }
-
-        //todo
-        //Set my status -> conn actor
-        //Request conversation -> ActorRef target for this should be passed back in successful connect response
     }
 }

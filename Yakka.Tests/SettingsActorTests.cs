@@ -207,8 +207,6 @@ namespace Yakka.Tests
         public void Some_fault_tolerance_behaviours()
         {
             /*
-                ToDo.
-
                 On save & load failures, if all retries have failed, I want the recipient to not receive any message
                 Instead an error handling actor be messaged with details of the failure, which can notify the user, because at this point there's no other corrective action to take
 

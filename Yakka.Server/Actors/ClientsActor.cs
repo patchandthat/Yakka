@@ -135,35 +135,47 @@ namespace Yakka.Server.Actors
             _output.Tell(new ConsoleWriterActor.WriteConnectedClients(info.ToList()));
         }
 
-        //Todo: Not very clear, break this up a bit
         private void NewClientConnection(NewClient msg)
         {
             if (!_clients.ContainsKey(msg.Id))
             {
-                //Notify all of new client
-                var newClientMessage = new ClientTracking.ClientConnected(new ConnectedClient(msg.Id, msg.Username, msg.Status));
-                foreach (var client in _clients.Values)
-                {
-                    client.ClientsHandler.Tell(newClientMessage);
-                }
+                BroadcastNewUserToClients(msg);
 
                 //Register new client
                 _clients.Add(msg.Id,
                     new ClientData(msg.Id, msg.Username, msg.Status, msg.ClientsHandler));
 
-                //Spin up a heartbeat handler for new client
-                var prop = Context.DI().Props<HeartbeatMonitorActor>();
-                var monitor = Context.ActorOf(prop, msg.Id.ToString());
-                monitor.Tell(new HeartbeatMonitorActor.AssignClient(msg.Id, msg.Status));
+                var monitor = StartHeartbeatMonitorForNewClient(msg);
                 _monitors.Add(msg.Id, monitor);
 
-                //Respond to connecting user with list of currently conencted users
-                IEnumerable<ConnectedClient> clients =
-                    _clients.Values.Select(c => new ConnectedClient(c.Id, c.Username, c.Status)).ToList();
+                IEnumerable<ConnectedClient> clients = GetConnectedClientList();
                 Sender.Tell(new ConnectionMessages.ConnectionResponse(Self, monitor, clients, MessageHandler));
 
                 MessageHandler.Tell(new MessagingActor.AddUser(msg.Id, new User(msg.Username, msg.MessageHandler)));
             }
+        }
+
+        private List<ConnectedClient> GetConnectedClientList()
+        {
+            return _clients.Values.Select(c => new ConnectedClient(c.Id, c.Username, c.Status)).ToList();
+        }
+
+        private void BroadcastNewUserToClients(NewClient msg)
+        {
+            var newClientMessage = new ClientTracking.ClientConnected(new ConnectedClient(msg.Id, msg.Username, msg.Status));
+            foreach (var client in _clients.Values)
+            {
+                client.ClientsHandler.Tell(newClientMessage);
+            }
+        }
+
+        private IActorRef StartHeartbeatMonitorForNewClient(NewClient msg)
+        {
+            var prop = Context.DI().Props<HeartbeatMonitorActor>();
+            var monitor = Context.ActorOf(prop, msg.Id.ToString());
+            monitor.Tell(new HeartbeatMonitorActor.AssignClient(msg.Id, msg.Status));
+
+            return monitor;
         }
 
         private void HandleLostConnection(ConnectionMessages.ConnectionLost msg)

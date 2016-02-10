@@ -12,14 +12,12 @@ namespace Yakka.Server
 {
     class Program
     {
-        //Todo: Use http://topshelf-project.com/ or something similar to allow this to be run as a service if need be
         /// <param name="args"></param>
         static void Main(string[] args)
         {
             ServerMetadata.Hostname = Dns.GetHostName();
             ServerMetadata.Port = 8081;
 
-            //Todo: eventually shift this to config file
             string configHocon = string.Format(
 @"akka {{
     loglevel = DEBUG

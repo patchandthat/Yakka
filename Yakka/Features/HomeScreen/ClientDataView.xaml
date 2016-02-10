@@ -8,11 +8,6 @@
              d:DesignHeight="50" d:DesignWidth="150">
     <Grid Margin="1">
         <StackPanel Orientation="Horizontal">
-            <!-- 
-                Todo: Figure out status-to-colour setter/converter, and bind to VM client status 
-                ie. Green / Amber / Red / Greyed
-                Status text as tooltip
-            -->
             <Viewbox Width="24" Height="24">
                 <Canvas Width="24" Height="24">
                     <Path Data="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z" Fill="Black" />
