@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Akka.Actor;
 using Yakka.Common.Messages;
 using Yakka.Common.Paths;
@@ -23,8 +24,15 @@ namespace Yakka.Actors.UI
             Receive<ShoutMessages.OutgoingShout>(msg => SendShout(msg));
             Receive<ShoutMessages.IncomingShout>(msg => _viewModel.ReceiveShout(msg));
 
+            Receive<ConversationMessages.ConversationRequest>(msg => HandleConversationRequest(msg));
+
             Receive<ConnectionActor.ChangeStatus>(
                 msg => Context.ActorSelection(ClientActorPaths.ConnectionActor.Path).Tell(msg));
+        }
+
+        private void HandleConversationRequest(ConversationMessages.ConversationRequest msg)
+        {
+            throw new NotImplementedException();
         }
 
         private void SendShout(ShoutMessages.OutgoingShout msg)

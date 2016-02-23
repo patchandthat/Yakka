@@ -182,16 +182,10 @@ namespace Yakka.Features.HomeScreen
 
         public void MessageSelectedUsers()
         {
-            object selections = new object();
-            _homeViewModelActor.Tell(new ConversationRequest(selections));
-        }
-    }
-
-    internal class ConversationRequest
-    {
-        public ConversationRequest(object selections)
-        {
-            throw new NotImplementedException();
+            var selections = Clients.Where(c => c.IsSelected)
+                                    .Select(c => new Guid(c.Id.ToByteArray()));
+            
+            _homeViewModelActor.Tell(new ConversationMessages.ConversationRequest(selections));
         }
     }
 }
