@@ -44,6 +44,14 @@ namespace Yakka.Server.Actors
                                         _handlers.Remove(msg.Id);
                                 });
             Receive<ShoutMessages.OutgoingShout>(msg => SendShoutToAllUsers(msg));
+            Receive<ConversationMessages.ConversationRequest>(msg => CreateOrRejoinConversation(msg));
+        }
+
+        private void CreateOrRejoinConversation(ConversationMessages.ConversationRequest msg)
+        {
+            //Spin up, or pass user details on to conversation coordinator actor
+            //Todo: pick me up tomorrow
+            throw new NotImplementedException();
         }
 
         private void SendShoutToAllUsers(ShoutMessages.OutgoingShout msg)

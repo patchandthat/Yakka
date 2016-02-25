@@ -14,5 +14,18 @@ namespace Yakka.Common.Messages
                 _clients = clients;
             }
         }
+
+        public class ConversationStarted
+        {
+            public Guid ConversationId { get; }
+            public IEnumerable<Guid> clients { get; }
+        }
+
+        public class ChatMessage
+        {
+            public string Message { get; } 
+            public Guid SenderId { get; }
+            public Guid ConversationId { get; }
+        }
     }
 }

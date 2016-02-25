@@ -32,10 +32,15 @@ namespace Yakka.Actors.UI
 
         private void HandleConversationRequest(ConversationMessages.ConversationRequest msg)
         {
-            throw new NotImplementedException();
+            ForwardToMessenger(msg);
         }
 
         private void SendShout(ShoutMessages.OutgoingShout msg)
+        {
+            ForwardToMessenger(msg);
+        }
+
+        private void ForwardToMessenger(object msg)
         {
             if (_messager == null)
             {

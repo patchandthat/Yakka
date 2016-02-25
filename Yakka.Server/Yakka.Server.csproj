@@ -89,6 +89,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actors\ClientsActor.cs" />
+    <Compile Include="Actors\ConversationActor.cs" />
+    <Compile Include="Actors\ConversationCoordinatorActor.cs" />
     <Compile Include="Actors\HeartbeatMonitorActor.cs" />
     <Compile Include="Actors\ConnectionActor.cs" />
     <Compile Include="Actors\ConsoleWriterActor.cs" />

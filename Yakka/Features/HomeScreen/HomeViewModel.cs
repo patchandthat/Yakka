@@ -183,7 +183,8 @@ namespace Yakka.Features.HomeScreen
         public void MessageSelectedUsers()
         {
             var selections = Clients.Where(c => c.IsSelected)
-                                    .Select(c => new Guid(c.Id.ToByteArray()));
+                                    .Select(c => new Guid(c.Id.ToByteArray()))
+                                    .Concat(new []{YakkaBootstrapper.ClientId});
             
             _homeViewModelActor.Tell(new ConversationMessages.ConversationRequest(selections));
         }
