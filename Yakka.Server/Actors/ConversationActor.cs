@@ -28,8 +28,27 @@ namespace Yakka.Server.Actors
         {
             _conversationId = conversationId;
 
+            Receive<ConversationCoordinatorActor.LocateConversation>(msg => LocateConversation(msg));
             Receive<ConversationCoordinatorActor.StartConversation>(msg => GreetClients(msg));
             Receive<ConversationMessages.ChatMessage>(msg => BroadcastChatMessage(msg));
+        }
+
+        private void LocateConversation(ConversationCoordinatorActor.LocateConversation msg)
+        {
+            if (_participants.Count != msg.Participants.Count())
+            {
+                Sender.Tell(new ConversationLocationAggregatorActor.ConversationNotFound());
+                return;
+            }
+
+            if (_participants.All(p => msg.Participants.Contains(p.ClientId)))
+            {
+                Sender.Tell(new ConversationLocationAggregatorActor.ConversationLocated(_conversationId));
+            }
+            else
+            {
+                Sender.Tell(new ConversationLocationAggregatorActor.ConversationNotFound());
+            }
         }
 
         private void GreetClients(ConversationCoordinatorActor.StartConversation msg)

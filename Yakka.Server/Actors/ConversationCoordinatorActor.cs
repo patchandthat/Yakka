@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Akka.Actor;
 using Yakka.Common.Messages;
 
 namespace Yakka.Server.Actors
 {
-    class ConversationCoordinatorActor : ReceiveActor
+    class ConversationCoordinatorActor : ReceiveActor, IWithUnboundedStash
     {
         public class StartConversation
         {
@@ -17,27 +19,90 @@ namespace Yakka.Server.Actors
             public IEnumerable<ConversationParticipant> Participants { get; }
         }
 
+        public class LocateConversation
+        {
+            public LocateConversation(IEnumerable<Guid> participants)
+            {
+                Participants = participants;
+            }
+
+            public IEnumerable<Guid> Participants { get; }
+        }
+
         private readonly Dictionary<Guid, IActorRef> _conversations = new Dictionary<Guid, IActorRef>();
+        private IActorRef _responseAggregator;
+        private StartConversation _pendingRequest;
+
+        public IStash Stash { get; set; }
 
         public ConversationCoordinatorActor()
         {
-            Receive<StartConversation>(msg => StartNewConversation(msg));
+            Become(Available);
+        }
+
+        private void Available()
+        {
+            if (_responseAggregator != null)
+            {
+                Stash.UnstashAll();
+
+                _pendingRequest = null;
+                Context.Stop(_responseAggregator);
+                _responseAggregator = null;
+            }
+
+            Receive<StartConversation>(msg => StartNewOrLocateExistingConversation(msg));
             Receive<ConversationMessages.ChatMessage>(msg => RouteChatMessage(msg));
         }
 
-        private void StartNewConversation(StartConversation msg)
+        private void Asking()
         {
-            //todo: this needs to also track participants as well so that we don't open multiple with the same participant list
-            
-            //Alternatively we could .Ask() all our children if any of them matches this participant list, and identify that way
-            //Will need a response aggregator actor to handle the ask responses so that this actor can continue to work, as there may be many of these initiations happening simultaneously
-            //Aggregator will hold the contextual state of the request, ie. the requested participants and how many conversation actors are being asked, and then send a control mesage back to the coordinator before shutting itself down
+            Receive<StartConversation>(msg => Stash.Stash());
+            Receive<ConversationMessages.ChatMessage>(msg => RouteChatMessage(msg));
 
+            Receive<ConversationLocationAggregatorActor.ConversationLocated>(msg => UseExistingConversation(msg));
+            Receive<ConversationLocationAggregatorActor.ConversationNotFound>(msg => UseNewConversation());
+            Receive<ConversationLocationAggregatorActor.ConversationLocationTimeout>(msg => UseNewConversation()); //todo: consider reporting failure to the user, or retrying the request
+        }
+
+        private void StartNewOrLocateExistingConversation(StartConversation msg)
+        {
+            _pendingRequest = msg;
+
+            if (_conversations.Count == 0)
+            {
+                UseNewConversation();
+                return;
+            }
+
+            Become(Asking);
+
+            _responseAggregator = Context.ActorOf(Props.Create(() => new ConversationLocationAggregatorActor(new HashSet<IActorRef>(_conversations.Values))));
+
+            IEnumerable<Guid> participants = msg.Participants.Select(p => p.ClientId).ToList();
+            _responseAggregator.Tell(new LocateConversation(participants), Self);
+        }
+
+        private void UseExistingConversation(ConversationLocationAggregatorActor.ConversationLocated msg)
+        {
+            IActorRef conversation = _conversations[msg.ConversationId];
+
+            //Clients will open a chat window with this ID if one doesn't already exist.
+            conversation.Tell(_pendingRequest);
+
+            Become(Available);
+        }
+
+        private void UseNewConversation()
+        {
             var conversationId = Guid.NewGuid();
-            IActorRef conversation = Context.ActorOf(Props.Create(() => new ConversationActor(conversationId)), conversationId.ToString());
+            IActorRef conversation = Context.ActorOf(Props.Create(() => new ConversationActor(conversationId)),
+                conversationId.ToString());
 
-            conversation.Tell(msg);
+            conversation.Tell(_pendingRequest);
             _conversations.Add(conversationId, conversation);
+
+            Become(Available);
         }
 
         private void RouteChatMessage(ConversationMessages.ChatMessage msg)

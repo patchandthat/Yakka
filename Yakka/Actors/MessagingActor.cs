@@ -1,4 +1,6 @@
-﻿using Akka.Actor;
+﻿using System;
+using System.Threading.Tasks;
+using Akka.Actor;
 using Yakka.Actors.UI;
 using Yakka.Common.Messages;
 using Yakka.Common.Paths;
@@ -8,6 +10,7 @@ namespace Yakka.Actors
     class MessagingActor : ReceiveActor
     {
         private IActorRef _serverMessagingActor;
+        private IActorRef _conversationsVMActor;
 
         public MessagingActor()
         {
@@ -29,17 +32,41 @@ namespace Yakka.Actors
         {
             Receive<ConnectionActor.ConnectionLost>(msg => Become(Disconnected));
             Receive<ShoutMessages.OutgoingShout>(msg => _serverMessagingActor.Tell(msg));
-            Receive<ConversationMessages.ConversationRequest>(msg => _serverMessagingActor.Tell(msg));
+            Receive<ConversationMessages.ConversationRequest>(msg => HandleConversationRequest(msg));
             Receive<ShoutMessages.IncomingShout>(msg =>
             {
                 Context.ActorSelection(ClientActorPaths.HomeViewModelActor.Path).Tell(msg);
                 Context.ActorSelection(ClientActorPaths.ShellViewModelActor.Path).Tell(new ShellViewModelActor.NotifyUser());
             });
+            Receive<ConversationMessages.ConversationStarted>(msg => OpenConversation(msg));
+            Receive<ConversationMessages.ChatMessage>(msg => ForwardToCorrectConversation(msg));
+        }
 
-            //Todo: pick me up tomorrow
-            //Todo: Forward to conversation screens
-            //Receive<ConversationMessages.ConversationStarted>();
-            //Receive<ConversationMessages.ChatMessage>();
+        private void HandleConversationRequest(ConversationMessages.ConversationRequest msg)
+        {
+            _serverMessagingActor.Tell(msg);
+        }
+
+        private void OpenConversation(ConversationMessages.ConversationStarted msg)
+        {
+            if (_conversationsVMActor == null)
+            {
+                _conversationsVMActor = Context.ActorSelection(ClientActorPaths.ConversationsViewModelActor.Path)
+                                               .ResolveOne(TimeSpan.FromSeconds(1)).Result;
+            }
+
+            _conversationsVMActor.Tell(msg);
+        }
+
+        private void ForwardToCorrectConversation(ConversationMessages.ChatMessage msg)
+        {
+            if (_conversationsVMActor == null)
+            {
+                _conversationsVMActor = Context.ActorSelection(ClientActorPaths.ConversationsViewModelActor.Path)
+                                               .ResolveOne(TimeSpan.FromSeconds(1)).Result;
+            }
+
+            _conversationsVMActor.Tell(msg);
         }
     }
 }

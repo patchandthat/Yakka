@@ -6,7 +6,12 @@
              xmlns:local="clr-namespace:Yakka.Features.Conversations"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
-            
-    </Grid>
+    <DockPanel>
+        <Grid DockPanel.Dock="Right">
+            <TextBlock>Participant list</TextBlock>
+        </Grid>
+        <Grid>
+            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="DummyText">Chat window</TextBlock>
+        </Grid>
+    </DockPanel>
 </UserControl>

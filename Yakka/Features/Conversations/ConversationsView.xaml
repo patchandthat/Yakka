@@ -8,14 +8,14 @@
              xmlns:dragablz="http://dragablz.net/winfx/xaml/dragablz"
              mc:Ignorable="d" 
              d:DesignHeight="385" d:DesignWidth="525">
-    <Grid>
+    <StackPanel>
+        <!--<Button x:Name="TestAddConversation" Margin="5">ADD TEST</Button>-->
         <dragablz:TabablzControl Margin="0" BorderThickness="0" x:Name="Conversations">
-            <TabItem Header="Conversation">
-                <TextBlock>Conversation window in here</TextBlock>
-            </TabItem>
-            <TabItem Header="Example">
-                <TextBlock>Another conversation window in here</TextBlock>
-            </TabItem>
+            <TabControl.ItemTemplate>
+                <ItemContainerTemplate>
+                    <TextBlock Text="{Binding DisplayName}" />
+                </ItemContainerTemplate>
+            </TabControl.ItemTemplate>
         </dragablz:TabablzControl>
-    </Grid>
+    </StackPanel>
 </UserControl>

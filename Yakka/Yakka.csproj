@@ -201,6 +201,8 @@
     <Compile Include="Actors\MessagingActor.cs" />
     <Compile Include="Actors\SettingsActor.cs" />
     <Compile Include="Actors\SettingsWorkerActor.cs" />
+    <Compile Include="Actors\UI\ConversationsViewModelActor.cs" />
+    <Compile Include="Actors\UI\ConversationViewModelActor.cs" />
     <Compile Include="Actors\UI\HomeViewModelActor.cs" />
     <Compile Include="Actors\UI\NotificationActor.cs" />
     <Compile Include="Actors\UI\ShellViewModelActor.cs" />

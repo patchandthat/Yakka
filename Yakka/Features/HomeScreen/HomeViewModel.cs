@@ -184,7 +184,9 @@ namespace Yakka.Features.HomeScreen
         {
             var selections = Clients.Where(c => c.IsSelected)
                                     .Select(c => new Guid(c.Id.ToByteArray()))
-                                    .Concat(new []{YakkaBootstrapper.ClientId});
+                                    .Concat(new []{YakkaBootstrapper.ClientId})
+                                    .Distinct()
+                                    .ToList();
             
             _homeViewModelActor.Tell(new ConversationMessages.ConversationRequest(selections));
         }
