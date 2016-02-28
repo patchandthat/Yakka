@@ -2,7 +2,7 @@
 {
     public static class ServerActorPaths
     {
-        //public static readonly ActorMetaData MessageRouter = new ActorMetaData("ChatMessageRouter");
+        //public static readonly ActorMetaData MessageRouter = new ActorMetaData("MessagingActor");
 
         //public static readonly ActorMetaData ConsoleActor = new ActorMetaData("ConsoleOut");
 
@@ -19,6 +19,7 @@
         public static readonly ActorMetaData ConsoleActor = new ActorMetaData("ConsoleActor");
         public static readonly ActorMetaData ClientsActor = new ActorMetaData("ClientsActor");
 
-        public static readonly ActorMetaData ChatMessageRouter = new ActorMetaData("ChatMessageRouter");
+        public static readonly ActorMetaData MessagingActor = new ActorMetaData("MessagingActor");
+        public static readonly ActorMetaData ConversationCoordinatorActor = new ActorMetaData("ConversationCoordinatorActor", MessagingActor);
     }
 }

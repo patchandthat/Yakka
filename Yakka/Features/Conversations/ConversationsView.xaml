@@ -4,9 +4,18 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Yakka.Features.Conversations"
+             xmlns:dockablz="http://dragablz.net/winfx/xaml/dockablz"
+             xmlns:dragablz="http://dragablz.net/winfx/xaml/dragablz"
              mc:Ignorable="d" 
              d:DesignHeight="385" d:DesignWidth="525">
-    <Grid Margin="5">
-        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">Conversations</TextBlock>
+    <Grid>
+        <dragablz:TabablzControl Margin="0" BorderThickness="0" x:Name="Conversations">
+            <TabItem Header="Conversation">
+                <TextBlock>Conversation window in here</TextBlock>
+            </TabItem>
+            <TabItem Header="Example">
+                <TextBlock>Another conversation window in here</TextBlock>
+            </TabItem>
+        </dragablz:TabablzControl>
     </Grid>
 </UserControl>

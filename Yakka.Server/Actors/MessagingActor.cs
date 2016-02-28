@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Akka.Actor;
 using Yakka.Common.Messages;
+using Yakka.Common.Paths;
 
 namespace Yakka.Server.Actors
 {
@@ -30,6 +32,7 @@ namespace Yakka.Server.Actors
         }
 
         private readonly Dictionary<Guid, User> _handlers = new Dictionary<Guid, User>();
+        private IActorRef _conversationCoordinator;
 
         public MessagingActor()
         {
@@ -44,14 +47,36 @@ namespace Yakka.Server.Actors
                                         _handlers.Remove(msg.Id);
                                 });
             Receive<ShoutMessages.OutgoingShout>(msg => SendShoutToAllUsers(msg));
-            Receive<ConversationMessages.ConversationRequest>(msg => CreateOrRejoinConversation(msg));
+            Receive<ConversationMessages.ConversationRequest>(msg => CreateConversation(msg));
         }
 
-        private void CreateOrRejoinConversation(ConversationMessages.ConversationRequest msg)
+        protected override void PreStart()
         {
-            //Spin up, or pass user details on to conversation coordinator actor
-            //Todo: pick me up tomorrow
-            throw new NotImplementedException();
+            // Initialize children
+            _conversationCoordinator = Context.ActorOf(Props.Create(() => new ConversationCoordinatorActor()),
+                ServerActorPaths.ConversationCoordinatorActor.Name);
+        }
+        
+        protected override void PostRestart(Exception reason)
+        {
+            // Overriding postRestart to disable the call to preStart() after restarts
+        }
+
+        protected override void PreRestart(Exception reason, object message)
+        {
+            // The default implementation of PreRestart() stops all the children
+            // of the actor. To opt-out from stopping the children, we
+            // have to override PreRestart()
+            // Keep the call to PostStop(), but no stopping of children
+            PostStop();
+        }
+
+        private void CreateConversation(ConversationMessages.ConversationRequest msg)
+        {
+            IEnumerable<ConversationParticipant> participants = msg.Clients.Select(id => new ConversationParticipant(id, _handlers[id].Handler)).ToList();
+            var request = new ConversationCoordinatorActor.StartConversation(participants);
+
+            _conversationCoordinator.Tell(request);
         }
 
         private void SendShoutToAllUsers(ShoutMessages.OutgoingShout msg)

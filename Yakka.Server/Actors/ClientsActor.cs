@@ -56,7 +56,7 @@ namespace Yakka.Server.Actors
                 if (_messageHandler != null)
                     return _messageHandler;
                 
-                _messageHandler = Context.ActorSelection(ServerActorPaths.ChatMessageRouter.Path)
+                _messageHandler = Context.ActorSelection(ServerActorPaths.MessagingActor.Path)
                                          .ResolveOne(TimeSpan.FromSeconds(1))
                                          .Result;
 

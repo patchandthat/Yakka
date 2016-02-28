@@ -73,7 +73,7 @@
                 </DockPanel>
             </wpf:ColorZone>
         
-            <controls:TransitioningContentControl x:Name="ActiveContent" Margin="8"></controls:TransitioningContentControl>
+            <controls:TransitioningContentControl x:Name="ActiveContent" Margin="0"></controls:TransitioningContentControl>
         
         </DockPanel>
 

@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Yakka.Features.InfoPage"
              mc:Ignorable="d" 
              d:DesignHeight="385" d:DesignWidth="525">
-    <StackPanel Margin="5">
+    <StackPanel Margin="13">
         
         <TextBlock TextWrapping="Wrap">
             Bacon ipsum dolor amet dolore aute sint, flank prosciutto aliquip tongue ex meatloaf pariatur in ullamco ham cupidatat. Ball tip minim spare ribs do. Duis dolor aliqua cupidatat pariatur drumstick. Ea anim consectetur chuck aliqua, alcatra excepteur turkey commodo. Quis dolor sint ribeye commodo eiusmod proident pork belly consectetur lorem.
