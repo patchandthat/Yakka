@@ -13,12 +13,6 @@ namespace Yakka.Features.Conversations
 
         public Guid Id { get; }
 
-        public ConversationViewModel(string displayName, Guid id)
-        {
-            Id = id;
-            DisplayName = displayName;
-        }
-
         /// <summary>
         /// Creates an instance of the screen.
         /// </summary>
@@ -28,6 +22,8 @@ namespace Yakka.Features.Conversations
             Id = id;
 
             _vmActor.Tell(new ConversationViewModelActor.AssociateWithViewModel(this));
+
+            DummyText = "Some dummy text";
         }
 
         public string DummyText
@@ -39,6 +35,11 @@ namespace Yakka.Features.Conversations
                 _dummyText = value;
                 NotifyOfPropertyChange(() => DummyText);
             }
+        }
+
+        public new string DisplayName
+        {
+            get { return "MyDisplayName"; }
         }
     }
 }

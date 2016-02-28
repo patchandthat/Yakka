@@ -9,13 +9,12 @@
              mc:Ignorable="d" 
              d:DesignHeight="385" d:DesignWidth="525">
     <StackPanel>
-        <!--<Button x:Name="TestAddConversation" Margin="5">ADD TEST</Button>-->
         <dragablz:TabablzControl Margin="0" BorderThickness="0" x:Name="Conversations">
-            <TabControl.ItemTemplate>
+            <dragablz:TabablzControl.HeaderItemTemplate>
                 <ItemContainerTemplate>
                     <TextBlock Text="{Binding DisplayName}" />
                 </ItemContainerTemplate>
-            </TabControl.ItemTemplate>
+            </dragablz:TabablzControl.HeaderItemTemplate>
         </dragablz:TabablzControl>
     </StackPanel>
 </UserControl>
