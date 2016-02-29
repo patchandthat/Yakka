@@ -20,16 +20,16 @@ namespace Yakka.Common.Messages
             public ConversationStarted(Guid conversationId, IEnumerable<Guid> clients)
             {
                 ConversationId = conversationId;
-                this.clients = clients;
+                Clients = clients;
             }
 
             public Guid ConversationId { get; }
-            public IEnumerable<Guid> clients { get; }
+            public IEnumerable<Guid> Clients { get; }
         }
 
-        public class ChatMessage
+        public class OutgoingChatMessage
         {
-            public ChatMessage(Guid conversationId, string message, Guid senderId)
+            public OutgoingChatMessage(Guid conversationId, string message, Guid senderId)
             {
                 Message = message;
                 SenderId = senderId;
@@ -40,5 +40,22 @@ namespace Yakka.Common.Messages
             public Guid SenderId { get; }
             public Guid ConversationId { get; }
         }
-    }
+
+		//Not really happy with this duplication
+		//But I do need to identify incoming/outgoing messages separately
+
+		public class IncomingChatMessage
+		{
+			public IncomingChatMessage(Guid conversationId, string message, Guid senderId)
+			{
+				Message = message;
+				SenderId = senderId;
+				ConversationId = conversationId;
+			}
+
+			public string Message { get; }
+			public Guid SenderId { get; }
+			public Guid ConversationId { get; }
+		}
+	}
 }

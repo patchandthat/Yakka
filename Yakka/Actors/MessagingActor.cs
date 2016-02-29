@@ -39,7 +39,7 @@ namespace Yakka.Actors
                 Context.ActorSelection(ClientActorPaths.ShellViewModelActor.Path).Tell(new ShellViewModelActor.NotifyUser());
             });
             Receive<ConversationMessages.ConversationStarted>(msg => OpenConversation(msg));
-            Receive<ConversationMessages.ChatMessage>(msg => ForwardToCorrectConversation(msg));
+            Receive<ConversationMessages.OutgoingChatMessage>(msg => ForwardToCorrectConversation(msg));
         }
 
         private void HandleConversationRequest(ConversationMessages.ConversationRequest msg)
@@ -58,7 +58,7 @@ namespace Yakka.Actors
             _conversationsVMActor.Tell(msg);
         }
 
-        private void ForwardToCorrectConversation(ConversationMessages.ChatMessage msg)
+        private void ForwardToCorrectConversation(ConversationMessages.OutgoingChatMessage msg)
         {
             if (_conversationsVMActor == null)
             {

@@ -162,6 +162,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Features\Conversations\ConversationParticipantView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Features\Conversations\ConversationsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -217,6 +221,10 @@
     <Compile Include="DataLayer\ImmutableYakkaSettings.cs" />
     <Compile Include="DataLayer\SettingsExtension.cs" />
     <Compile Include="DataLayer\YakkaSettings.cs" />
+    <Compile Include="Features\Conversations\ConversationParticipantView.xaml.cs">
+      <DependentUpon>ConversationParticipantView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Features\Conversations\ConversationParticipantViewModel.cs" />
     <Compile Include="Features\Conversations\ConversationViewModel.cs" />
     <Compile Include="Features\Dialogs\ErrorDialog.xaml.cs">
       <DependentUpon>ErrorDialog.xaml</DependentUpon>

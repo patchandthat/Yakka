@@ -20,7 +20,8 @@
             <!--ShoutBox-->
             <TextBox Margin="5,17,5,5" 
                      DockPanel.Dock="Top" 
-                     x:Name="ShoutMessage" 
+                     x:Name="ShoutMessage"
+                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                      materialDesign:TextFieldAssist.Hint="Type a message to all users and hit enter"
                      cal:Message.Attach="[Event KeyDown] = [Action SendShout($executionContext)]">
             </TextBox>

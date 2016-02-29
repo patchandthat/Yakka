@@ -30,7 +30,7 @@ namespace Yakka.Server.Actors
 
             Receive<ConversationCoordinatorActor.LocateConversation>(msg => LocateConversation(msg));
             Receive<ConversationCoordinatorActor.StartConversation>(msg => GreetClients(msg));
-            Receive<ConversationMessages.ChatMessage>(msg => BroadcastChatMessage(msg));
+            Receive<ConversationMessages.OutgoingChatMessage>(msg => BroadcastChatMessage(msg));
         }
 
         private void LocateConversation(ConversationCoordinatorActor.LocateConversation msg)
@@ -63,7 +63,7 @@ namespace Yakka.Server.Actors
             }
         }
 
-        private void BroadcastChatMessage(ConversationMessages.ChatMessage msg)
+        private void BroadcastChatMessage(ConversationMessages.OutgoingChatMessage msg)
         {
             _messageHistory.Add(new ConversationMessage(msg.SenderId, msg.Message));
 

@@ -52,13 +52,13 @@ namespace Yakka.Server.Actors
             }
 
             Receive<StartConversation>(msg => StartNewOrLocateExistingConversation(msg));
-            Receive<ConversationMessages.ChatMessage>(msg => RouteChatMessage(msg));
+            Receive<ConversationMessages.OutgoingChatMessage>(msg => RouteChatMessage(msg));
         }
 
         private void Asking()
         {
             Receive<StartConversation>(msg => Stash.Stash());
-            Receive<ConversationMessages.ChatMessage>(msg => RouteChatMessage(msg));
+            Receive<ConversationMessages.OutgoingChatMessage>(msg => RouteChatMessage(msg));
 
             Receive<ConversationLocationAggregatorActor.ConversationLocated>(msg => UseExistingConversation(msg));
             Receive<ConversationLocationAggregatorActor.ConversationNotFound>(msg => UseNewConversation());
@@ -105,7 +105,7 @@ namespace Yakka.Server.Actors
             Become(Available);
         }
 
-        private void RouteChatMessage(ConversationMessages.ChatMessage msg)
+        private void RouteChatMessage(ConversationMessages.OutgoingChatMessage msg)
         {
             if (_conversations.ContainsKey(msg.ConversationId))
             {

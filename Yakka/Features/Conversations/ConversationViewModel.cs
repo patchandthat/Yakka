@@ -1,17 +1,31 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Windows.Input;
 using Akka.Actor;
 using Caliburn.Micro;
 using Yakka.Actors.UI;
+using Yakka.Common.Messages;
 
 namespace Yakka.Features.Conversations
 {
+	//Todo: Sync the user name and status data on the client side, there's no need for anything more than the client id to be set with messages
     class ConversationViewModel : Screen
     {
-        private readonly IActorRef _vmActor;
-        private string msg;
-        private string _dummyText;
+       private readonly IActorRef _vmActor;
+	    private IObservableCollection<ConversationParticipantViewModel> _participants = new BindableCollection<ConversationParticipantViewModel>();
+	    private string _message;
+		private const int MaxMessageHistory = 3000;
 
-        public Guid Id { get; }
+		private List<ReceivedMessage> _receivedMessages = new List<ReceivedMessage>();
+
+	    public class ReceivedMessage
+	    {
+		    public string UserName { get; set; }
+		    public string Message { get; set; }
+	    }
+
+	    public Guid Id { get; }
 
         /// <summary>
         /// Creates an instance of the screen.
@@ -22,24 +36,69 @@ namespace Yakka.Features.Conversations
             Id = id;
 
             _vmActor.Tell(new ConversationViewModelActor.AssociateWithViewModel(this));
-
-            DummyText = "Some dummy text";
         }
-
-        public string DummyText
-        {
-            get { return _dummyText; }
-            set
-            {
-                if (value == _dummyText) return;
-                _dummyText = value;
-                NotifyOfPropertyChange(() => DummyText);
-            }
-        }
-
+		
         public new string DisplayName
         {
             get { return "MyDisplayName"; }
         }
+
+	    public IObservableCollection<ConversationParticipantViewModel> Participants
+	    {
+			get { return new BindableCollection<ConversationParticipantViewModel>(_participants); }
+		    set
+		    {
+			    if(Equals(value, _participants)) return;
+			    _participants = value;
+				NotifyOfPropertyChange(() => Participants);
+		    }
+	    }
+
+	    public string Message
+	    {
+		    get { return _message; }
+		    set
+		    {
+			    if(value == _message) {
+				    return;
+			    }
+			    _message = value;
+			    NotifyOfPropertyChange(() => Message);
+		    }
+	    }
+
+	    public string ChatHistory
+	    {
+		    get
+		    {
+				var sb = new StringBuilder();
+				foreach (ReceivedMessage msg in _receivedMessages) {
+					sb.AppendLine($"{msg.UserName} : {msg.Message}");
+				}
+
+				return sb.ToString();
+			}
+	    }
+
+	    public void SendMessage(ActionExecutionContext context)
+	    {
+		    var args = context.EventArgs as KeyEventArgs;
+
+		    if(args != null && args.Key == Key.Enter) {
+				_vmActor.Tell(new ConversationMessages.OutgoingChatMessage(Id, Message, YakkaBootstrapper.ClientId));
+				Message = string.Empty;
+		    }
+	    }
+
+	    public void ReceiveMessage(ReceivedMessage message)
+	    {
+		    _receivedMessages.Add(message);
+
+			while (_receivedMessages.Count > MaxMessageHistory) {
+				_receivedMessages.RemoveAt(0);
+			}
+
+			NotifyOfPropertyChange(() => ChatHistory);
+		}
     }
 }
