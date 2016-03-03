@@ -1,7 +1,8 @@
-﻿using System.Net;
+﻿using System;
+using System.IO;
+using System.Net;
 using System.Reflection;
 using Akka.Actor;
-using Akka.Actor.Dsl;
 using Akka.Configuration;
 using Akka.DI.AutoFac;
 using Autofac;
@@ -15,25 +16,19 @@ namespace Yakka.Server
         /// <param name="args"></param>
         static void Main(string[] args)
         {
-            ServerMetadata.Hostname = Dns.GetHostName();
-            ServerMetadata.Port = 8081;
+				var options = new Options();
+				if (!CommandLine.Parser.Default.ParseArguments(args, options)) {
+					Console.WriteLine(options.GetUsage());
+					return;
+				}
 
-            string configHocon = string.Format(
-@"akka {{
-    loglevel = DEBUG
-    loggers = [""Akka.Logger.NLog.NLogLogger, Akka.Logger.NLog""]
-    actor {{
-        provider = ""Akka.Remote.RemoteActorRefProvider, Akka.Remote""
-    }}
-    remote {{
-        helios.tcp {{
-            hostname = {0}            
-            port = {1}
-        }}
-    }}
-}}", ServerMetadata.Hostname, ServerMetadata.Port);
+				ServerMetadata.Hostname = Dns.GetHostName();
+            ServerMetadata.Port = options.Port;
 
-            var config = ConfigurationFactory.ParseString(configHocon);
+	         string hocon = File.ReadAllText("YakkaServer.hocon");
+            string configHocon = string.Format(hocon, ServerMetadata.Hostname, ServerMetadata.Port);
+				var config = ConfigurationFactory.ParseString(configHocon);
+
             var system = ActorSystem.Create("YakkaServer", config);
 
             var container = ConfigureAutofacContainer();

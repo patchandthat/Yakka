@@ -1,0 +1,13 @@
+﻿akka {{
+    loglevel = DEBUG
+    loggers = ["Akka.Logger.NLog.NLogLogger, Akka.Logger.NLog"]
+    actor {{
+        provider = "Akka.Remote.RemoteActorRefProvider, Akka.Remote"
+    }}
+    remote {{
+        helios.tcp {{
+            hostname = {0}            
+            port = {1}
+        }}
+    }}
+}}
