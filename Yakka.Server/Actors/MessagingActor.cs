@@ -48,6 +48,7 @@ namespace Yakka.Server.Actors
                                 });
             Receive<ShoutMessages.OutgoingShout>(msg => SendShoutToAllUsers(msg));
             Receive<ConversationMessages.ConversationRequest>(msg => CreateConversation(msg));
+	        Receive<ConversationMessages.OutgoingChatMessage>(msg => _conversationCoordinator.Tell(msg));
         }
 
         protected override void PreStart()

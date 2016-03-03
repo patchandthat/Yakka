@@ -8,20 +8,28 @@
              xmlns:cal="http://www.caliburnproject.org"
              mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="525">
-    <DockPanel>
-        <DockPanel DockPanel.Dock="Right" Margin="5" Width="250">
-            <TextBlock Margin="5" DockPanel.Dock="Top">Participants</TextBlock>
-            <ItemsControl Margin="5" x:Name="Participants"></ItemsControl>
-        </DockPanel>
-        <DockPanel Margin="5">
+    <Grid Margin="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="250"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        
+        <DockPanel Grid.Column="0" Grid.Row="0" Margin="5">
             <TextBox Margin="5" 
-                     DockPanel.Dock="Bottom" 
+                     DockPanel.Dock="Top" 
                      x:Name="Message"
                      Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                      materialDesign:TextFieldAssist.Hint="Type a message and hit enter"
                      cal:Message.Attach="[Event KeyDown] = [Action SendMessage($executionContext)]">
             </TextBox>
-            <TextBox VerticalContentAlignment="Stretch" TextWrapping="Wrap" Margin="5" IsReadOnly="True" x:Name="ChatHistory"></TextBox>
+            <TextBox VerticalContentAlignment="Stretch" DockPanel.Dock="Bottom" TextWrapping="Wrap" Margin="5" IsReadOnly="True" x:Name="ChatHistory" VerticalScrollBarVisibility="Auto"></TextBox>
         </DockPanel>
-    </DockPanel>
+        <DockPanel DockPanel.Dock="Right" Margin="5" Width="250" Grid.Column="1">
+            <TextBlock Margin="5" DockPanel.Dock="Top">Participants</TextBlock>
+            <ItemsControl Margin="5" x:Name="Participants"></ItemsControl>
+        </DockPanel>
+    </Grid>
 </UserControl>

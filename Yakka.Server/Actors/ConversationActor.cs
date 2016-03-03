@@ -67,9 +67,11 @@ namespace Yakka.Server.Actors
         {
             _messageHistory.Add(new ConversationMessage(msg.SenderId, msg.Message));
 
+				var incomingChatMessage = new ConversationMessages.IncomingChatMessage(this._conversationId, msg.Message, msg.SenderId);
+
             foreach (var participant in _participants)
             {
-                participant.MessagingHandler.Tell(msg);
+                participant.MessagingHandler.Tell(incomingChatMessage);
             }
         }
     }

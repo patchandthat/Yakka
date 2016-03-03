@@ -54,6 +54,7 @@ namespace Yakka.Features.Conversations
 		    }
 	    }
 
+
 	    public string Message
 	    {
 		    get { return _message; }
@@ -100,5 +101,12 @@ namespace Yakka.Features.Conversations
 
 			NotifyOfPropertyChange(() => ChatHistory);
 		}
+
+	    public void AddParticipant(ConversationParticipantViewModel newParticipant)
+	    {
+			_participants.Add(newParticipant);
+
+			NotifyOfPropertyChange(() => Participants);
+	    }
     }
 }

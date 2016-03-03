@@ -39,10 +39,21 @@ namespace Yakka.Actors
                 Context.ActorSelection(ClientActorPaths.ShellViewModelActor.Path).Tell(new ShellViewModelActor.NotifyUser());
             });
             Receive<ConversationMessages.ConversationStarted>(msg => OpenConversation(msg));
-            Receive<ConversationMessages.OutgoingChatMessage>(msg => ForwardToCorrectConversation(msg));
+            Receive<ConversationMessages.OutgoingChatMessage>(msg => ForwardToServerMessager(msg));
+				Receive<ConversationMessages.IncomingChatMessage>(msg => ForwardToConversations(msg));
         }
 
-        private void HandleConversationRequest(ConversationMessages.ConversationRequest msg)
+	    private void ForwardToConversations(ConversationMessages.IncomingChatMessage msg)
+	    {
+			if (_conversationsVMActor == null) {
+				_conversationsVMActor = Context.ActorSelection(ClientActorPaths.ConversationsViewModelActor.Path)
+														 .ResolveOne(TimeSpan.FromSeconds(1)).Result;
+			}
+
+			_conversationsVMActor.Tell(msg);
+		}
+
+	    private void HandleConversationRequest(ConversationMessages.ConversationRequest msg)
         {
             _serverMessagingActor.Tell(msg);
         }
@@ -58,15 +69,9 @@ namespace Yakka.Actors
             _conversationsVMActor.Tell(msg);
         }
 
-        private void ForwardToCorrectConversation(ConversationMessages.OutgoingChatMessage msg)
-        {
-            if (_conversationsVMActor == null)
-            {
-                _conversationsVMActor = Context.ActorSelection(ClientActorPaths.ConversationsViewModelActor.Path)
-                                               .ResolveOne(TimeSpan.FromSeconds(1)).Result;
-            }
-
-            _conversationsVMActor.Tell(msg);
-        }
+	    private void ForwardToServerMessager(ConversationMessages.OutgoingChatMessage msg)
+	    {
+			_serverMessagingActor.Tell(msg);
+	    }
     }
 }

@@ -66,7 +66,6 @@ akka {{
         {
             var builder = new ContainerBuilder();
 
-            //var wm = new WindowManager();
             builder.RegisterType<WindowManager>().As<IWindowManager>().SingleInstance();
             builder.RegisterType<EventAggregator>().As<IEventAggregator>().SingleInstance();
 

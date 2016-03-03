@@ -27,7 +27,9 @@ namespace Yakka.Actors.UI
         {
             _conversationMetadata = conversationMetadata;
 
-            Receive<AssociateWithViewModel>(msg => AssociateAndSetParticipants(msg));
+				//Todo: RequestParticipantNames from local clients actor
+
+           Receive<AssociateWithViewModel>(msg => AssociateAndSetParticipants(msg));
 	        Receive<ConversationMessages.OutgoingChatMessage>(msg => HandleOutgoingMessage(msg));
 	        Receive<ConversationMessages.IncomingChatMessage>(msg => HandleIncomingMessage(msg));
         }
@@ -38,7 +40,7 @@ namespace Yakka.Actors.UI
 
 		    foreach(var client in _conversationMetadata.Clients) {
 			    //Todo: lookup client name and status
-				 _viewModel.Participants.Add(new ConversationParticipantViewModel()
+				 _viewModel.AddParticipant(new ConversationParticipantViewModel()
 				 {
 					 Id = client,
 					 Status = ClientStatus.Available,
