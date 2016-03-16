@@ -15,6 +15,7 @@
         public static readonly ActorMetaData ConnectionActor = new ActorMetaData("ConnectionActor");
         public static readonly ActorMetaData HeartbeatActor = new ActorMetaData("HeartbeatActor", ConnectionActor);
         public static readonly ActorMetaData ClientsActor = new ActorMetaData("ClientsActor");
+        public static readonly ActorMetaData LockMonitor = new ActorMetaData("LockMonitorActor");
 
         public static readonly ActorMetaData ChatMessageRouter = new ActorMetaData("ChatMessageRouter");
         public static readonly ActorMetaData NotifierActor = new ActorMetaData("NotifierActor", ShellViewModelActor);

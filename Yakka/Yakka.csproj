@@ -198,6 +198,7 @@
     <Compile Include="Actors\ConnectionActor.cs" />
     <Compile Include="Actors\ErrorDialogActor.cs" />
     <Compile Include="Actors\HeartbeatActor.cs" />
+    <Compile Include="Actors\LockMonitorActor.cs" />
     <Compile Include="Actors\MessagingActor.cs" />
     <Compile Include="Actors\SettingsActor.cs" />
     <Compile Include="Actors\SettingsWorkerActor.cs" />

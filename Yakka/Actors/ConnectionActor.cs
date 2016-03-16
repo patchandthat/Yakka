@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.DI.Core;
 using Yakka.Actors.UI;
@@ -56,6 +57,7 @@ namespace Yakka.Actors
         private IActorRef _clientsActor;
         private IActorRef _messagingActor;
         private ClientStatus _status = ClientStatus.Available;
+        private ClientStatus _oldStatus;
 
         protected override void PreStart()
         {
@@ -109,9 +111,23 @@ namespace Yakka.Actors
                                         //Ignore, this is an unlikely but possible and harmless race condition
                                         //we've had a response and become connected at the same time the timeout fired
                                     });
+            Receive<LockMonitorActor.SystemLocked>(msg => AppearAway());
+            Receive<LockMonitorActor.SystemUnlocked>(msg => StopAppearingAway());
 
             Context.ActorSelection(ClientActorPaths.ShellViewModelActor.Path)
                    .Tell(new ShellViewModelActor.UpdateConnectionState(true));
+        }
+
+        private void AppearAway()
+        {
+            _oldStatus = _status;
+            _heartbeatActor.Tell(new HeartbeatActor.ChangeStatus(ClientStatus.Away));
+        }
+
+        private void StopAppearingAway()
+        {
+            _status = _oldStatus;
+            _heartbeatActor.Tell(new HeartbeatActor.ChangeStatus(_status));
         }
 
         #region When disconnected

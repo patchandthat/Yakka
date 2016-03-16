@@ -54,8 +54,7 @@ namespace Yakka.Features.HomeScreen
         {
             DisplayName = "Home screen";
 
-            _homeViewModelActor = system.ActorOf(Props.Create(() => new HomeViewModelActor(this)),
-                ClientActorPaths.HomeViewModelActor.Name);
+            _homeViewModelActor = system.ActorOf(Props.Create(() => new HomeViewModelActor(this)), ClientActorPaths.HomeViewModelActor.Name);
         }
 
         public string ShoutMessage
@@ -89,9 +88,7 @@ namespace Yakka.Features.HomeScreen
         {
             get
             {
-                var states =
-                    (from ClientStatus status in Enum.GetValues(typeof (ClientStatus)) select status.Humanize())
-                        .AsEnumerable();
+                var states = (from ClientStatus status in Enum.GetValues(typeof (ClientStatus)) select status.Humanize()).AsEnumerable();
                 return new BindableCollection<string>(states);
             }
         }
@@ -132,22 +129,17 @@ namespace Yakka.Features.HomeScreen
 
         public void SetClients(IEnumerable<ConnectedClient> clients)
         {
-            Clients = new BindableCollection<ClientDataViewModel>(
-                clients.Select(c => new ClientDataViewModel
-                {
-                    Id = c.ClientId,
-                    Username = c.Username,
-                    Status = c.Status
-                }));
+            Clients = new BindableCollection<ClientDataViewModel>(clients.Select(c => new ClientDataViewModel
+            {
+                Id = c.ClientId, Username = c.Username, Status = c.Status
+            }));
         }
 
         public void NewClient(ConnectedClient client)
         {
             Clients.Add(new ClientDataViewModel()
             {
-                Id = client.ClientId,
-                Username = client.Username,
-                Status = client.Status
+                Id = client.ClientId, Username = client.Username, Status = client.Status
             });
         }
 
@@ -189,11 +181,7 @@ namespace Yakka.Features.HomeScreen
 
         public void MessageSelectedUsers()
         {
-            var selections = SelectedClients
-                .Select(c => c.Id)
-                .Union(new[] {YakkaBootstrapper.ClientId})
-                .Distinct()
-                .ToList();
+            var selections = SelectedClients.Select(c => c.Id).Union(new[] {YakkaBootstrapper.ClientId}).Distinct().ToList();
 
             _homeViewModelActor.Tell(new ConversationMessages.ConversationRequest(selections));
         }

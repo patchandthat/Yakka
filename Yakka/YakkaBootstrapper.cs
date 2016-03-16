@@ -55,6 +55,7 @@ akka {{
             var clientsActor = _clientActorSystem.ActorOf(Props.Create(() => new ClientsActor()), ClientActorPaths.ClientsActor.Name);
             var messager = _clientActorSystem.ActorOf(Props.Create(() => new MessagingActor()), ClientActorPaths.ChatMessageRouter.Name);
             var connectionActor = _clientActorSystem.ActorOf(Props.Create(() => new ConnectionActor()), ClientActorPaths.ConnectionActor.Name);
+            var lockMonitor = _clientActorSystem.ActorOf(Props.Create(() => new LockMonitorActor()), ClientActorPaths.LockMonitor.Name);
 
             Initialize();
         }
