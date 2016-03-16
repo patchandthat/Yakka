@@ -35,6 +35,27 @@ namespace Yakka.Actors.UI
 
             Receive<ClientsActor.ClientStatusQueryResponse>(msg => UpdateClientList(msg));
             Context.ActorSelection(ClientActorPaths.ClientsActor.Path).Tell(new ClientsActor.ClientStatusQuery(conversationMetadata.Clients));
+
+            Receive<ClientTracking.ClientChanged>(
+                change =>
+                {
+                    var participant = _viewModel.Participants.FirstOrDefault(p => p.Id == change.Client.ClientId);
+                    if (participant != null) participant.Status = change.Client.Status;
+                });
+
+            Receive<ClientTracking.ClientConnected>(
+                connect =>
+                {
+                    var participant = _viewModel.Participants.FirstOrDefault(p => p.Id == connect.Client.ClientId);
+                    if (participant != null) participant.Status = connect.Client.Status;
+                });
+
+            Receive<ClientTracking.ClientDisconnected>(
+                disconect =>
+                {
+                    var participant = _viewModel.Participants.FirstOrDefault(p => p.Id == disconect.Client.ClientId);
+                    if (participant != null) participant.Status = ClientStatus.Offline;
+                });
         }
 
         private void UpdateClientList(ClientsActor.ClientStatusQueryResponse response)
@@ -44,8 +65,10 @@ namespace Yakka.Actors.UI
                 foreach (var participant in _viewModel.Participants)
                 {
                     var name = response.ClientInformation.FirstOrDefault(ci => ci.ClientId == participant.Id)?.Username;
+                    var status = response.ClientInformation.FirstOrDefault(ci => ci.ClientId == participant.Id)?.Status;
 
                     participant.Username = name ?? "Unknown";
+                    participant.Status = status ?? ClientStatus.Available;
                 }
             }
 
@@ -60,11 +83,12 @@ namespace Yakka.Actors.UI
             {
                 //Just being overly caution about race conditions
                 string tempName = _participants?.FirstOrDefault(p => p.ClientId == client)?.Username;
-                
+                var status = _participants?.FirstOrDefault(ci => ci.ClientId == client)?.Status;
+
                 _viewModel.AddParticipant(new ConversationParticipantViewModel()
                 {
                     Id = client,
-                    Status = ClientStatus.Available,
+                    Status = status ?? ClientStatus.Available,
                     Username = tempName ?? "Unknown"
                 });
             }

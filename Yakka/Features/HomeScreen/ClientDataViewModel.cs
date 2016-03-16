@@ -1,7 +1,9 @@
 using System;
+using System.Windows.Media;
 using Caliburn.Micro;
 using Humanizer;
 using Yakka.Common.Messages;
+using Yakka.Util;
 
 namespace Yakka.Features.HomeScreen
 {
@@ -34,6 +36,7 @@ namespace Yakka.Features.HomeScreen
                 _status = value;
                 NotifyOfPropertyChange(() => Status);
                 NotifyOfPropertyChange(() => StatusString);
+                NotifyOfPropertyChange(() => UserFillBrush);
             }
         }
 
@@ -47,5 +50,9 @@ namespace Yakka.Features.HomeScreen
                 NotifyOfPropertyChange(() => IsSelected);
             }
         }
+
+        // Not really keen on this being in the VM as it's ui centric
+        // Probably more suited to the codebehind of the usercontrol
+        public SolidColorBrush UserFillBrush => StatusToBrushUtil.Convert(Status);
     }
 }

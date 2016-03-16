@@ -31,6 +31,7 @@ namespace Yakka.Actors
 
         private IActorRef _homeVm;
         private Dictionary<Guid, ConnectedClient> _clientList;
+        private IActorRef _conversations;
 
         public ClientsActor()
         {
@@ -52,7 +53,8 @@ namespace Yakka.Actors
                     ForwardToHomeViewModelActor(msg);
 
                     _clientList[msg.Client.ClientId] = msg.Client;
-                    //Todo: push updates to conversations
+
+                    PushToAllConversations(msg);
                 });
 
             Receive<ClientTracking.ClientConnected>(
@@ -64,6 +66,8 @@ namespace Yakka.Actors
                     {
                         _clientList.Add(msg.Client.ClientId, msg.Client);
                     }
+
+                    PushToAllConversations(msg);
                 });
 
             Receive<ClientTracking.ClientDisconnected>(
@@ -76,7 +80,7 @@ namespace Yakka.Actors
                         _clientList.Add(msg.Client.ClientId, msg.Client);
                     }
 
-                    //todo: Push notification to conversations
+                    PushToAllConversations(msg);
                 });
 
             Receive<ClientStatusQuery>(
@@ -88,6 +92,19 @@ namespace Yakka.Actors
 
                     Sender.Tell(new ClientStatusQueryResponse(data));
                 });
+        }
+
+        private void PushToAllConversations(object msg)
+        {
+            if (_conversations == null)
+            {
+                _conversations =
+                    Context.ActorSelection(ClientActorPaths.ConversationsViewModelActor.Path)
+                           .ResolveOne(TimeSpan.FromSeconds(1))
+                           .Result;
+            }
+
+            _conversations.Tell(msg);
         }
 
         private void ForwardToHomeViewModelActor(object msg)

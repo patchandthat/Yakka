@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using Caliburn.Micro;
 using Humanizer;
 using Yakka.Common.Messages;
+using Yakka.Util;
 
 namespace Yakka.Features.Conversations
 {
@@ -37,7 +39,12 @@ namespace Yakka.Features.Conversations
 				_status = value;
 				NotifyOfPropertyChange(() => Status);
 				NotifyOfPropertyChange(() => StatusString);
+				NotifyOfPropertyChange(() => UserFillBrush);
 			}
 		}
-	}
+
+        // Not really keen on this being in the VM as it's ui centric
+        // Probably more suited to the codebehind of the usercontrol
+        public SolidColorBrush UserFillBrush => StatusToBrushUtil.Convert(Status);
+    }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Akka.Actor;
+using Akka.Util.Internal;
 using Yakka.Common.Messages;
 using Yakka.Common.Paths;
 using Yakka.Features.Conversations;
@@ -19,9 +21,24 @@ namespace Yakka.Actors.UI
 
             Receive<ConversationMessages.ConversationStarted>(msg => OpenOrFocusWindow(msg));
 	        Receive<ConversationMessages.IncomingChatMessage>(msg => ForwardToCorrectConversation(msg));
+
+            Receive<ClientTracking.ClientChanged>(m => BroadcastToAll(m));
+            Receive<ClientTracking.ClientConnected>(m => BroadcastToAll(m));
+            Receive<ClientTracking.ClientDisconnected>(m => BroadcastToAll(m));
         }
 
-	    private void ForwardToCorrectConversation(ConversationMessages.IncomingChatMessage msg)
+        private void BroadcastToAll(object msg)
+        {
+            if (_conversations != null)
+            {
+                foreach (var c in _conversations.Values)
+                {
+                    c.Tell(msg);
+                }
+            }
+        }
+
+        private void ForwardToCorrectConversation(ConversationMessages.IncomingChatMessage msg)
 	    {
 		    if (_conversations.ContainsKey(msg.ConversationId))
 		    {

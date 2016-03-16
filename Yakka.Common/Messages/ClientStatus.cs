@@ -6,5 +6,6 @@
         Away,
         Busy,
         DoNotDisturb,
+        Offline
     }
 }

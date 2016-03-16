@@ -231,6 +231,7 @@
     <Compile Include="Features\HomeScreen\ClientDataViewModel.cs" />
     <Compile Include="Util\FlashWindowNotifier.cs" />
     <Compile Include="Util\INotifier.cs" />
+    <Compile Include="Util\StatusToBrushUtil.cs" />
     <Compile Include="YakkaBootstrapper.cs" />
     <Compile Include="Features\Conversations\ConversationsView.xaml.cs">
       <DependentUpon>ConversationsView.xaml</DependentUpon>
