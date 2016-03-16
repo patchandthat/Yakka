@@ -25,7 +25,7 @@
                      materialDesign:TextFieldAssist.Hint="Type a message to all users and hit enter"
                      cal:Message.Attach="[Event KeyDown] = [Action SendShout($executionContext)]">
             </TextBox>
-            
+
             <TextBox VerticalContentAlignment="Stretch" TextWrapping="Wrap" Margin="5" DockPanel.Dock="Bottom" IsReadOnly="True" x:Name="Shouts"></TextBox>
         </DockPanel>
 
@@ -45,7 +45,7 @@
                      DockPanel.Dock="Top" 
                      x:Name="Clients" 
                      SelectionMode="Extended" 
-                     cal:Message.Attach="[Event SelectionChanged] = [Action ChangeSelection($this)]" />
+                     cal:Message.Attach="[Event SelectionChanged] = [Action ChangeSelection(Clients.SelectedItems)]" />
         </DockPanel>
     </Grid>
 </UserControl>

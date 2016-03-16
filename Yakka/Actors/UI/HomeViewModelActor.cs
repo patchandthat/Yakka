@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Akka.Actor;
 using Yakka.Common.Messages;
 using Yakka.Common.Paths;

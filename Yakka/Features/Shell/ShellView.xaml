@@ -31,15 +31,6 @@
                         <TextBlock x:Name="ConnectionState" Width="80" VerticalAlignment="Center"></TextBlock>
                     </StackPanel>
 
-                    <!--Info-->
-                    <Button Style="{StaticResource MaterialDesignFloatingActionButton}" Margin="4,4,8,4" HorizontalAlignment="Left" DockPanel.Dock="Right" x:Name="InfoButton">
-                        <Viewbox Width="36" Height="36">
-                            <Canvas Width="24" Height="24">
-                                <Path Data="M11 17h2v-6h-2v6zm1-15C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zM11 9h2V7h-2v2z" Fill="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}, Path=Foreground}" />
-                            </Canvas>
-                        </Viewbox>
-                    </Button>
-                
                     <!--Settings-->
                     <Button Style="{StaticResource MaterialDesignFloatingActionButton}" Margin="4" HorizontalAlignment="Left" DockPanel.Dock="Right" x:Name="SettingsButton">
                         <Viewbox Width="36" Height="36">

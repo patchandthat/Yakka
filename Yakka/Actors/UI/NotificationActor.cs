@@ -5,6 +5,8 @@ namespace Yakka.Actors.UI
 {
     class NotificationActor : ReceiveActor
     {
+        public class NotifyUser { }
+
         private readonly INotifier _notifier;
 
         public NotificationActor(INotifier notifier)

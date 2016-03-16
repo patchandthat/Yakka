@@ -9,17 +9,17 @@ using Yakka.Common.Messages;
 
 namespace Yakka.Features.Conversations
 {
-	//Todo: Sync the user name and status data on the client side, there's no need for anything more than the client id to be set with messages
     class ConversationViewModel : Screen
     {
-       private readonly IActorRef _vmActor;
+        private readonly IActorRef _vmActor;
 	    private IObservableCollection<ConversationParticipantViewModel> _participants = new BindableCollection<ConversationParticipantViewModel>();
 	    private string _message;
 		private const int MaxMessageHistory = 3000;
 
 		private List<ReceivedMessage> _receivedMessages = new List<ReceivedMessage>();
+        private string _displayName;
 
-	    public class ReceivedMessage
+        public class ReceivedMessage
 	    {
 		    public string UserName { get; set; }
 		    public string Message { get; set; }
@@ -37,13 +37,19 @@ namespace Yakka.Features.Conversations
 
             _vmActor.Tell(new ConversationViewModelActor.AssociateWithViewModel(this));
         }
-		
+
         public new string DisplayName
         {
-            get { return "MyDisplayName"; }
+            get { return _displayName; }
+            set
+            {
+                if (value == _displayName) return;
+                _displayName = value;
+                NotifyOfPropertyChange(() => DisplayName);
+            }
         }
 
-	    public IObservableCollection<ConversationParticipantViewModel> Participants
+        public IObservableCollection<ConversationParticipantViewModel> Participants
 	    {
 			get { return new BindableCollection<ConversationParticipantViewModel>(_participants); }
 		    set
@@ -53,7 +59,6 @@ namespace Yakka.Features.Conversations
 				NotifyOfPropertyChange(() => Participants);
 		    }
 	    }
-
 
 	    public string Message
 	    {

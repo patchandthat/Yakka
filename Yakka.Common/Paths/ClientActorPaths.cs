@@ -8,7 +8,6 @@
         public static readonly ActorMetaData SettingsViewModelActor = new ActorMetaData("SettingsViewModelActor");
         public static readonly ActorMetaData ConversationsViewModelActor = new ActorMetaData("ConversationsViewModelActor");
         public static readonly ActorMetaData ConversationViewModelActor = new ActorMetaData("ConversationViewModelActor", ConversationsViewModelActor);
-        public static readonly ActorMetaData InfoViewModelActor = new ActorMetaData("InfoViewModelActor");
 
         public static readonly ActorMetaData SettingsActor = new ActorMetaData("SettingsActor");
         public static readonly ActorMetaData SettingsWorkerActor = new ActorMetaData("SettingsWorkerActor", SettingsActor);

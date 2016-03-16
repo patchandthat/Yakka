@@ -186,10 +186,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Features\InfoPage\InfoPageView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Features\Settings\SettingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -247,10 +243,6 @@
       <DependentUpon>HomeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Features\HomeScreen\HomeViewModel.cs" />
-    <Compile Include="Features\InfoPage\InfoPageView.xaml.cs">
-      <DependentUpon>InfoPageView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Features\InfoPage\InfoPageViewModel.cs" />
     <Compile Include="Features\Settings\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>

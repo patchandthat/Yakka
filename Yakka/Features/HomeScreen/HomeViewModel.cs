@@ -82,7 +82,8 @@ namespace Yakka.Features.HomeScreen
         }
 
         private ClientStatus _visibilityState = ClientStatus.Available;
-        private IObservableCollection<ClientDataViewModel> _selectedClients;
+
+        private IList<ClientDataViewModel> SelectedClients { get; } = new List<ClientDataViewModel>();
 
         public BindableCollection<string> VisibilityStates
         {
@@ -168,26 +169,32 @@ namespace Yakka.Features.HomeScreen
             }
         }
 
-        public void ChangeSelection(ClientDataViewModel sender)
+        public void ChangeSelection(dynamic items)
         {
-            if (sender != null)
-            {
-                sender.IsSelected = !sender.IsSelected;
+            SelectedClients.Clear();
 
-                NotifyOfPropertyChange(() => CanMessageSelectedUsers);
+            foreach (dynamic item in items)
+            {
+                var cast = item as ClientDataViewModel;
+                if (cast != null) SelectedClients.Add(cast);
             }
+
+            NotifyOfPropertyChange(() => CanMessageSelectedUsers);
         }
 
-        public bool CanMessageSelectedUsers => Clients.Any(x => x.IsSelected);
+        public bool CanMessageSelectedUsers
+        {
+            get { return SelectedClients?.Any() ?? false; }
+        }
 
         public void MessageSelectedUsers()
         {
-            var selections = Clients.Where(c => c.IsSelected)
-                                    .Select(c => new Guid(c.Id.ToByteArray()))
-                                    .Concat(new []{YakkaBootstrapper.ClientId})
-                                    .Distinct()
-                                    .ToList();
-            
+            var selections = SelectedClients
+                .Select(c => c.Id)
+                .Union(new[] {YakkaBootstrapper.ClientId})
+                .Distinct()
+                .ToList();
+
             _homeViewModelActor.Tell(new ConversationMessages.ConversationRequest(selections));
         }
     }

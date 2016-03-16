@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Akka.Actor;
 using Yakka.Actors.UI;
 using Yakka.Common.Messages;
@@ -36,11 +35,11 @@ namespace Yakka.Actors
             Receive<ShoutMessages.IncomingShout>(msg =>
             {
                 Context.ActorSelection(ClientActorPaths.HomeViewModelActor.Path).Tell(msg);
-                Context.ActorSelection(ClientActorPaths.ShellViewModelActor.Path).Tell(new ShellViewModelActor.NotifyUser());
+                Context.ActorSelection(ClientActorPaths.ShellViewModelActor.Path).Tell(new NotificationActor.NotifyUser());
             });
             Receive<ConversationMessages.ConversationStarted>(msg => OpenConversation(msg));
             Receive<ConversationMessages.OutgoingChatMessage>(msg => ForwardToServerMessager(msg));
-				Receive<ConversationMessages.IncomingChatMessage>(msg => ForwardToConversations(msg));
+			Receive<ConversationMessages.IncomingChatMessage>(msg => ForwardToConversations(msg));
         }
 
 	    private void ForwardToConversations(ConversationMessages.IncomingChatMessage msg)

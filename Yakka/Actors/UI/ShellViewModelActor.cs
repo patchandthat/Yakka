@@ -18,8 +18,6 @@ namespace Yakka.Actors.UI
             public bool Connected { get; }
         }
 
-        public class NotifyUser { }
-
         private readonly ShellViewModel _shellViewModel;
         private IActorRef _connectionActor;
         private IActorRef _notifierActor;
@@ -31,7 +29,7 @@ namespace Yakka.Actors.UI
             Receive<ConnectionActor.ConnectRequest>(msg => ForwardConnectionRequest(msg));
             Receive<ConnectionActor.Disconnect>(msg => ForwardDisconnectRequest(msg));
             Receive<UpdateConnectionState>(msg => _shellViewModel.IsConnected = msg.Connected);
-            Receive<NotifyUser>(msg =>
+            Receive<NotificationActor.NotifyUser>(msg =>
             {
                 _notifierActor.Tell(msg);
             });

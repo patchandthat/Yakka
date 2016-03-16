@@ -7,12 +7,10 @@ using Caliburn.Micro;
 using MaterialDesignThemes.Wpf;
 using Yakka.Actors;
 using Yakka.Actors.UI;
-using Yakka.Common.Messages;
 using Yakka.Common.Paths;
 using Yakka.Features.Conversations;
 using Yakka.Features.Dialogs;
 using Yakka.Features.HomeScreen;
-using Yakka.Features.InfoPage;
 using Yakka.Features.Settings;
 
 namespace Yakka.Features.Shell
@@ -27,11 +25,10 @@ namespace Yakka.Features.Shell
         private readonly IActorRef _shellViewModelActor;
         private bool _isConnected;
 
-        public ShellViewModel(HomeViewModel home, SettingsViewModel settings, InfoPageViewModel infoPage, ConversationsViewModel convos, IActorRefFactory system)
+        public ShellViewModel(HomeViewModel home, SettingsViewModel settings, ConversationsViewModel convos, IActorRefFactory system)
         {
             _screens.Add(Screens.Home, home);
             _screens.Add(Screens.Settings, settings);
-            _screens.Add(Screens.Info, infoPage);
             _screens.Add(Screens.Conversations, convos);
 
             system.ActorSelection(ClientActorPaths.ErrorDialogActor.Path)

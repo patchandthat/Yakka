@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Akka.Actor;
 using Yakka.Common.Messages;
+using Yakka.Common.Paths;
 using Yakka.Features.Conversations;
 
 namespace Yakka.Actors.UI
@@ -30,20 +30,23 @@ namespace Yakka.Actors.UI
 	    }
 
 	    private void OpenOrFocusWindow(ConversationMessages.ConversationStarted msg)
-        {
-            if (_conversations.ContainsKey(msg.ConversationId))
-            {
-                //todo: focus
-            }
-            else
-            {
-                IActorRef conversationActor = Context.ActorOf(Props.Create(() => new ConversationViewModelActor(msg)), msg.ConversationId.ToString());
-                var newConversation = new ConversationViewModel(conversationActor, msg.ConversationId);
+	    {
+	        if (!_conversations.ContainsKey(msg.ConversationId))
+	        {
+	            IActorRef conversationActor = Context.ActorOf(Props.Create(() => new ConversationViewModelActor(msg)),
+	                msg.ConversationId.ToString());
+	            var newConversation = new ConversationViewModel(conversationActor, msg.ConversationId)
+	            {
+	                DisplayName = $"#{_conversations.Count+1}"
+	            };
 
-                _viewModel.AddConversation(newConversation);
+	            _viewModel.AddConversation(newConversation);
 
-                _conversations.Add(msg.ConversationId, conversationActor);
-            }
-        }
+	            _conversations.Add(msg.ConversationId, conversationActor);
+	        }
+
+            _viewModel.FocusConversation(msg.ConversationId);
+            Context.ActorSelection(ClientActorPaths.NotifierActor.Path).Tell(new NotificationActor.NotifyUser());
+	    }
     }
 }

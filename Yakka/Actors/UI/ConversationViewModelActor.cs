@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
 using Akka.Actor;
 using Yakka.Common.Messages;
 using Yakka.Common.Paths;
@@ -12,8 +13,9 @@ namespace Yakka.Actors.UI
         private ConversationViewModel _viewModel;
         private ConversationMessages.ConversationStarted _conversationMetadata;
 	    private IActorRef _messagingActor;
+        private IEnumerable<ConnectedClient> _participants;
 
-	    public class AssociateWithViewModel
+        public class AssociateWithViewModel
         {
             public AssociateWithViewModel(ConversationViewModel viewModel)
             {
@@ -27,29 +29,48 @@ namespace Yakka.Actors.UI
         {
             _conversationMetadata = conversationMetadata;
 
-				//Todo: RequestParticipantNames from local clients actor
-
-           Receive<AssociateWithViewModel>(msg => AssociateAndSetParticipants(msg));
+            Receive<AssociateWithViewModel>(msg => AssociateAndSetParticipants(msg));
 	        Receive<ConversationMessages.OutgoingChatMessage>(msg => HandleOutgoingMessage(msg));
 	        Receive<ConversationMessages.IncomingChatMessage>(msg => HandleIncomingMessage(msg));
+
+            Receive<ClientsActor.ClientStatusQueryResponse>(msg => UpdateClientList(msg));
+            Context.ActorSelection(ClientActorPaths.ClientsActor.Path).Tell(new ClientsActor.ClientStatusQuery(conversationMetadata.Clients));
         }
 
-	    private void AssociateAndSetParticipants(AssociateWithViewModel msg)
-	    {
-		    _viewModel = msg.ViewModel;
+        private void UpdateClientList(ClientsActor.ClientStatusQueryResponse response)
+        {
+            if (_viewModel != null)
+            {
+                foreach (var participant in _viewModel.Participants)
+                {
+                    var name = response.ClientInformation.FirstOrDefault(ci => ci.ClientId == participant.Id)?.Username;
 
-		    foreach(var client in _conversationMetadata.Clients) {
-			    //Todo: lookup client name and status
-				 _viewModel.AddParticipant(new ConversationParticipantViewModel()
-				 {
-					 Id = client,
-					 Status = ClientStatus.Available,
-					 Username = "Todo:" + client
-				 });
-		    }
-	    }
+                    participant.Username = name ?? "Unknown";
+                }
+            }
 
-		private void HandleOutgoingMessage(ConversationMessages.OutgoingChatMessage msg)
+            _participants = response.ClientInformation;
+        }
+
+        private void AssociateAndSetParticipants(AssociateWithViewModel msg)
+        {
+            _viewModel = msg.ViewModel;
+
+            foreach (var client in _conversationMetadata.Clients)
+            {
+                //Just being overly caution about race conditions
+                string tempName = _participants?.FirstOrDefault(p => p.ClientId == client)?.Username;
+                
+                _viewModel.AddParticipant(new ConversationParticipantViewModel()
+                {
+                    Id = client,
+                    Status = ClientStatus.Available,
+                    Username = tempName ?? "Unknown"
+                });
+            }
+        }
+
+        private void HandleOutgoingMessage(ConversationMessages.OutgoingChatMessage msg)
 		{
 			if(_messagingActor == null) {
 				_messagingActor = 
@@ -63,12 +84,16 @@ namespace Yakka.Actors.UI
 
 		private void HandleIncomingMessage(ConversationMessages.IncomingChatMessage msg)
 		{
-			//Todo: build a local dict of user id -> usernames on association
 			_viewModel.ReceiveMessage(new ConversationViewModel.ReceivedMessage()
 			{
 				Message = msg.Message,
-				UserName = "User:" + msg.SenderId
+				UserName = _participants.FirstOrDefault(p => p.ClientId == msg.SenderId)?.Username ?? "Unknown"
 			});
+
+		    if (!_viewModel.IsActive)
+		    {
+		        Context.ActorSelection(ClientActorPaths.NotifierActor.Path).Tell(new NotificationActor.NotifyUser());
+		    }
 		}
 	}
 }
